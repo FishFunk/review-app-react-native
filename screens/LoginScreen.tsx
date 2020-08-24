@@ -17,25 +17,30 @@ export default function LoginScreen() {
       FirebaseService.login(email, pwd)
         .catch((error)=>{
           setError(true);
-          console.error(error);
+          // console.error(error);
         })
         .finally(()=>{
           setLoading(false);
         });
     }
 
+    const onRegister = ()=>{
+      setError(false);
+    }
+
     if(loading){
       return (
         <View style={styles.container}>
-          <ActivityIndicator size="large" color={ theme.DARK_COLOR }/>
+          <ActivityIndicator size="large" color={ theme.LIGHT_COLOR }/>
         </View>
       )
     } else {
       return (
           <View style={styles.container}>
               <Text style={styles.title}>Welcome!</Text>
-              {isError ? <Text style={styles.warning}>Login Failed!</Text> : null }
-              <View style={styles.separator} />
+              <Text style={styles.warning}>
+                {isError? 'Login Failed!': ''}
+              </Text>
               <TextInput
                   placeholder='Email'
                   style={styles.input}
@@ -51,10 +56,10 @@ export default function LoginScreen() {
               <View style={styles.buttonGroup}>
                 <Button color={theme.SECONDARY_COLOR} title="Login" onPress={onSubmit} />
                 <View style={styles.margin} />
-                <Button color={theme.PRIMARY_COLOR} title="Register" onPress={()=>{}} />
+                <Button color={theme.PRIMARY_COLOR} title="Register" onPress={onRegister} />
               </View>
               <View style={styles.separator} />
-              <Button color={theme.DARK_COLOR} title="Forgot Password?" onPress={()=>{}} />
+              <Button color={theme.LIGHT_COLOR} title="Forgot Password?" onPress={()=>{}} />
           </View>
       );
     }
@@ -80,7 +85,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   warning: {
-    paddingTop: 10,
+    marginVertical: 10,
     color: theme.DANGER_COLOR,
     fontSize: 12,
     fontWeight: 'bold'
