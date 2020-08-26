@@ -8,6 +8,9 @@ import useColorScheme from '../hooks/useColorScheme';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faMapMarkedAlt, faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import Logo from '../components/Logo';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -22,14 +25,16 @@ export default function BottomTabNavigator() {
         name="TabOne"
         component={TabOneNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarLabel: "Map",
+          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={ faMapMarkedAlt } color={color} />,
         }}
       />
       <BottomTab.Screen
         name="TabTwo"
         component={TabTwoNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarLabel: "Account",
+          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={ faUserCircle } color={color} />,
         }}
       />
     </BottomTab.Navigator>
@@ -52,7 +57,7 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="TabOneScreen"
         component={TabOneScreen}
-        options={{ headerTitle: 'Tab One Title', headerTitleAlign: 'center' }}
+        options={{ headerTitle: 'Reviewer', headerTitleAlign: 'center' }}
       />
     </TabOneStack.Navigator>
   );
@@ -66,7 +71,7 @@ function TabTwoNavigator() {
       <TabTwoStack.Screen
         name="TabTwoScreen"
         component={TabTwoScreen}
-        options={{ headerTitle: 'Tab Two Title', headerTitleAlign: 'center' }}
+        options={{ headerTitle: props => <Logo />, headerTitleAlign: 'center' }}
       />
     </TabTwoStack.Navigator>
   );

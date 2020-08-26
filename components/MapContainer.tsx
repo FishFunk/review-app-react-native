@@ -4,6 +4,7 @@ import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../services/locationService';
 import { get } from 'lodash';
+import { LocationData } from 'expo-location';
 
 export default class MapContainer extends React.Component {
 
@@ -25,10 +26,10 @@ export default class MapContainer extends React.Component {
 
     getInitialState(){
         getLocation()
-            .then((data: Coordinates)=>{
+            .then((data: LocationData)=>{
                 this.updateRegion({
-                    latitude: data.latitude,
-                    longitude: data.longitude
+                    latitude: data.coords.latitude,
+                    longitude: data.coords.longitude
                 });
             })
             .catch(error =>{

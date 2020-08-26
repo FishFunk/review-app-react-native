@@ -9,16 +9,16 @@ export default {
           TabOne: {
             screens: {
               TabOneScreen: 'one',
-            },
+            }
           },
           TabTwo: {
             screens: {
               TabTwoScreen: 'two',
-            },
-          },
-        },
+            }
+          }
+        }
       },
-      NotFound: '*',
-    },
-  },
+      NotFound: '*'
+    }
+  }
 };
