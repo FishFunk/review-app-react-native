@@ -20,12 +20,18 @@
     ],
     "android": {
       "package": "com.wanderlustlabs.reviewers",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyDaOLFfg2TTZcOy6CohzxrNfelT3gwAha0" } 
+      }
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.wanderlustlabs.reviewers",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "config": {
+        "googleMapsApiKey": "AIzaSyCiImxwioBXuT6Stdm-Y1xMGpgHrzZUHN4"
+      }
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
