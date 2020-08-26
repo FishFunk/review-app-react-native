@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../services/locationService';
+import { get } from 'lodash';
 
 export default class MapContainer extends React.Component {
 
@@ -25,40 +26,37 @@ export default class MapContainer extends React.Component {
     getInitialState(){
         getLocation()
             .then((data: Coordinates)=>{
-                this.updateState({
+                this.updateRegion({
                     latitude: data.latitude,
                     longitude: data.longitude
-                })
+                });
             })
             .catch(error =>{
                 // console.error(error);
             });
     }
 
-    getCoordsFromName(loc: any){
-        console.log(loc);
-
-        this.updateState({
-            latitude: loc.lat,
-            longitude: loc.lng
-        })
-    }
-
-    updateState(loc: any){
+    updateRegion(loc: any){
         this.setState({
-            latitude: loc.latitude,
-            longitude: loc.longitude,
-            latitudeDelta: 0.003,
-            longitudeDelta: 0.003
-        })
+            region: {
+                latitude: loc.latitude,
+                longitude: loc.longitude,
+                latitudeDelta: 0.003,
+                longitudeDelta: 0.003
+            }
+        });
     }
 
-    // onNotifyChange(data: any, details: any){
-    //     console.log(data);
-    //     console.log(details);
-    // }
+    handleSelectPlace(place: any){
+        console.log(place);
+        const loc = {
+            latitude: get(place, 'result.geometry.location.lat'),
+            longitude: get(place, 'result.geometry.location.lng')
+        };
+        this.updateRegion(loc);
+    }
 
-    onMapRegionChange(region: any){
+    onHandleRegionChange(region: any){
         this.setState({ region });
     }
 
@@ -66,14 +64,14 @@ export default class MapContainer extends React.Component {
         return (
             <View style={{ width: '100%', height: '100%' }}>
                 <View style={{zIndex: 999, marginLeft: 10, marginRight: 10}}>
-                    <MapInput notifyChange={this.getCoordsFromName}/>
+                    <MapInput handleSelectPlace={this.handleSelectPlace.bind(this)}/>
                 </View>
                 {
                     this.state.region.latitude ?
                         <View style={{width: '100%', height: '100%'}}>
                             <Map 
                                 region={this.state.region}
-                                onRegionChange={this.onMapRegionChange.bind(this)}
+                                onRegionChange={this.onHandleRegionChange.bind(this)}
                             />
                         </View> : null
                 }
