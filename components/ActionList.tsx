@@ -1,13 +1,15 @@
-import React from "react";
-import { SafeAreaView, View, Button, StyleSheet, Text, TouchableOpacity } from "react-native";
+import React from 'react';
+import { StyleSheet, View, Button } from 'react-native';
+import { 
+  List, 
+  ListItem, 
+  Text, 
+  Left, 
+  Right, 
+  Icon } from 'native-base';
 import FirebaseService from '../services/firebaseService';
 import { getContactsPermission } from '../services/contactService';
-
-const Item = (props: any) => (
-  <TouchableOpacity onPress={props.onPress}>
-    <Text style={styles.title}>{props.title}</Text>
-  </TouchableOpacity>
-);
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default class ActionList extends React.Component {
   
@@ -30,27 +32,34 @@ export default class ActionList extends React.Component {
 
     render(){
         return (
-            <SafeAreaView style={styles.container}>
-                <View style={styles.item}>
-                    <Item onPress={this.onClickFriends} title="Friends"/>
-                </View>
-                <View style={styles.item}>
-                    <Item onPress={this.onPress} title="Favorites"/>
-                </View>
-                <View style={styles.item}>
-                    <Item onPress={this.onPress} title="Reviews"/>
-                </View>
-                <View style={styles.item}>
-                    <Item onPress={this.onPress} title="Followers"/>
-                </View>
-                <View style={styles.itemLast}>
-                    <Item onPress={this.onLogout} title="Logout"/>
-                </View>
-                {/* <View style={styles.itemLast}>
-                    <Button title="Logout" onPress={this.onLogout}/>
-                </View> */}
-            </SafeAreaView>
-
+          <View style={{ width: '100%', height: '100%' }}>
+            <List>
+              <ListItem button={true} onPress={this.onClickFriends}>
+                <Left>
+                  <Text>Friends</Text>
+                </Left>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+              <ListItem button={true} onPress={this.onPress}>
+              <Left>
+                  <Text>Favorites</Text>
+                </Left>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+              <ListItem button={true} onPress={this.onLogout}>
+                <Left>
+                  <Text>Logout</Text>
+                </Left>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+            </List>
+          </View>
         )};
 };
 
