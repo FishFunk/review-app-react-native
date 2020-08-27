@@ -33,7 +33,7 @@ export default class MapContainer extends React.Component {
                 });
             })
             .catch(error =>{
-                // console.error(error);
+                console.error(error);
             });
     }
 
@@ -64,7 +64,7 @@ export default class MapContainer extends React.Component {
     render() {
         return (
             <View style={{ width: '100%', height: '100%' }}>
-                <View style={{zIndex: 999, marginLeft: 10, marginRight: 10}}>
+                <View style={{zIndex: 9999, marginLeft: 10, marginRight: 10}}>
                     <MapInput handleSelectPlace={this.handleSelectPlace.bind(this)}/>
                 </View>
                 {

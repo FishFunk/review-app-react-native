@@ -2,32 +2,27 @@ import firebase from 'firebase';
 import config from './firebaseServiceConfig';
 
 class FirebaseService {
-    public auth: any;
-    private db: any;
+    public auth: firebase.auth.Auth;
+    private db: firebase.database.Database;
 
-	init(success: Function) {
-		if (Object.entries(config).length === 0 && config.constructor === Object) {
-			if (process.env.NODE_ENV === 'development') {
-				console.warn(
-					'Missing Firebase Configuration'
-				);
-			}
-			success(false);
-			return;
+	constructor(){
+		if (Object.entries(config).length === 0) {
+			console.warn('Missing Firebase Configuration');
 		}
 
 		firebase.initializeApp(config);
 		this.db = firebase.database();
 		this.auth = firebase.auth();
-		success(true);
-    }
-    
+
+		console.log(`Firebase initialized successfully`);
+	}
+
     login(username: string, password: string): Promise<any> {
         return this.auth.signInWithEmailAndPassword(username, password);
     }
 
 	currentUserId = () => {
-		return this.auth.currentUser.uid;
+		return this.auth.currentUser ? this.auth.currentUser.uid : null;
 	}
 
 	userRef = () => {
@@ -77,7 +72,7 @@ class FirebaseService {
 		// return this.db.ref(`users/${userId}`).remove();
 	}
 
-	onAuthStateChanged = (callback: Function) => {
+	onAuthStateChanged = (callback: firebase.Observer<any>) => {
 		return this.auth.onAuthStateChanged(callback);
 	};
 
