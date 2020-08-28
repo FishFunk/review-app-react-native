@@ -2,10 +2,9 @@ import * as React from 'react';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import theme from '../styles/theme';
 import { Text, View } from '../components/Themed';
-import { Button, Item, Input, Content } from 'native-base';
-
+import { Button, Item, Input, Content, Image } from 'native-base';
+import UndrawReviewSvg from '../svgs/undraw_reviews';
 import FirebaseService from '../services/firebaseService';
-import { color } from 'react-native-reanimated';
 
 export default function LoginScreen(props: any) {
 
@@ -39,7 +38,13 @@ export default function LoginScreen(props: any) {
     } else {
       return (
           <Content contentContainerStyle={styles.container}>
-              <Text style={styles.title}>Welcome!</Text>
+              <View style={styles.svgWrapper}>
+                <UndrawReviewSvg width='75%' height='200px'/>
+              </View>
+              <Text style={styles.title}>It's time we reviewed our reviews</Text>
+              <Text style={styles.subtext}>
+                Welcome to Reviewly! Real reviews from people you trust.
+              </Text>
               <Text style={styles.warning}>
                 {isError? 'Login Failed!': ''}
               </Text>
@@ -65,7 +70,7 @@ export default function LoginScreen(props: any) {
                   <Text style={styles.buttonText}>Register</Text>
                 </Button>
               </View>
-              <View style={styles.separator} />
+              <View style={styles.smallSeparator} />
               <Button style={styles.forgotButton} full>
                 <Text style={styles.forgotText}>Forgot Password?</Text>
               </Button>
@@ -98,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   forgotText: {
-    color: theme.LIGHT_COLOR
+    color: theme.PRIMARY_COLOR
   },
   buttonText: {
     color: theme.DARK_COLOR,
@@ -110,12 +115,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.DARK_COLOR
+    backgroundColor: theme.LIGHT_COLOR
   },
   title: {
-    color: theme.LIGHT_COLOR,
-    fontSize: 30,
+    color: theme.DARK_COLOR,
+    fontSize: 20,
     fontWeight: 'bold'
+  },
+  subtext: {
+    marginTop: 15,
+    marginRight: '10%',
+    marginLeft: '10%',
+    textAlign: 'center',
+    color: theme.DARK_COLOR,
+    fontSize: 16
   },
   warning: {
     marginVertical: 10,
@@ -127,9 +140,19 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: '80%',
   },
+  smallSeparator: {
+    marginVertical: 10,
+    width: '80%',
+  },
   inputItem: {
     marginLeft: 20,
     marginRight: 20,
     marginBottom: 15
+  },
+  svgWrapper: {
+    alignItems: 'center',
+    padding: 10,
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,0.3)'
   }
 });
