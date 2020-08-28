@@ -1,0 +1,82 @@
+export interface searchPlace {
+    result: {
+      formatted_address: string;
+      geometry: {
+        location: {
+          lat: number;
+          lng: number;
+        },
+        viewport: {
+          northeast: {
+            lat: number;
+            lng: number;
+          },
+          southwest: {
+            lat: number;
+            lng: number;
+          }
+        }
+      },
+      name: string;
+    },
+    status: string;
+}
+
+export interface apiPlace {
+  latitude: number,
+  longitude: number,
+  name: string,
+  photos?: Array<placePhoto>
+  rating?: number,
+  vicinity?: string
+}
+
+export interface fullApiPlace {
+  business_status : OPERATIONAL,
+  geometry : {
+    location : {
+        lat : number,
+        lng : number
+    },
+    viewport : {
+        northeast : {
+          lat : number,
+          lng : number
+        },
+        southwest : {
+          lat : number,
+          lng : number
+        }
+    }
+  },
+  icon : string,
+  name : string,
+  opening_hours : {
+    open_now : boolean
+  },
+  photos : Array<placePhoto>,
+  place_id : string,
+  plus_code : Object,
+  rating : number,
+  reference : string,
+  scope : string,
+  types : Array<string>,
+  user_ratings_total : number,
+  vicinity : string
+}
+
+export interface marker {
+  latlng: {
+    latitude: number,
+    longitude: number
+  },
+  title: string,
+  description: string
+}
+
+export interface placePhoto {
+  height: number,
+  html_attributions: Array<string>
+  photo_reference: string,
+  width: number
+}

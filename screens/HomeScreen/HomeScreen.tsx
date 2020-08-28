@@ -4,7 +4,7 @@ import {
   Container, 
   Content} from "native-base";
 import AppHeader from "../../components/AppHeader";
-import MapContainer from '../../components/MapContainer';
+import MapContainer from '../../components/map/MapContainer';
 
 export default function HomeScreen(props: any) {
     return (

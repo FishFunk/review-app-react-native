@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE, AnimatedRegion } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, AnimatedRegion, MapEvent } from 'react-native-maps';
 
 export default function Map(props: any) {
 
-    const [isLoading, setLoading] = useState(false);
-    const [markers, setMarkers] = useState([]);
+    // const [isLoading, setLoading] = useState(false);
+    // const [markers, setMarkers] = useState([]);
 
     let mapViewRef;
+
+    function onPressMarker(event: MapEvent<{ action: "marker-press"; id: string }>){
+        console.log(event.nativeEvent.coordinate);
+    }
 
     return (
         <MapView
@@ -19,8 +23,9 @@ export default function Map(props: any) {
             zoomControlEnabled={true}
             zoomTapEnabled={true}
         >
-            {markers.map((marker: any) => (
+            {props.markers.map((marker: any) => (
                 <Marker
+                    onPress={onPressMarker}
                     coordinate={marker.latlng}
                     title={marker.title}
                     description={marker.description}

@@ -2,39 +2,65 @@ import React from 'react';
 import { View } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
-import { getLocation } from '../services/locationService';
+import { getLocation, getPlaces } from '../../services/locationService';
 import { get } from 'lodash';
 import { LocationData } from 'expo-location';
+import { searchPlace, apiPlace, marker } from '../../models/place';
 
 export default class MapContainer extends React.Component {
 
-    initialState = {
+    defaultRegion = {
         // San Francisco
         latitude: 37.78825,
         longitude: -122.4324,
         latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        longitudeDelta: 0.0421
     };
 
+    // initial state
     state = {
-        region: this.initialState
+        loading: true,
+        region: this.defaultRegion,
+        markers: []
     };
 
     componentDidMount(){
-        this.getInitialState();
+        this.getInitialState()
+            .then(async ()=>{
+                const places = await getPlaces(
+                    this.state.region.latitude, 
+                    this.state.region.longitude);
+                const markers = this.convertPlacesToMarkers(places);
+                this.setState({ markers: markers, loading: false });
+            });
     }
 
     getInitialState(){
-        getLocation()
+        return getLocation()
             .then((data: LocationData)=>{
+                console.log("getLocation success");
                 this.updateRegion({
                     latitude: data.coords.latitude,
                     longitude: data.coords.longitude
                 });
             })
             .catch(error =>{
-                console.error(error);
+                console.log("getLocation failed. using default region");
             });
+    }
+
+    convertPlacesToMarkers(places: apiPlace[]){
+        return places.map((place)=>{
+            var m: marker = {
+                latlng: {
+                    latitude: place.latitude,
+                    longitude: place.longitude
+                },
+                title: place.name,
+                description: place.rating != null ? place.rating.toString() : place.name
+            }
+            return m;
+        });
     }
 
     updateRegion(loc: any){
@@ -48,13 +74,20 @@ export default class MapContainer extends React.Component {
         });
     }
 
-    handleSelectPlace(place: any){
-        console.log(place);
+    handleSelectPlace(place: searchPlace){
         const loc = {
             latitude: get(place, 'result.geometry.location.lat'),
             longitude: get(place, 'result.geometry.location.lng')
         };
+
+        const marker: marker = {
+            latlng: loc,
+            title: place.result.name,
+            description: place.result.formatted_address
+        }
+
         this.updateRegion(loc);
+        this.setState({ markers: [marker] });
     }
 
     onHandleRegionChange(region: any){
@@ -62,6 +95,10 @@ export default class MapContainer extends React.Component {
     }
 
     render() {
+        if(this.state.loading){
+            // show loading
+        }
+
         return (
             <View style={{ width: '100%', height: '100%' }}>
                 <View style={{zIndex: 9999, marginLeft: 10, marginRight: 10}}>
@@ -72,6 +109,7 @@ export default class MapContainer extends React.Component {
                         <View style={{width: '100%', height: '100%'}}>
                             <Map 
                                 region={this.state.region}
+                                markers={this.state.markers}
                                 onRegionChange={this.onHandleRegionChange.bind(this)}
                             />
                         </View> : null
