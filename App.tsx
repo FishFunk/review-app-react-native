@@ -13,7 +13,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
-import theme from './styles/theme';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
@@ -49,7 +48,6 @@ export default function App(props: any) {
   
   if(!user){
     return (
-      <Container style={{backgroundColor: 'white'}}>
         <NavigationContainer>
           <stackNavigator.Navigator initialRouteName="Login">
             <stackNavigator.Screen name="Login" component={LoginScreen} 
@@ -62,7 +60,6 @@ export default function App(props: any) {
               }}/>
           </stackNavigator.Navigator>
         </NavigationContainer>
-      </Container>
     )
   } else {
     return (

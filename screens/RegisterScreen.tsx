@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { StyleSheet, TextInput, Button, ActivityIndicator } from 'react-native';
+import { StyleSheet, ActivityIndicator } from 'react-native';
 import theme from '../styles/theme';
 import { Text, View } from '../components/Themed';
 import FirebaseService from '../services/firebaseService';
+import { Content, Button, Item, Input } from 'native-base';
 
 export default function RegisterScreen(props: any) {
 
     const [email, onChangeEmail] = React.useState('');
     const [pwd, onChangePwd] = React.useState('');
+    const [name, onChangeName] = React.useState('');
     const [loading, setLoading] = React.useState(false);
     const [isError, setError] = React.useState(false);
 
@@ -28,46 +30,68 @@ export default function RegisterScreen(props: any) {
       )
     } else {
       return (
-          <View style={styles.container}>
+          <Content contentContainerStyle={styles.container}>
               <Text style={styles.title}>Join Us!</Text>
               <Text style={styles.warning}>
                 {isError? 'Registration Failed!': ''}
               </Text>
-                <TextInput
+              <Item style={styles.inputItem}>
+                <Input 
                   placeholder='Name'
-                  style={styles.input}
-                  onChangeText={text => onChangeEmail(text)}
-                  value={email} />
-                <TextInput
+                  onChangeText={text => onChangeName(text)}
+                  value={name} />
+              </Item>
+              <Item style={styles.inputItem}>
+                <Input 
                   placeholder='Email'
-                  style={styles.input}
                   onChangeText={text => onChangeEmail(text)}
                   value={email} />
-              <TextInput
-                  placeholder='Confirm Email'
-                  style={styles.input}
-                  onChangeText={text => onChangeEmail(text)}
-                  value={email} />
+              </Item>
+              <Item style={styles.inputItem}>
+                <Input 
+                  placeholder='Password'
+                  onChangeText={text => onChangePwd(text)}
+                  value={pwd} 
+                  secureTextEntry={true} />
+              </Item>
               <View style={styles.separator} />
               <View style={styles.buttonGroup}>
-                <Button color={theme.PRIMARY_COLOR} title="Register" onPress={onRegister} />
+                <Button style={styles.registerButton} onPress={onRegister}>
+                  <Text style={styles.buttonText}>Register</Text>
+                </Button>
               </View>
-              <View style={styles.separator}></View>
-              <View style={styles.buttonGroup}>
-                <Button color={theme.PRIMARY_COLOR} title="Cancel" onPress={onCancel} />
-              </View>
-          </View>
+              <View style={styles.separator} />
+              <Button style={styles.forgotButton} full onPress={onCancel}>
+                <Text style={styles.forgotText}>Cancel</Text>
+              </Button>
+          </Content>
       );
     }
 }
 
 const styles = StyleSheet.create({
-  margin: {
-    marginHorizontal: 10
-  },
   buttonGroup: {
+    width: '100%',
+    justifyContent: "space-evenly",
     flexDirection: 'row',
     backgroundColor: 'transparent'
+  },
+  registerButton: {
+    backgroundColor: theme.SECONDARY_COLOR,
+    width: 100,
+    justifyContent: 'center'
+  },
+  forgotButton: {
+    backgroundColor: 'transparent'
+  },
+  forgotText: {
+    color: theme.LIGHT_COLOR
+  },
+  buttonText: {
+    color: theme.DARK_COLOR,
+    textShadowColor: theme.LIGHT_COLOR,
+    textShadowRadius: 5,
+    textShadowOffset: { width: 1, height: 1}
   },
   container: {
     flex: 1,
@@ -90,16 +114,9 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: '80%',
   },
-  input: {
-    width: '90%',
-    backgroundColor: theme.LIGHT_COLOR,
-    padding: 15,
-    marginBottom: 10,
-    borderColor: theme.DARK_COLOR,
-    borderWidth: 1
-  },
-  button: {
-    color: theme.DARK_COLOR,
-    backgroundColor: theme.SECONDARY_COLOR
+  inputItem: {
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 15
   }
 });

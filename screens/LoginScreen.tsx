@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, TextInput, Button, ActivityIndicator } from 'react-native';
+import { StyleSheet, ActivityIndicator } from 'react-native';
 import theme from '../styles/theme';
 import { Text, View } from '../components/Themed';
+import { Button, Item, Input, Content } from 'native-base';
 
 import FirebaseService from '../services/firebaseService';
+import { color } from 'react-native-reanimated';
 
 export default function LoginScreen(props: any) {
 
@@ -30,37 +32,44 @@ export default function LoginScreen(props: any) {
 
     if(loading){
       return (
-        <View style={styles.container}>
+        <Content contentContainerStyle={styles.container}>
           <ActivityIndicator size="large" color={ theme.LIGHT_COLOR }/>
-        </View>
+        </Content>
       )
     } else {
       return (
-          <View style={styles.container}>
+          <Content contentContainerStyle={styles.container}>
               <Text style={styles.title}>Welcome!</Text>
               <Text style={styles.warning}>
                 {isError? 'Login Failed!': ''}
               </Text>
-              <TextInput
+              <Item style={styles.inputItem}>
+                <Input 
                   placeholder='Email'
-                  style={styles.input}
                   onChangeText={text => onChangeEmail(text)}
                   value={email} />
-              <TextInput
+              </Item>
+              <Item style={styles.inputItem}>
+                <Input 
                   placeholder='Password'
-                  style={styles.input}
                   onChangeText={text => onChangePwd(text)}
                   value={pwd} 
-                  secureTextEntry={true}/>
+                  secureTextEntry={true} />
+              </Item>
               <View style={styles.separator} />
               <View style={styles.buttonGroup}>
-                <Button color={theme.SECONDARY_COLOR} title="Login" onPress={onSubmit} />
-                <View style={styles.margin} />
-                <Button color={theme.PRIMARY_COLOR} title="Register" onPress={onRegister} />
+                <Button style={styles.loginButton} onPress={onSubmit}>
+                  <Text style={styles.buttonText}>Login</Text>
+                </Button>
+                <Button style={styles.registerButton} onPress={onRegister}>
+                  <Text style={styles.buttonText}>Register</Text>
+                </Button>
               </View>
               <View style={styles.separator} />
-              <Button color={theme.LIGHT_COLOR} title="Forgot Password?" onPress={()=>{}} />
-          </View>
+              <Button style={styles.forgotButton} full>
+                <Text style={styles.forgotText}>Forgot Password?</Text>
+              </Button>
+          </Content>
       );
     }
 }
@@ -70,8 +79,32 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   },
   buttonGroup: {
+    width: '100%',
+    justifyContent: "space-evenly",
     flexDirection: 'row',
     backgroundColor: 'transparent'
+  },
+  loginButton: {
+    backgroundColor: theme.PRIMARY_COLOR,
+    width: 100,
+    justifyContent: 'center'
+  },
+  registerButton: {
+    backgroundColor: theme.SECONDARY_COLOR,
+    width: 100,
+    justifyContent: 'center'
+  },
+  forgotButton: {
+    backgroundColor: 'transparent'
+  },
+  forgotText: {
+    color: theme.LIGHT_COLOR
+  },
+  buttonText: {
+    color: theme.DARK_COLOR,
+    textShadowColor: theme.LIGHT_COLOR,
+    textShadowRadius: 5,
+    textShadowOffset: { width: 1, height: 1}
   },
   container: {
     flex: 1,
@@ -94,16 +127,9 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: '80%',
   },
-  input: {
-    width: '90%',
-    backgroundColor: theme.LIGHT_COLOR,
-    padding: 15,
-    marginBottom: 10,
-    borderColor: theme.DARK_COLOR,
-    borderWidth: 1
-  },
-  button: {
-    color: theme.DARK_COLOR,
-    backgroundColor: theme.SECONDARY_COLOR
+  inputItem: {
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 15
   }
 });
