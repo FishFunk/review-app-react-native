@@ -20,7 +20,7 @@ export default class PlaceList extends Component<{places: any}> {
     const baseImage =
       "https://images.unsplash.com/photo-1552334405-4929565998d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80";
     return (
-      <Container style={styles.container2}>
+      <Container style={styles.container}>
         <Content>
           {places.length <= 0 && (
             <View style={styles.loaderContainer}>
@@ -44,7 +44,7 @@ export default class PlaceList extends Component<{places: any}> {
                       item.rating && (
                         <View>
                           <View style={styles.startReviewsContainer}>
-                            <ReviewStars stars={item.rating} />
+                            <ReviewStars rating={item.rating} />
                             <Text>{item.rating.toFixed(1)}</Text>
                           </View>
                           <View>
@@ -79,25 +79,6 @@ export default class PlaceList extends Component<{places: any}> {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "space-between"
-  },
-  container2: {
-    flex: 1,
-    justifyContent: "center"
-  },
-  menuTitle: {
-    fontSize: 16,
-    fontFamily: "Poppins-Medium",
-    color: "#575757",
-    marginLeft: 20,
-    marginTop: 10
-  },
-  mapView: {
-    flex: 1,
-    justifyContent: "center"
-  },
-  restaurantList: {
     flex: 1,
     justifyContent: "center"
   },

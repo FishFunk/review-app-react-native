@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
-import { getLocation, getPlaces } from '../../services/locationService';
+import { getLocation, getGooglePlaces } from '../../services/locationService';
 import { get } from 'lodash';
 import { LocationData } from 'expo-location';
 import { searchPlace, apiPlace, marker } from '../../models/place';
@@ -27,11 +27,11 @@ export default class MapContainer extends React.Component {
     componentDidMount(){
         this.getInitialState()
             .then(async ()=>{
-                const places = await getPlaces(
-                    this.state.region.latitude, 
-                    this.state.region.longitude);
-                const markers = this.convertPlacesToMarkers(places);
-                this.setState({ markers: markers, loading: false });
+                // const places = await getGooglePlaces(
+                //     this.state.region.latitude, 
+                //     this.state.region.longitude);
+                // const markers = this.convertPlacesToMarkers(places);
+                this.setState({ loading: false });
             });
     }
 

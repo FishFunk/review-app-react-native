@@ -2,30 +2,22 @@ import * as React from 'react';
 import { StyleSheet, TextInput, Button, ActivityIndicator } from 'react-native';
 import theme from '../styles/theme';
 import { Text, View } from '../components/Themed';
-
 import FirebaseService from '../services/firebaseService';
 
-export default function LoginScreen(props: any) {
+export default function RegisterScreen(props: any) {
 
     const [email, onChangeEmail] = React.useState('');
     const [pwd, onChangePwd] = React.useState('');
     const [loading, setLoading] = React.useState(false);
     const [isError, setError] = React.useState(false);
 
-    const onSubmit = ()=>{
-      setLoading(true);
-      FirebaseService.login(email, pwd)
-        .catch((error)=>{
-          setError(true);
-          // console.error(error);
-        })
-        .finally(()=>{
-          setLoading(false);
-        });
+    const onRegister = ()=>{
+        alert("not implemented");
+        setError(false);
     }
 
-    const onRegister = ()=>{
-      props.navigation.push('Register');
+    const onCancel = ()=>{
+        props.navigation.goBack();
     }
 
     if(loading){
@@ -37,29 +29,33 @@ export default function LoginScreen(props: any) {
     } else {
       return (
           <View style={styles.container}>
-              <Text style={styles.title}>Welcome!</Text>
+              <Text style={styles.title}>Join Us!</Text>
               <Text style={styles.warning}>
-                {isError? 'Login Failed!': ''}
+                {isError? 'Registration Failed!': ''}
               </Text>
-              <TextInput
+                <TextInput
+                  placeholder='Name'
+                  style={styles.input}
+                  onChangeText={text => onChangeEmail(text)}
+                  value={email} />
+                <TextInput
                   placeholder='Email'
                   style={styles.input}
                   onChangeText={text => onChangeEmail(text)}
                   value={email} />
               <TextInput
-                  placeholder='Password'
+                  placeholder='Confirm Email'
                   style={styles.input}
-                  onChangeText={text => onChangePwd(text)}
-                  value={pwd} 
-                  secureTextEntry={true}/>
+                  onChangeText={text => onChangeEmail(text)}
+                  value={email} />
               <View style={styles.separator} />
               <View style={styles.buttonGroup}>
-                <Button color={theme.SECONDARY_COLOR} title="Login" onPress={onSubmit} />
-                <View style={styles.margin} />
                 <Button color={theme.PRIMARY_COLOR} title="Register" onPress={onRegister} />
               </View>
-              <View style={styles.separator} />
-              <Button color={theme.LIGHT_COLOR} title="Forgot Password?" onPress={()=>{}} />
+              <View style={styles.separator}></View>
+              <View style={styles.buttonGroup}>
+                <Button color={theme.PRIMARY_COLOR} title="Cancel" onPress={onCancel} />
+              </View>
           </View>
       );
     }

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View } from "react-native";
 import { Icon } from "react-native-elements";
 
-class ReviewStars extends Component<{ stars: any }> {
+class ReviewStars extends Component<{ rating: number }> {
   FullStar = (key: any) => (
     <Icon color="#FFC300" key={key} type="ionicon" name="ios-star" size={12} />
   );
@@ -27,16 +27,27 @@ class ReviewStars extends Component<{ stars: any }> {
     />
   );
   render() {
-    const { stars } = this.props;
-    let starReviews = [];
-    for (let i = 1; i <= 5; i++) {
+    const { rating } = this.props;
+    const fullStarCount = Math.floor(rating);
+    const emptyStarCount = 5 - (5 - Math.floor(rating));
+    const addHalfStar = rating % 1 > 0.4;
+
+    let stars = [];
+    for (let i = 1; i <= fullStarCount; i++) {
       let star = this.FullStar(i);
-      if (i > stars) {
-        star = this.EmptyStar(i);
-      }
-      starReviews.push(star);
+      stars.push(star);
     }
-    return <View style={{ flex: 1, flexDirection: "row" }}>{starReviews}</View>;
+
+    if(addHalfStar){
+      stars.push(this.HalfStar(fullStarCount + 1));
+    }
+
+    for (let i = 1; i <= emptyStarCount; i++) {
+      let star = this.EmptyStar(fullStarCount + 1 + i);
+      stars.push(star);
+    }
+
+    return <View style={{ flex: 1, flexDirection: "row" }}>{stars}</View>;
   }
 }
 

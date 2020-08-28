@@ -11,11 +11,15 @@ import Screen2 from './screens/Screen2/Screen2';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import { createStackNavigator } from '@react-navigation/stack';
+import theme from './styles/theme';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
   const drawerNavigator = createDrawerNavigator();
+  const stackNavigator = createStackNavigator();
 
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -44,7 +48,22 @@ export default function App(props: any) {
   }
   
   if(!user){
-    return (<LoginScreen/>)
+    return (
+      <Container style={{backgroundColor: 'white'}}>
+        <NavigationContainer>
+          <stackNavigator.Navigator initialRouteName="Login">
+            <stackNavigator.Screen name="Login" component={LoginScreen} 
+              options={{
+                headerShown: false
+              }}/>
+            <stackNavigator.Screen name="Register" component={RegisterScreen} 
+              options={{
+                headerShown: false
+              }}/>
+          </stackNavigator.Navigator>
+        </NavigationContainer>
+      </Container>
+    )
   } else {
     return (
       <Container>
