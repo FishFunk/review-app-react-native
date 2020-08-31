@@ -8,7 +8,6 @@ class MapInput extends React.Component<{ handleSelectPlace: Function }> {
             <PlacesInput
                 googleApiKey={'AIzaSyCASruS9jkUVVJ8E2rk7ga5qRezbIYtj7s'}
                 placeHolder={"Find a place"}
-                queryTypes="establishment"
                 language={"en-US"}
                 onSelect={(place: any) => {
                     this.props.handleSelectPlace(place);

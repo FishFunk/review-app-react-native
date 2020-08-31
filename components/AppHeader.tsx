@@ -24,6 +24,6 @@ export default function AppHeader(props: any) {
             <Button transparent>
             </Button>
             </Right>
-      </Header>
+        </Header>
     );
 }

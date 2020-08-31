@@ -23,7 +23,7 @@ export const getPlacesUrl = (lat: number, lng: number, radius: number, type?: st
   return `${baseUrl}${location}${typeData}${api}`;
 }
 
-export const getGooglePlaces = (lat: number, lng: number, placeType: string = 'establishment')=> {
+export const getGooglePlaces = (lat: number, lng: number, placeType: string = '')=> {
   const places = new Array<apiPlace>();
   const url = getPlacesUrl(lat, lng, 1500, placeType);
 

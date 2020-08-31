@@ -31,7 +31,7 @@ export default function RegisterScreen(props: any) {
     } else {
       return (
           <Content contentContainerStyle={styles.container}>
-              <Text style={styles.title}>Join Us!</Text>
+              <Text style={styles.title}>GLad You Could Join Us!</Text>
               <Text style={styles.warning}>
                 {isError? 'Registration Failed!': ''}
               </Text>
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   forgotText: {
-    color: theme.LIGHT_COLOR
+    color: theme.PRIMARY_COLOR
   },
   buttonText: {
     color: theme.DARK_COLOR,
@@ -97,10 +97,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.DARK_COLOR
+    backgroundColor: theme.LIGHT_COLOR
   },
   title: {
-    color: theme.LIGHT_COLOR,
+    color: theme.DARK_COLOR,
     fontSize: 30,
     fontWeight: 'bold'
   },

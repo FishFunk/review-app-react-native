@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, ScrollView, Text } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation, getGooglePlaces } from '../../services/locationService';
@@ -7,7 +7,8 @@ import { get } from 'lodash';
 import { LocationData } from 'expo-location';
 import { searchPlace, apiPlace, marker } from '../../models/place';
 
-export default class MapContainer extends React.Component {
+export default class MapContainer extends React.Component<{toggleSlideUpPanel: Function}> {
+
 
     defaultRegion = {
         // San Francisco
@@ -22,6 +23,23 @@ export default class MapContainer extends React.Component {
         loading: true,
         region: this.defaultRegion,
         markers: []
+    };
+
+    styles = {
+        container: {
+          flex: 1,
+          zIndex: 1,
+          backgroundColor: 'white',
+          alignItems: 'center',
+          justifyContent: 'center'
+        },
+        dragHandler: {
+          alignSelf: 'stretch',
+          height: 64,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#ccc'
+        }
     };
 
     componentDidMount(){
@@ -94,6 +112,14 @@ export default class MapContainer extends React.Component {
         this.setState({ region });
     }
 
+    onMarkerSelect(){
+        this.props.toggleSlideUpPanel();
+    }
+
+    onPressMapArea(){
+        this.props.toggleSlideUpPanel(false);
+    }
+
     render() {
         if(this.state.loading){
             // show loading
@@ -110,10 +136,14 @@ export default class MapContainer extends React.Component {
                             <Map 
                                 region={this.state.region}
                                 markers={this.state.markers}
+                                onPress={this.onPressMapArea.bind(this)}
+                                onMarkerSelect={this.onMarkerSelect.bind(this)}
                                 onRegionChange={this.onHandleRegionChange.bind(this)}
                             />
                         </View> : null
                 }
+
+                
             </View>
         )
     }
