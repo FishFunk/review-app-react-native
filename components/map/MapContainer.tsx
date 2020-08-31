@@ -7,7 +7,7 @@ import { get } from 'lodash';
 import { LocationData } from 'expo-location';
 import { searchPlace, apiPlace, marker } from '../../models/place';
 
-export default class MapContainer extends React.Component<{toggleSlideUpPanel: Function}> {
+export default class MapContainer extends React.Component<{toggleSlideUpPanel: Function, setPlaceId: Function}> {
 
 
     defaultRegion = {
@@ -113,6 +113,7 @@ export default class MapContainer extends React.Component<{toggleSlideUpPanel: F
     }
 
     onMarkerSelect(){
+        this.props.setPlaceId("12345");
         this.props.toggleSlideUpPanel();
     }
 

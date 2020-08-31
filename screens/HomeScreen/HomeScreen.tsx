@@ -10,6 +10,7 @@ import SlideUpPanelContainer from '../../components/SlideUpPanelContainer';
 export default function HomeScreen(props: any) {
 
     const [isSlideUpPanelOpen, setSlideUpPanelOpen] = useState(false);
+    const [placeId, setPlaceId] = useState('');
 
     function onToggleSlideUpPanel(force?: boolean){
       if(force != null){
@@ -19,13 +20,17 @@ export default function HomeScreen(props: any) {
       }
     }
 
+    function updatePlaceId(placeId: string){
+      setPlaceId(placeId);
+    }
+
     return (
       <Container>
         <AppHeader toggleDrawer={props.navigation.openDrawer}/>
         <Content contentContainerStyle={styles.container}>
-        <MapContainer toggleSlideUpPanel={onToggleSlideUpPanel} />
+        <MapContainer toggleSlideUpPanel={onToggleSlideUpPanel} setPlaceId={updatePlaceId} />
         </Content>
-        <SlideUpPanelContainer isOpen={isSlideUpPanelOpen} />
+        <SlideUpPanelContainer isOpen={isSlideUpPanelOpen} placeId={placeId} />
       </Container>
     );
 }

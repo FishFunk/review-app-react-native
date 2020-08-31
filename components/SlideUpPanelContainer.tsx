@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PlaceDetails from "./map/PlaceDetails";
 
-export default class SlideUpPanelContainer extends React.Component<{isOpen: boolean}> {
+export default class SlideUpPanelContainer extends React.Component<{isOpen: boolean, placeId: string}> {
     _panel: any;
 
     componentDidUpdate(prevProps: any){
@@ -23,12 +23,7 @@ export default class SlideUpPanelContainer extends React.Component<{isOpen: bool
             <SlidingUpPanel ref={c => (this._panel = c)} showBackdrop={false}>
                 {dragHandler => (
                     <View style={styles.container}>
-                        <View style={styles.draggable} {...dragHandler}>
-                            <Text>Drag handler</Text>
-                        </View>
-                    <ScrollView style={{width: '100%'}}>
-                        <PlaceDetails />
-                    </ScrollView>
+                        <PlaceDetails placeId={this.props.placeId} dragHandler={dragHandler}/>
                     </View>
                 )}
             </SlidingUpPanel>
@@ -43,12 +38,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'white'
-  },
-  draggable: {
-    alignSelf: 'stretch',
-    height: 64,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ccc'
   }
 });

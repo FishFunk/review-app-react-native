@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 import config from './firebaseServiceConfig';
+import { review } from '../models/reviews';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -29,19 +30,28 @@ class FirebaseService {
 		return this.db.ref().child("users");
 	}
 
-	getUserData = (userId: string) => {
-		// if (!firebase.apps.length) {
-		// 	return Promise.reject("Firebase not initialized");;
-		// }
-		// return new Promise((resolve, reject) => {
-		// 	this.db
-		// 		.ref(`users/${userId}`)
-		// 		.once('value')
-		// 		.then(snapshot => {
-		// 			const user = snapshot.val();
-		// 			resolve(user);
-		// 		});
-		// });
+	async getReviews(placeId: string): Promise<Array<review>>{
+		if(!placeId){
+			return Promise.resolve([]);
+		}
+
+		if (!firebase.apps.length) {
+			return Promise.reject("Firebase not initialized");;
+		}
+
+		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
+		const reviews = reviewSnapshots.val();
+		let result = [];
+
+		for(let i = 0; i < reviews.length; i++){
+			const usrSnap = await this.db.ref(`users/${reviews[i].reviewer_id}`).once('value');
+			let usr = usrSnap.val();
+			reviews[i].name = `${usr.firstName} ${usr.lastName}`;
+			reviews[i].img = usr.img;
+			result.push(reviews[i]);
+		}
+		
+		return result;
 	};
 
 	updateUserData = (user: any) => {

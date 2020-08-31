@@ -50,7 +50,7 @@ class ReviewStars extends Component<{ rating: number }> {
       stars.push(star);
     }
 
-    return <View style={{ flex: 1, flexDirection: "row" }}>{stars}</View>;
+    return <View style={{ flexDirection: "row" }}>{stars}</View>;
   }
 }
 
@@ -59,6 +59,6 @@ export default ReviewStars;
 const styles = StyleSheet.create({
   star: {
     color: theme.SECONDARY_COLOR,
-    fontSize: 12
+    fontSize: 16
   }
 });
