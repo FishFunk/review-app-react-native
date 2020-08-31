@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View, ScrollView, Text } from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
+import PlaceDetails from "./map/PlaceDetails";
 
 export default class SlideUpPanelContainer extends React.Component<{isOpen: boolean}> {
     _panel: any;
@@ -25,24 +26,8 @@ export default class SlideUpPanelContainer extends React.Component<{isOpen: bool
                         <View style={styles.draggable} {...dragHandler}>
                             <Text>Drag handler</Text>
                         </View>
-                    <ScrollView>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
-                        <Text>Here is the content inside panel</Text>
+                    <ScrollView style={{width: '100%'}}>
+                        <PlaceDetails />
                     </ScrollView>
                     </View>
                 )}
@@ -57,10 +42,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 999,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: 'white'
   },
   draggable: {
     alignSelf: 'stretch',

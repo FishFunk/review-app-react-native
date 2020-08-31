@@ -5,7 +5,7 @@ import {
   Content} from "native-base";
 import AppHeader from "../../components/AppHeader";
 import MapContainer from '../../components/map/MapContainer';
-import SlideUpPanelContainer from '../../components/map/SlideUpPanelContainer';
+import SlideUpPanelContainer from '../../components/SlideUpPanelContainer';
 
 export default function HomeScreen(props: any) {
 

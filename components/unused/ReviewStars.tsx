@@ -1,36 +1,39 @@
 import React, { Component } from "react";
-import { View } from "react-native";
-import { Icon } from "react-native-elements";
+import { View , StyleSheet} from "react-native";
+import { Icon } from 'native-base';
+import theme from "../../styles/theme";
 
 class ReviewStars extends Component<{ rating: number }> {
   FullStar = (key: any) => (
-    <Icon color="#FFC300" key={key} type="ionicon" name="ios-star" size={12} />
+    <Icon       
+      style={styles.star}
+      key={key} name="ios-star"/>
   );
 
   HalfStar = (key: any) => (
     <Icon
-      color="#FFC300"
+      style={styles.star}
       key={key}
-      type="ionicon"
       name="md-star-half"
-      size={12}
     />
   );
 
   EmptyStar = (key: any) => (
     <Icon
-      color="#FFC300"
+      style={styles.star}
       key={key}
-      type="ionicon"
       name="ios-star-outline"
-      size={12}
     />
   );
   render() {
     const { rating } = this.props;
     const fullStarCount = Math.floor(rating);
-    const emptyStarCount = 5 - (5 - Math.floor(rating));
     const addHalfStar = rating % 1 > 0.4;
+    let emptyStarCount = 5 - fullStarCount;
+
+    if(addHalfStar){
+      emptyStarCount --;
+    }
 
     let stars = [];
     for (let i = 1; i <= fullStarCount; i++) {
@@ -52,3 +55,10 @@ class ReviewStars extends Component<{ rating: number }> {
 }
 
 export default ReviewStars;
+
+const styles = StyleSheet.create({
+  star: {
+    color: theme.SECONDARY_COLOR,
+    fontSize: 12
+  }
+});
