@@ -30,7 +30,10 @@ export default function HomeScreen(props: any) {
         <Content contentContainerStyle={styles.container}>
         <MapContainer toggleSlideUpPanel={onToggleSlideUpPanel} setPlaceId={updatePlaceId} />
         </Content>
-        <SlideUpPanelContainer isOpen={isSlideUpPanelOpen} placeId={placeId} />
+        <SlideUpPanelContainer 
+          isOpen={isSlideUpPanelOpen} 
+          placeId={placeId} 
+          toggleSlideUpPanel={onToggleSlideUpPanel}/>
       </Container>
     );
 }

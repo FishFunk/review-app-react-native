@@ -3,7 +3,8 @@ import { StyleSheet, View } from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PlaceDetails from "./map/PlaceDetails";
 
-export default class SlideUpPanelContainer extends React.Component<{isOpen: boolean, placeId: string}> {
+export default class SlideUpPanelContainer extends React.Component<
+    {isOpen: boolean, placeId: string, toggleSlideUpPanel: Function}> {
     _panel: any;
 
     componentDidUpdate(prevProps: any){
@@ -20,10 +21,13 @@ export default class SlideUpPanelContainer extends React.Component<{isOpen: bool
 
     render(){
         return (
-            <SlidingUpPanel ref={c => (this._panel = c)} showBackdrop={false}>
+            <SlidingUpPanel ref={c => (this._panel = c)}>
                 {dragHandler => (
                     <View style={styles.container}>
-                        <PlaceDetails placeId={this.props.placeId} dragHandler={dragHandler}/>
+                        <PlaceDetails 
+                            placeId={this.props.placeId} 
+                            dragHandler={dragHandler} 
+                            toggleSlideUpPanel={this.props.toggleSlideUpPanel}/>
                     </View>
                 )}
             </SlidingUpPanel>
