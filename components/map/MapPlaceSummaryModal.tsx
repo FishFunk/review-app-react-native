@@ -1,24 +1,27 @@
 import React from "react";
-import { StyleSheet, View, Animated, Modal } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import PlaceDetails from "./PlaceDetails";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import Modal from "react-native-modal";
+import { fullApiPlace } from "../../models/place";
 
 export default class MapPlaceSummaryModal extends React.Component<
-    {isOpen: boolean, placeId: string, toggleSummaryModal: Function}> {
+    { isOpen: boolean, placeId: string, toggleSummaryModal: Function }>{
 
     render(){
         return (
             <Modal
-                visible={this.props.isOpen}
-                animationType={'slide'}
-                transparent={true}
+                style={styles.modal}
+                propagateSwipe
+                isVisible={this.props.isOpen}
+                animationIn={'slideInUp'}
+                onBackdropPress={() => this.props.toggleSummaryModal()}
+                onSwipeComplete={() => this.props.toggleSummaryModal()}
+                swipeDirection="down"
             >
-                <View style={styles.container}>
-                    <View style={styles.modalView}>
-                        <PlaceDetails 
-                            placeId={this.props.placeId} 
-                            toggleSummaryModal={this.props.toggleSummaryModal}/>
-                    </View>
+                <View style={styles.modalView}>
+                    <PlaceDetails 
+                        placeId={this.props.placeId} 
+                        toggleSummaryModal={this.props.toggleSummaryModal}/>
                 </View>
             </Modal>
         )
@@ -26,28 +29,17 @@ export default class MapPlaceSummaryModal extends React.Component<
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center'
+    modal: {
+        margin: 0
     },
     modalView: {
         marginTop: 400,
+        marginRight: 0,
+        marginLeft: 0,
+        marginBottom: 0,
+        padding: 0,
         height: '100%',
         width: '100%',
-        backgroundColor: "white",
-        padding: 10,
-        // alignItems: "center",
-        // borderRadius: 20,
-        // shadowColor: "#000",
-        // shadowOffset: {
-        //     width: 0,
-        //     height: 2
-        // },
-        // shadowOpacity: 0.25,
-        // shadowRadius: 3.84,
-        // elevation: 5
+        backgroundColor: "white"
     }
 });

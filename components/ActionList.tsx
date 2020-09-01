@@ -27,7 +27,7 @@ export default class ActionList extends React.Component {
         const data = await getContactsPermission()
             .catch(error => console.error(error));
 
-        console.log(data);
+        // console.log(data);
     }
 
     render(){

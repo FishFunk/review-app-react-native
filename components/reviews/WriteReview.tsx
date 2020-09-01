@@ -1,14 +1,40 @@
 import React, { Component } from 'react';
 import { Modal, View, StyleSheet } from 'react-native';
-import { Icon, Button, Input, Text, Form, Item, Textarea, Label } from 'native-base'
+import { 
+    Button, 
+    Text, 
+    Form, 
+    Item, 
+    Textarea, 
+    Label, 
+    Title, 
+    Toast
+} from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
 import EditableStars from './EditableStars';
+import { fullApiPlace } from '../../models/place';
+import FirebaseService from '../../services/firebaseService';
 
-export default class WriteReview extends Component<{ showModal: boolean, onDismissModal: Function }> {
+export default class WriteReview extends Component<{ 
+        showModal: boolean, 
+        onDismissModal: Function,
+        place: fullApiPlace
+    },
+    {
+        rating1: number,
+        rating2: number
+        rating3: number,
+        comments: string
+    }> {
+
     constructor(props: any){
         super(props);
         this.state = {
+            rating1: 0,
+            rating2: 0,
+            rating3: 0,
+            comments: ''
         }
     }
 
@@ -16,8 +42,42 @@ export default class WriteReview extends Component<{ showModal: boolean, onDismi
         this.props.onDismissModal();
     }
 
-    onUpdateRating(newRating: number){
-        console.log("new star rating: " + newRating);
+    onEditComment(text: string){
+        this.setState({ comments: text });
+    }
+
+    onUpdateRating1(newRating: number){
+        this.setState({ rating1: newRating });
+    }
+
+    onUpdateRating2(newRating: number){
+        this.setState({ rating2: newRating });
+    }
+
+    onUpdateRating3(newRating: number){
+        this.setState({ rating3: newRating });
+    }
+
+    async onSubmitForm(){
+        // 
+        // {place_id, place_name, reviewer_id, atmosphere, menu, service, avg_rating }
+        const { place_id, name } = this.props.place;
+        const data = {
+            place_id: place_id,
+            place_name: name,
+            atmosphere: this.state.rating1,
+            menu: this.state.rating2,
+            service: this.state.rating3,
+            comments: this.state.comments,
+            avg_rating: this.avgRating()
+        }
+
+        await FirebaseService.submitReview(data);
+        this.onDismissModal();
+    }
+
+    avgRating(){
+        return (this.state.rating1 + this.state.rating2 + this.state.rating3) / 3;
     }
 
     render(){
@@ -30,30 +90,67 @@ export default class WriteReview extends Component<{ showModal: boolean, onDismi
         >
             <View style={styles.container}>
                 <View style={styles.modalView}>
-                    {/* <View style={styles.header}>
-                        <Button transparent onPress={this.onDismissModal.bind(this)}>
-                            <Icon style={styles.closeButton} name='close' type="FontAwesome" />
-                        </Button>
-                    </View> */}
+                    <View>
+                        <Title>
+                            <Text style={styles.title}>{this.props.place.name}</Text>
+                        </Title>
+                    </View>
                     <View style={styles.formContainer}>
                         <Form style={styles.form}>
-                            <Item stackedLabel bordered={false} style={styles.starItem}>
-                                <Label>Rating</Label>
-                                <EditableStars onRatingChanged={this.onUpdateRating.bind(this)}  />
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Atmosphere</Label>
+                                <EditableStars 
+                                    fontSize={30}
+                                    initalRating={this.state.rating1} 
+                                    onRatingChanged={this.onUpdateRating1.bind(this)}  />
+                            </Item>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Food</Label>
+                                <EditableStars 
+                                    fontSize={30}
+                                    initalRating={this.state.rating2} 
+                                    onRatingChanged={this.onUpdateRating2.bind(this)}  />
+                            </Item>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Service</Label>
+                                <EditableStars 
+                                    fontSize={30}
+                                    initalRating={this.state.rating3} 
+                                    onRatingChanged={this.onUpdateRating3.bind(this)}  />
                             </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
                                 <Label>Comments</Label>
+                                <Label style={styles.sublabel}>up to 250 characters</Label>
                                 <Textarea 
+                                    value={this.state.comments}
+                                    maxLength={250}
+                                    multiline={true}
+                                    onChangeText={this.onEditComment.bind(this)}
                                     style={styles.textArea} 
                                     rowSpan={4} 
                                     bordered={false} 
                                     underline={false}/>
                             </Item>
+                            <Item stackedLabel>
+                                <Label>Average</Label>
+                                <ReviewStars rating={this.avgRating()} fontSize={30} />
+                            </Item>
                         </Form>
                     </View>
                     <View style={styles.buttonGroup}>
-                        <Button style={styles.submitButton}><Text>Submit</Text></Button>
-                        <Button style={styles.cancelButton} onPress={this.onDismissModal.bind(this)}><Text>Cancel</Text></Button>
+                        <Button 
+                            style={styles.submitButton}
+                            full 
+                            onPress={this.onSubmitForm.bind(this)}>
+                            <Text style={{color: theme.DARK_COLOR}}>Submit</Text>
+                        </Button>
+                        <Button 
+                            style={styles.cancelButton}
+                            full 
+                            transparent 
+                            onPress={this.onDismissModal.bind(this)}>
+                                <Text style={{color: theme.DANGER_COLOR}}>Cancel</Text>
+                        </Button>
                     </View>
                 </View>
             </View>
@@ -89,10 +186,9 @@ const styles=StyleSheet.create({
     },
     formContainer: {
         width: '100%',
-        height: 350,
         paddingTop: 10,
         paddingRight: 10,
-        paddingBottom: 10
+        paddingBottom: 40
     },
     form: {
         width: '100%'
@@ -101,23 +197,18 @@ const styles=StyleSheet.create({
         flexDirection: 'row',
         width: '100%'
     },
-    closeButton: {
-        color: theme.PRIMARY_COLOR,
-        fontSize: 20
-    },
     modalText: {
         textAlign: "center"
     },
     buttonGroup: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly'
+        width: '50%',
+        justifyContent: 'center'
     },
     submitButton: {
-        backgroundColor: theme.PRIMARY_COLOR
+        backgroundColor: theme.SECONDARY_COLOR
     },
     cancelButton: {
-        backgroundColor: theme.DANGER_COLOR
+        marginTop: 20
     },
     textAreaItem: {
         borderBottomWidth: 0
@@ -129,7 +220,16 @@ const styles=StyleSheet.create({
         borderColor: theme.DARK_COLOR
     },
     starItem: {
+        justifyContent: 'space-between',
         borderBottomWidth: 0,
         marginBottom: 10
+    },
+    title: {
+        fontSize: 30,
+        color: theme.DARK_COLOR
+    },
+    sublabel: {
+        fontSize: 12,
+        fontWeight: '200'
     }
 })

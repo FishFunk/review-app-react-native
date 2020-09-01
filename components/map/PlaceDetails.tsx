@@ -10,33 +10,54 @@ import {
     Thumbnail,
     Button,
     Icon,
-    Spinner
+    Spinner,
+    Title
 } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import FirebaseService from '../../services/firebaseService';
-import { review } from '../../models/reviews';
+import { reviewSummary } from '../../models/reviews';
 import theme from '../../styles/theme';
 import WriteReview from '../reviews/WriteReview';
+import { getGooglePlaceById } from '../../services/googlePlaceApiService';
+import { fullApiPlace } from '../../models/place';
+import _indexOf from 'lodash/indexOf';
 
 export default class PlaceDetails extends React.Component<
     { placeId: string, toggleSummaryModal: Function },
-    { items: Array<review>, showReviewModal: boolean, isLoading: boolean }> {
+    { 
+        items: Array<reviewSummary>, 
+        showReviewModal: boolean, 
+        isLoading: boolean,
+        place: fullApiPlace,
+        disableEdit: boolean
+    }> {
 
     state = {
         isLoading: true,
         showReviewModal: false,
-        items: []
+        items: [],
+        place: {},
+        disableEdit: true
     }
 
 
     componentDidMount(){
-        FirebaseService.getReviews(this.props.placeId)
-            .then((reviews: Array<review>)=>{
-                this.setState({ 
-                    items: reviews, 
-                    isLoading: false });
-            })
+        this.load()
             .catch(error => console.error(error));
+    }
+
+    async load(){
+        const reviews = await FirebaseService.getReviews(this.props.placeId)
+        const place = await getGooglePlaceById(this.props.placeId);
+        const userReviews = await FirebaseService.getUserReviewList();
+
+        this.setState({
+            showReviewModal: false,
+            items: reviews,
+            place: place,
+            isLoading: false,
+            disableEdit: _indexOf(userReviews, place.place_id) > -1
+        });
     }
 
     onPressWriteReview(){
@@ -48,47 +69,57 @@ export default class PlaceDetails extends React.Component<
     }
 
     onDismissModal(){
-        this.setState({ showReviewModal: false });
+        this.load();
     }
 
     render() {
         return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Button transparent onPress={this.onDismissPanel.bind(this)}>
-                    <Icon type="FontAwesome" name="close"></Icon>
-                </Button>
-                <Text style={styles.title}>Some Place</Text>
-                <Button transparent onPress={this.onPressWriteReview.bind(this)}>
-                    <Icon type="FontAwesome" name="edit"></Icon>
-                </Button>
-            </View>
             {
                 this.state.isLoading ?
                 <Spinner color={theme.PRIMARY_COLOR} /> :
-                <ScrollView>
-                    <List style={styles.list}>
-                        {
-                            this.state.items.map((item: review, idx: number)=> 
-                                <ListItem avatar key={idx} style={styles.listItem}>
-                                    <Left>
-                                        <Thumbnail source={{ uri: item.img}} defaultSource={require('../../assets/images/profile.png')} />
-                                    </Left>
-                                    <Body>
-                                        <ReviewStars rating={item.rating} />
-                                        <Text>{item.name}</Text>
-                                        <Text note>{item.comments}</Text>
-                                    </Body>
-                                    <Right>
-                                        <Text note>{ item.date }</Text>
-                                    </Right>
-                                </ListItem>
-                            )
-                        }
-                    </List>
-                </ScrollView>
+                <View>
+                    <View style={styles.header}>
+                        <Button transparent onPress={this.onDismissPanel.bind(this)}>
+                            <Icon type="FontAwesome" name="close"></Icon>
+                        </Button>
+                        <Text style={styles.title}>{this.state.place.name}</Text>
+                        <Button transparent onPress={this.onPressWriteReview.bind(this)} disabled={this.state.disableEdit}>
+                            <Icon type="FontAwesome" name="edit"></Icon>
+                        </Button>
+                    </View>
+                    {       
+                        this.state.items.length > 0 ?             
+                        <ScrollView>
+                            <List style={styles.list}>
+                                {
+                                    this.state.items.map((item: reviewSummary, idx: number)=> 
+                                        <ListItem avatar key={idx} style={styles.listItem}>
+                                            <Left>
+                                                <Thumbnail source={{ uri: item.img}} defaultSource={require('../../assets/images/profile.png')} />
+                                            </Left>
+                                            <Body>
+                                                <ReviewStars rating={item.avg_rating} fontSize={18} />
+                                                <Text>{item.name}</Text>
+                                                <Text note>{item.comments}</Text>
+                                            </Body>
+                                            <Right>
+                                                <Text note>{ item.date }</Text>
+                                            </Right>
+                                        </ListItem>
+                                    )
+                                }
+                            </List>
+                        </ScrollView> :
+                        <View style={styles.noReviewConatiner}>
+                            <Title>No Reviews Yet</Title>
+                            <Text>Be the first to write one!</Text>
+                        </View>
+                    }
+                </View>
             }
             <WriteReview 
+                place={this.state.place}
                 showModal={this.state.showReviewModal} 
                 onDismissModal={this.onDismissModal.bind(this)}/>
         </View>)
@@ -120,5 +151,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         marginTop: 10
+    },
+    noReviewConatiner: {
+        width: '100%',
+        marginTop: 100,
+        // backgroundColor: '#DCDCDC',
+        alignItems: 'center'
     }
   });

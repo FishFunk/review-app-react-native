@@ -3,10 +3,23 @@ import { View , StyleSheet} from "react-native";
 import { Icon } from 'native-base';
 import theme from "../../styles/theme";
 
-class EditableStars extends Component<{ onRatingChanged: Function }> {
+class EditableStars extends Component<{ 
+    onRatingChanged: Function, 
+    initalRating?: number,
+    fontSize?: number }> {
+
+    defaultFontSize = 20;
+    defaultRating = 3;
+
+    styles = StyleSheet.create({
+        star: {
+            color: theme.SECONDARY_COLOR,
+            fontSize: this.props.fontSize || this.defaultFontSize
+        }
+    });
 
     state = {
-        rating: 3
+        rating: this.props.initalRating != null ? this.props.initalRating : this.defaultRating
     }
 
     updateRating(newRating: number){
@@ -17,14 +30,14 @@ class EditableStars extends Component<{ onRatingChanged: Function }> {
     FullStar = (key: any) => (
         <Icon 
             onPress={this.updateRating.bind(this, key)}
-            style={styles.star}
+            style={this.styles.star}
             key={key} name="ios-star"/>
     );
 
     EmptyStar = (key: any) => (
         <Icon
             onPress={this.updateRating.bind(this, key)}
-            style={styles.star}
+            style={this.styles.star}
             key={key}
             name="ios-star-outline"
         />
@@ -50,10 +63,3 @@ class EditableStars extends Component<{ onRatingChanged: Function }> {
 }
 
 export default EditableStars;
-
-const styles = StyleSheet.create({
-  star: {
-    color: theme.SECONDARY_COLOR,
-    fontSize: 50
-  }
-});

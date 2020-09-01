@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import config from './firebaseServiceConfig';
-import { review } from '../models/reviews';
+import { reviewSummary, postReview } from '../models/reviews';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -22,15 +22,24 @@ class FirebaseService {
         return this.auth.signInWithEmailAndPassword(username, password);
     }
 
-	currentUserId = () => {
-		return this.auth.currentUser ? this.auth.currentUser.uid : null;
-	}
-
 	userRef = () => {
 		return this.db.ref().child("users");
 	}
 
-	async getReviews(placeId: string): Promise<Array<review>>{
+	async getUserReviewList() {
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		const userReviewsSnapshot = await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).once('value');
+		if(!userReviewsSnapshot.exists()){
+			return [];
+		} else {
+			return userReviewsSnapshot.val();
+		}
+	}
+
+	async getReviews(placeId: string): Promise<Array<reviewSummary>>{
 		if(!placeId){
 			return Promise.resolve([]);
 		}
@@ -39,20 +48,60 @@ class FirebaseService {
 			return Promise.reject("Firebase not initialized");;
 		}
 
+
 		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
+		if(!reviewSnapshots.exists()){
+			return [];
+		}
+
 		const reviews = reviewSnapshots.val();
 		let result = [];
 
 		for(let i = 0; i < reviews.length; i++){
 			const usrSnap = await this.db.ref(`users/${reviews[i].reviewer_id}`).once('value');
 			let usr = usrSnap.val();
-			reviews[i].name = `${usr.firstName} ${usr.lastName}`;
-			reviews[i].img = usr.img;
-			result.push(reviews[i]);
+			if(usr){
+				reviews[i].name = `${usr.firstName} ${usr.lastName}`;
+				reviews[i].img = usr.img;
+				result.push(reviews[i]);
+			}
 		}
 		
 		return result;
 	};
+
+	async submitReview(review: any): Promise<any>{
+		// TODO: Add place to DB?
+		if(!firebase.apps.length || !this.auth.currentUser){
+			return Promise.reject("Firebase not initialized correctly");
+		}
+
+		const newReview: postReview = {
+			place_id: review.place_id,
+			place_name: review.place_name,
+			reviewer_id: this.auth.currentUser.uid,
+			atmosphere: review.atmosphere,
+			menu: review.menu,
+			service: review.service,
+			avg_rating: review.avg_rating,
+			comments: review.comments,
+			date: new Date().toDateString()
+		}
+
+		const userReviews = await this.getUserReviewList();
+		const userReviewIds = userReviews.map((r: any)=>r.place_id);
+		userReviewIds.push(newReview.place_id);
+		await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).update(userReviewIds);
+
+		const reviewSnapshots = await this.db.ref(`reviews/${newReview.place_id}`).once('value');
+		if(!reviewSnapshots.exists()){
+			return this.db.ref(`reviews/${newReview.place_id}`).set([newReview]);
+		} else {
+			const reviews = reviewSnapshots.val();
+			reviews.push(newReview);
+			return this.db.ref(`reviews/${newReview.place_id}`).update(reviews);
+		}
+	}
 
 	updateUserData = (user: any) => {
 		// if (!firebase.apps.length) {

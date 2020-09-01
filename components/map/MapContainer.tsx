@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, ScrollView, Text } from 'react-native';
+import { View } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
-import { getLocation, getGooglePlaces } from '../../services/locationService';
+import { getLocation } from '../../services/locationService';
 import { get } from 'lodash';
 import { LocationData } from 'expo-location';
 import { searchPlace, apiPlace, marker } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
+import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
+import { MapEvent } from 'react-native-maps';
 
 export default class MapContainer extends React.Component<
     {}, 
@@ -56,6 +58,7 @@ export default class MapContainer extends React.Component<
     componentDidMount(){
         this.getInitialState()
             .then(async ()=>{
+                // TODO: Want to read places from firebase DB to prepopulate map
                 // const places = await getGooglePlaces(
                 //     this.state.region.latitude, 
                 //     this.state.region.longitude);
@@ -123,8 +126,17 @@ export default class MapContainer extends React.Component<
         this.setState({ region });
     }
 
-    onMarkerSelect(){
-        this.setState({ placeId: "12345", showSummaryModal: true });
+    async onMarkerSelect(mapClickEvent: any){
+        if(!mapClickEvent.placeId){
+            const query = mapClickEvent.name || mapClickEvent.id;
+            const place = await getGooglePlaceIdBySearch(query).catch(error => {
+                return Promise.reject(error);
+            });
+
+            this.setState({ placeId: place.place_id, showSummaryModal: true });
+        } else {
+            this.setState({ placeId: mapClickEvent.placeId, showSummaryModal: true });
+        }
     }
 
     onPressMapArea(){

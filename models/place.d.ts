@@ -1,3 +1,12 @@
+export interface placeId {
+  place_id: string
+}
+
+export interface placeByQuery {
+  candidates: placeId[],
+  status: string
+}
+
 export interface searchPlace {
     result: {
       formatted_address: string;
@@ -32,13 +41,13 @@ export interface apiPlace {
 }
 
 export interface fullApiPlace {
-  business_status : OPERATIONAL,
-  geometry : {
-    location : {
+  business_status? : OPERATIONAL,
+  geometry? : {
+    location? : {
         lat : number,
         lng : number
     },
-    viewport : {
+    viewport? : {
         northeast : {
           lat : number,
           lng : number
@@ -49,20 +58,21 @@ export interface fullApiPlace {
         }
     }
   },
-  icon : string,
-  name : string,
-  opening_hours : {
+  icon? : string,
+  name? : string,
+  opening_hours? : {
     open_now : boolean
   },
-  photos : Array<placePhoto>,
-  place_id : string,
-  plus_code : Object,
-  rating : number,
-  reference : string,
-  scope : string,
-  types : Array<string>,
-  user_ratings_total : number,
-  vicinity : string
+  photos? : Array<placePhoto>,
+  place_id? : string,
+  plus_code? : Object,
+  rating? : number,
+  reference? : string,
+  scope? : string,
+  types? : Array<string>,
+  user_ratings_total? : number,
+  website?: string,
+  vicinity? : string
 }
 
 export interface marker {
