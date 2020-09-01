@@ -6,8 +6,17 @@ import { getLocation, getGooglePlaces } from '../../services/locationService';
 import { get } from 'lodash';
 import { LocationData } from 'expo-location';
 import { searchPlace, apiPlace, marker } from '../../models/place';
+import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 
-export default class MapContainer extends React.Component<{toggleSlideUpPanel: Function, setPlaceId: Function}> {
+export default class MapContainer extends React.Component<
+    {}, 
+    {
+        loading: boolean, 
+        region: {}, 
+        markers: marker[], 
+        showSummaryModal: boolean,
+        placeId: string
+    }> {
 
 
     defaultRegion = {
@@ -20,9 +29,11 @@ export default class MapContainer extends React.Component<{toggleSlideUpPanel: F
 
     // initial state
     state = {
+        placeId: '',
         loading: true,
         region: this.defaultRegion,
-        markers: []
+        markers: [],
+        showSummaryModal: false
     };
 
     styles = {
@@ -113,12 +124,19 @@ export default class MapContainer extends React.Component<{toggleSlideUpPanel: F
     }
 
     onMarkerSelect(){
-        this.props.setPlaceId("12345");
-        this.props.toggleSlideUpPanel();
+        this.setState({ placeId: "12345", showSummaryModal: true });
     }
 
     onPressMapArea(){
-        this.props.toggleSlideUpPanel(false);
+        this.setState({ showSummaryModal: false });
+    }
+
+    onToggleSummaryModal(forceVal?: boolean){
+        if(forceVal != null){
+            this.setState({ showSummaryModal: forceVal });
+        } else {
+            this.setState({ showSummaryModal: !this.state.showSummaryModal });
+        }
     }
 
     render() {
@@ -144,7 +162,10 @@ export default class MapContainer extends React.Component<{toggleSlideUpPanel: F
                         </View> : null
                 }
 
-                
+                <MapPlaceSummaryModal 
+                    isOpen={this.state.showSummaryModal} 
+                    placeId={this.state.placeId} 
+                    toggleSummaryModal={this.onToggleSummaryModal.bind(this)}/>
             </View>
         )
     }

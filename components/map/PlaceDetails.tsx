@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, GestureResponderHandlers, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -10,8 +10,7 @@ import {
     Thumbnail,
     Button,
     Icon,
-    Header,
-    Title
+    Spinner
 } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import FirebaseService from '../../services/firebaseService';
@@ -20,39 +19,42 @@ import theme from '../../styles/theme';
 import WriteReview from '../reviews/WriteReview';
 
 export default class PlaceDetails extends React.Component<
-    { placeId: string, dragHandler: GestureResponderHandlers, toggleSlideUpPanel: Function },
-    { items: Array<review>, showModal: boolean }> {
+    { placeId: string, toggleSummaryModal: Function },
+    { items: Array<review>, showReviewModal: boolean, isLoading: boolean }> {
 
     state = {
-        showModal: false,
+        isLoading: true,
+        showReviewModal: false,
         items: []
     }
 
 
-    componentDidUpdate(prevProps: any){
+    componentDidMount(){
         FirebaseService.getReviews(this.props.placeId)
             .then((reviews: Array<review>)=>{
-                this.setState({ items: reviews });
+                this.setState({ 
+                    items: reviews, 
+                    isLoading: false });
             })
             .catch(error => console.error(error));
     }
 
     onPressWriteReview(){
-        this.setState({ showModal: true });
+        this.setState({ showReviewModal: true });
     }
 
     onDismissPanel(){
-        this.props.toggleSlideUpPanel(false);
+        this.props.toggleSummaryModal(false);
     }
 
     onDismissModal(){
-        this.setState({ showModal: false });
+        this.setState({ showReviewModal: false });
     }
 
     render() {
         return (
-        <View>
-            <View style={styles.draggable} {...this.props.dragHandler}>
+        <View style={styles.container}>
+            <View style={styles.header}>
                 <Button transparent onPress={this.onDismissPanel.bind(this)}>
                     <Icon type="FontAwesome" name="close"></Icon>
                 </Button>
@@ -61,40 +63,50 @@ export default class PlaceDetails extends React.Component<
                     <Icon type="FontAwesome" name="edit"></Icon>
                 </Button>
             </View>
-            <ScrollView>
-                <List style={styles.list}>
-                    {
-                        this.state.items.map((item: review, idx: number)=> 
-                            <ListItem avatar key={idx} style={styles.listItem}>
-                                <Left>
-                                    <Thumbnail source={{ uri: item.img}} defaultSource={require('../../assets/images/profile.png')} />
-                                </Left>
-                                <Body>
-                                    <ReviewStars rating={item.rating} />
-                                    <Text>{item.name}</Text>
-                                    <Text note>{item.comments}</Text>
-                                </Body>
-                                <Right>
-                                    <Text note>{ item.date }</Text>
-                                </Right>
-                            </ListItem>
-                        )
-                    }
-                </List>
-            </ScrollView>
-            <WriteReview showModal={this.state.showModal} onDismissModal={this.onDismissModal.bind(this)}/>
+            {
+                this.state.isLoading ?
+                <Spinner color={theme.PRIMARY_COLOR} /> :
+                <ScrollView>
+                    <List style={styles.list}>
+                        {
+                            this.state.items.map((item: review, idx: number)=> 
+                                <ListItem avatar key={idx} style={styles.listItem}>
+                                    <Left>
+                                        <Thumbnail source={{ uri: item.img}} defaultSource={require('../../assets/images/profile.png')} />
+                                    </Left>
+                                    <Body>
+                                        <ReviewStars rating={item.rating} />
+                                        <Text>{item.name}</Text>
+                                        <Text note>{item.comments}</Text>
+                                    </Body>
+                                    <Right>
+                                        <Text note>{ item.date }</Text>
+                                    </Right>
+                                </ListItem>
+                            )
+                        }
+                    </List>
+                </ScrollView>
+            }
+            <WriteReview 
+                showModal={this.state.showReviewModal} 
+                onDismissModal={this.onDismissModal.bind(this)}/>
         </View>)
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        width: '100%',
+        height: '100%'
+    },
     list: {
         padding: 5
     },
     listItem: {
         padding: 5
     },
-    draggable: {
+    header: {
         padding: 5,
         height: 60,
         flexDirection: "row",
