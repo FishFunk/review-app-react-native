@@ -13,16 +13,22 @@ export default function AppHeader(props: any) {
     return (
         <Header>
             <Left>
-            <Button transparent onPress={props.toggleDrawer}>
-                <Icon name='menu' />
-            </Button>
+            {
+                <Button transparent onPress={props.onPressButton}>
+                    <Icon name={props.buttonIconName} />
+                </Button>
+            }
             </Left>
             <Body>
-            <Title>Review App</Title>
+                <Title>{props.title}</Title>
             </Body>
             <Right>
-            <Button transparent>
-            </Button>
+                {
+                    props.rightButtonIconName ? 
+                        <Button transparent onPress={(props.onPressRightButton)}>
+                            <Icon name={props.rightButtonIconName}/>
+                        </Button> : <Button transparent/>
+                }
             </Right>
         </Header>
     );

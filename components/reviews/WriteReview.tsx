@@ -59,8 +59,6 @@ export default class WriteReview extends Component<{
     }
 
     async onSubmitForm(){
-        // 
-        // {place_id, place_name, reviewer_id, atmosphere, menu, service, avg_rating }
         const { place_id, name } = this.props.place;
         const data = {
             place_id: place_id,

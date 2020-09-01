@@ -9,7 +9,7 @@ import ActionList from "../../components/ActionList";
 export default function HomeScreen(props: any) {
     return (
       <Container>
-        <AppHeader toggleDrawer={props.navigation.openDrawer}/>
+        <AppHeader onPressButton={props.navigation.goBack} buttonIconName={'arrow-back'}/>
         <Content contentContainerStyle={styles.container}>
             <ActionList />
         </Content>

@@ -13,12 +13,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
+import SocialScreen from './screens/SocialScreen';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const drawerNavigator = createDrawerNavigator();
+  // const drawerNavigator = createDrawerNavigator();
   const stackNavigator = createStackNavigator();
+  const mainStackNavigator = createStackNavigator();
+
 
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -66,10 +69,13 @@ export default function App(props: any) {
       <Container>
         <StatusBar />
         <NavigationContainer>
-          <drawerNavigator.Navigator initialRouteName="Home">
-            <drawerNavigator.Screen name="Home" component={HomeScreen} />
-            <drawerNavigator.Screen name="Account" component={Screen2} />
-          </drawerNavigator.Navigator>
+          <mainStackNavigator.Navigator initialRouteName="Home" screenOptions={{
+            headerShown: false,
+          }}>
+            <mainStackNavigator.Screen name="Home" component={HomeScreen} />
+            <mainStackNavigator.Screen options={{gestureDirection: 'horizontal-inverted'}} name="Account" component={Screen2} />
+            <mainStackNavigator.Screen name="Social" component={SocialScreen} />
+          </mainStackNavigator.Navigator>
         </NavigationContainer>  
       </Container>
     );
