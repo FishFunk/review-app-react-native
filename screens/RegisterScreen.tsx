@@ -9,7 +9,8 @@ export default function RegisterScreen(props: any) {
 
     const [email, onChangeEmail] = React.useState('');
     const [pwd, onChangePwd] = React.useState('');
-    const [name, onChangeName] = React.useState('');
+    const [firstName, onChangeFirstName] = React.useState('');
+    const [lastName, onChangeLastName] = React.useState('');
     const [loading, setLoading] = React.useState(false);
     const [isError, setError] = React.useState(false);
 
@@ -37,9 +38,15 @@ export default function RegisterScreen(props: any) {
               </Text>
               <Item style={styles.inputItem}>
                 <Input 
-                  placeholder='Name'
-                  onChangeText={text => onChangeName(text)}
-                  value={name} />
+                  placeholder='First Name'
+                  onChangeText={text => onChangeFirstName(text)}
+                  value={firstName} />
+              </Item>
+              <Item style={styles.inputItem}>
+                <Input 
+                  placeholder='Last Name'
+                  onChangeText={text => onChangeLastName(text)}
+                  value={lastName} />
               </Item>
               <Item style={styles.inputItem}>
                 <Input 
