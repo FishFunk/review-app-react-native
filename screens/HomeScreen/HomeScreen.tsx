@@ -12,9 +12,9 @@ export default function HomeScreen(props: any) {
       <Container>
         <AppHeader 
           onPressButton={()=> props.navigation.navigate('Account')} 
-          buttonIconName={'settings'} 
+          buttonIconName={'user-circle'} 
           title={'Review App'}
-          rightButtonIconName={'people'}
+          rightButtonIconName={'user-friends'}
           onPressRightButton={()=> props.navigation.navigate('Social')}/>
         <Content contentContainerStyle={styles.container}>
           <MapContainer />

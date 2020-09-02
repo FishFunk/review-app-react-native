@@ -1,6 +1,7 @@
 import firebase from 'firebase';
 import config from './firebaseServiceConfig';
 import { reviewSummary, postReview } from '../models/reviews';
+import { appUser } from '../models/user';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -20,12 +21,8 @@ class FirebaseService {
 
     login(username: string, password: string): Promise<any> {
         return this.auth.signInWithEmailAndPassword(username, password);
-    }
-
-	userRef = () => {
-		return this.db.ref().child("users");
 	}
-
+	
 	async getUserReviewList() {
 		if(!firebase.apps.length || !this.auth.currentUser){
 			throw new Error("Firebase not initialized correctly!");
@@ -70,6 +67,37 @@ class FirebaseService {
 		return result;
 	};
 
+	async findFriends(contactList: any[]): Promise<appUser[]>{
+		if(!firebase.apps.length || !this.auth.currentUser){
+			return Promise.reject("Firebase not initialized correctly");
+		}
+
+		const emails = <any>{};
+		const lastNames = <any>{};
+
+		contactList.map((contact, idx)=>{
+			if(contact.contactType === "person"){
+				lastNames[contact.lastName] = 1;
+				if(contact.emails){
+					contact.emails.forEach((email: string)=>{
+						emails[email] = 1;
+					});
+				}
+			}
+		});
+
+		let matches = new Array<appUser>();
+		const usersSnapshot = await this.db.ref(`users`).once('value');
+		usersSnapshot.forEach((snap)=>{
+			const user = snap.val();
+			if(emails[user.email] || lastNames[user.lastName]){
+				matches.push(user);
+			}
+		});
+
+		return matches;
+	}
+
 	async submitReview(review: any): Promise<any>{
 		// TODO: Add place to DB?
 		if(!firebase.apps.length || !this.auth.currentUser){
@@ -103,32 +131,29 @@ class FirebaseService {
 		}
 	}
 
-	updateUserData = (user: any) => {
-		// if (!firebase.apps.length) {
-		// 	return Promise.reject("Firebase not initialized");
-		// }
-		
-		// return this.db.ref(`users/${user.id}`).update(user);
+	async getUserFollowingIds(): Promise<string[]> {
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		const userFriendsSnapshot = await this.db.ref(`users/${this.auth.currentUser.uid}/following`).once('value');
+		if(!userFriendsSnapshot.exists()){
+			return [];
+		} else {
+			return userFriendsSnapshot.val();
+		}
+	}
+
+	updateUserData = (user: appUser) => {
+		throw new Error("not implemented");
 	};
 
-	setNewUser = (newUser: any) => {
-		// if (!firebase.apps.length) {
-		// 	return Promise.reject("Firebase not initialized");
-		// }
-
-		// if(!newUser.id) {
-		// 	return Promise.reject("User object must conatain a unique ID");
-		// }
-
-		// return this.db.ref(`users/${newUser.id}`).set(newUser);
+	setNewUser = (newUser: appUser) => {
+		throw new Error("not implemented");
 	}
 
 	deleteUser = (userId: string) => {
-		// if (!firebase.apps.length) {
-		// 	return Promise.reject("Firebase not initialized");
-		// }
-
-		// return this.db.ref(`users/${userId}`).remove();
+		throw new Error("not implemented");
 	}
 
 	onAuthStateChanged = (callback: firebase.Observer<any>) => {

@@ -1,15 +1,15 @@
 import React from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { 
   List, 
   ListItem, 
   Text, 
   Left, 
   Right, 
-  Icon } from 'native-base';
+  Icon,
+  Button } from 'native-base';
 import FirebaseService from '../services/firebaseService';
-import { getContactsPermission } from '../services/contactService';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import theme from '../styles/theme';
 
 export default class ActionList extends React.Component {
   
@@ -23,20 +23,21 @@ export default class ActionList extends React.Component {
         FirebaseService.signOut();
     }
 
-    async onClickFriends(){
-        const data = await getContactsPermission()
-            .catch(error => console.error(error));
-
-        // console.log(data);
-    }
-
     render(){
         return (
           <View style={{ width: '100%', height: '100%' }}>
             <List>
-              <ListItem button={true} onPress={this.onClickFriends}>
+              <ListItem button={true}>
                 <Left>
-                  <Text>Friends</Text>
+                  <Text>Following</Text>
+                </Left>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+              <ListItem button={true}>
+                <Left>
+                  <Text>Followers</Text>
                 </Left>
                 <Right>
                   <Icon name="arrow-forward" />
@@ -50,23 +51,35 @@ export default class ActionList extends React.Component {
                   <Icon name="arrow-forward" />
                 </Right>
               </ListItem>
-              <ListItem button={true} onPress={this.onLogout}>
+              <ListItem button={true} onPress={this.onPress}>
+              <Left>
+                  <Text>My Reviews</Text>
+                </Left>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+              </ListItem>
+              <ListItem button={true}>
                 <Left>
-                  <Text>Logout</Text>
+                  <Text>Some other option</Text>
                 </Left>
                 <Right>
                   <Icon name="arrow-forward" />
                 </Right>
               </ListItem>
             </List>
+            <View style={styles.buttonContainer}>
+              <Button transparent onPress={this.onLogout} style={styles.button}>
+                <Text style={styles.buttonText}>Logout</Text>
+              </Button>
+            </View>
           </View>
         )};
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: '100%'
+    flex: 1
   },
   item: {
     height: 50,
@@ -85,4 +98,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24
   },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: "space-evenly",
+    flexDirection: 'row'
+  },
+  button: {
+    marginTop: 200
+  },
+  buttonText: {
+    color: theme.DANGER_COLOR
+  }
 });

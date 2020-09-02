@@ -4,6 +4,7 @@ export const getContacts = (): Promise<Contacts.Contact[]> => {
     return new Promise((resolve, reject)=>{
         Contacts.getContactsAsync({ 
             fields: [
+                Contacts.Fields.ContactType,
                 Contacts.Fields.FirstName,
                 Contacts.Fields.LastName,
                 Contacts.Fields.Emails, 

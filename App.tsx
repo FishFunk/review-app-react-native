@@ -76,6 +76,8 @@ export default function App(props: any) {
             <mainStackNavigator.Screen options={{gestureDirection: 'horizontal-inverted'}} name="Account" component={Screen2} />
             <mainStackNavigator.Screen name="Social" component={SocialScreen} />
           </mainStackNavigator.Navigator>
+          {/* <drawerNavigator.Navigator>
+          </drawerNavigator.Navigator> */}
         </NavigationContainer>  
       </Container>
     );

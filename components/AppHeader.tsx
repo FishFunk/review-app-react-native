@@ -8,14 +8,17 @@ import {
     Button, 
     Body
 } from "native-base";
+import theme from '../styles/theme';
 
 export default function AppHeader(props: any) {
+    const fontSize = 24;
     return (
         <Header>
             <Left>
             {
                 <Button transparent onPress={props.onPressButton}>
-                    <Icon name={props.buttonIconName} />
+                    <Icon type={'FontAwesome5'} name={props.buttonIconName} 
+                        style={{fontSize: fontSize, color:theme.PRIMARY_COLOR}}/>
                 </Button>
             }
             </Left>
@@ -26,7 +29,8 @@ export default function AppHeader(props: any) {
                 {
                     props.rightButtonIconName ? 
                         <Button transparent onPress={(props.onPressRightButton)}>
-                            <Icon name={props.rightButtonIconName}/>
+                            <Icon type={'FontAwesome5'} name={props.rightButtonIconName} 
+                                style={{fontSize: fontSize, color:theme.PRIMARY_COLOR}}/>
                         </Button> : <Button transparent/>
                 }
             </Right>

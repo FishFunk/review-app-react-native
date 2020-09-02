@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import theme from '../styles/theme';
 import { Text, View } from '../components/Themed';
-import { Button, Item, Input, Content, Image } from 'native-base';
+import { Button, Item, Input, Content } from 'native-base';
 import UndrawReviewSvg from '../svgs/undraw_reviews';
 import FirebaseService from '../services/firebaseService';
 
