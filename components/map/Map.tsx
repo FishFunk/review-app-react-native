@@ -294,7 +294,7 @@ const mapStyle = [
       "elementType": "geometry.fill",
       "stylers": [
         {
-          "color": theme.SECONDARY_TINTED
+          "color": theme.SECONDARY_COLOR
         }
       ]
     },

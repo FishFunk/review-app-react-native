@@ -23,7 +23,7 @@ class FirebaseService {
         return this.auth.signInWithEmailAndPassword(username, password);
 	}
 	
-	async getUserReviewList() {
+	async getUserReviewIdList() {
 		if(!firebase.apps.length || !this.auth.currentUser){
 			throw new Error("Firebase not initialized correctly!");
 		}
@@ -116,18 +116,20 @@ class FirebaseService {
 			date: new Date().toDateString()
 		}
 
-		const userReviews = await this.getUserReviewList();
-		const userReviewIds = userReviews.map((r: any)=>r.place_id);
-		userReviewIds.push(newReview.place_id);
-		await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).update(userReviewIds);
+		const userReviewIds = await this.getUserReviewIdList();
+		const existingReviewSnapshots = await this.db.ref(`reviews/${newReview.place_id}`).once('value');
 
-		const reviewSnapshots = await this.db.ref(`reviews/${newReview.place_id}`).once('value');
-		if(!reviewSnapshots.exists()){
+		// Update user review list
+		userReviewIds.push(newReview.place_id);
+		await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
+
+		// Update place review list
+		if(!existingReviewSnapshots.exists()){
 			return this.db.ref(`reviews/${newReview.place_id}`).set([newReview]);
 		} else {
-			const reviews = reviewSnapshots.val();
+			const reviews = existingReviewSnapshots.val();
 			reviews.push(newReview);
-			return this.db.ref(`reviews/${newReview.place_id}`).update(reviews);
+			return this.db.ref(`reviews/${newReview.place_id}`).set(reviews);
 		}
 	}
 

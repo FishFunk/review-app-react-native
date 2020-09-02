@@ -49,14 +49,14 @@ export default class PlaceDetails extends React.Component<
     async load(){
         const reviews = await FirebaseService.getReviews(this.props.placeId)
         const place = await getGooglePlaceById(this.props.placeId);
-        const userReviews = await FirebaseService.getUserReviewList();
+        const userReviewIds = await FirebaseService.getUserReviewIdList();
 
         this.setState({
             showReviewModal: false,
             items: reviews,
             place: place,
             isLoading: false,
-            disableEdit: _indexOf(userReviews, place.place_id) > -1
+            disableEdit: _indexOf(userReviewIds, place.place_id) > -1
         });
     }
 

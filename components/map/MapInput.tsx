@@ -12,6 +12,8 @@ class MapInput extends React.Component<{ handleSelectPlace: Function }> {
                 onSelect={(place: any) => {
                     this.props.handleSelectPlace(place);
                 }}
+                clearQueryOnSelect={true}
+                requiredCharactersBeforeSearch={2}
             />
         )
     }
