@@ -144,8 +144,12 @@ class FirebaseService {
 		}
 	}
 
-	updateUserData = (user: appUser) => {
-		throw new Error("not implemented");
+	updateUserData = (data: any) => {
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		return this.db.ref(`users/${this.auth.currentUser.uid}`).update(data);
 	};
 
 	setNewUser = (newUser: appUser) => {

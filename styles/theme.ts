@@ -4,6 +4,7 @@ const tintColorDark = '#fff';
 export default {
     PRIMARY_COLOR: '#00bbf9',
     SECONDARY_COLOR: '#00f5d4',
+    SECONDARY_TINTED: '#19c2ab',
     WARNING_COLOR: '#fee440',
     DANGER_COLOR: '#e63946',
     DARK_COLOR: '#353535',

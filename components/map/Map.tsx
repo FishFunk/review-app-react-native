@@ -214,7 +214,7 @@ const mapStyle = [
       "elementType": "geometry.fill",
       "stylers": [
         {
-          "color": "#8b4dff"
+          "color": theme.PRIMARY_COLOR
         }
       ]
     },
@@ -294,7 +294,7 @@ const mapStyle = [
       "elementType": "geometry.fill",
       "stylers": [
         {
-          "color": "#bdbfff"
+          "color": theme.SECONDARY_TINTED
         }
       ]
     },
@@ -303,7 +303,7 @@ const mapStyle = [
       "elementType": "labels.text.fill",
       "stylers": [
         {
-          "color": "#9e9e9e"
+          "color": theme.DARK_COLOR
         }
       ]
     }

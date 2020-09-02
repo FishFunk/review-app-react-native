@@ -11,7 +11,7 @@ export default function SocialScreen(props: any){
         <Container>
             <AppHeader 
                 onPressButton={props.navigation.goBack} 
-                buttonIconName={'arrow-back'} 
+                buttonIconName={'arrow-left'} 
                 title={'Friend Finder'}/>
             <Content contentContainerStyle={styles.container}>
                 <Social />
