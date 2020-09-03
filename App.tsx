@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { Container } from 'native-base';
 import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
+// import useColorScheme from './hooks/useColorScheme';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import FirebaseService from './services/firebaseService';
@@ -17,7 +17,7 @@ import SocialScreen from './screens/SocialScreen';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
+  // const colorScheme = useColorScheme();
   // const drawerNavigator = createDrawerNavigator();
   const stackNavigator = createStackNavigator();
   const mainStackNavigator = createStackNavigator();

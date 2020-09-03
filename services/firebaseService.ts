@@ -42,7 +42,7 @@ class FirebaseService {
 	}
 
 	async signInWithFacebook(): Promise<{type: string, message: string}>{
-		await Facebook.initializeAsync();
+		await Facebook.initializeAsync(appConfig.expo.facebookAppId, appConfig.expo.facebookDisplayName);
 		const result = await Facebook.logInWithReadPermissionsAsync(
 			{
 				permissions: ['public_profile', 'email']
@@ -85,7 +85,11 @@ class FirebaseService {
 				photoUrl: loggedInUserData.photoURL || ''
 			}
 
-			return this.db.ref(`uesrs/${newUser.id}`).set(newUser);
+			await this.db.ref(`users/${newUser.id}`).set(newUser).catch(error => {
+				return Promise.reject(error);
+			});
+
+			return Promise.resolve({ type: 'success', message: `Welcome ${newUser.firstName}!`})
 		} else {
 			// User already exists, do nothing
 			var usr = userSnap.val();
