@@ -8,4 +8,5 @@ export interface appUser {
     id: string;
     placesReviewed: array[];
     mobile?: string;
+    photoUrl?: string;
 }

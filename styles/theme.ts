@@ -20,5 +20,9 @@ export default {
     DARK_COLOR: '#354046',
     LIGHT_COLOR: '#F9F7F3',
     BRIGHT_COLOR: '#EC4732',
-    DANGER_COLOR: '#DE2331'
+    DANGER_COLOR: '#DE2331',
+
+
+
+    facebookBlue: '#4267b2'
 }

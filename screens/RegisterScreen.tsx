@@ -32,7 +32,7 @@ export default function RegisterScreen(props: any) {
     } else {
       return (
           <Content contentContainerStyle={styles.container}>
-              <Text style={styles.title}>GLad You Could Join Us!</Text>
+              <Text style={styles.title}>Glad You Could Join Us!</Text>
               <Text style={styles.warning}>
                 {isError? 'Registration Failed!': ''}
               </Text>
@@ -63,14 +63,13 @@ export default function RegisterScreen(props: any) {
               </Item>
               <View style={styles.separator} />
               <View style={styles.buttonGroup}>
-                <Button style={styles.registerButton} onPress={onRegister}>
-                  <Text style={styles.buttonText}>Register</Text>
+                <Button transparent style={styles.registerButton} onPress={onRegister}>
+                  <Text style={styles.registerText}>Submit</Text>
+                </Button>
+                <Button transparent style={styles.cancelButton} onPress={onCancel}>
+                  <Text style={styles.cancelText}>Cancel</Text>
                 </Button>
               </View>
-              <View style={styles.separator} />
-              <Button style={styles.forgotButton} full onPress={onCancel}>
-                <Text style={styles.forgotText}>Cancel</Text>
-              </Button>
           </Content>
       );
     }
@@ -84,21 +83,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   registerButton: {
-    backgroundColor: theme.SECONDARY_COLOR,
+    borderWidth: 1,
+    borderColor: theme.SECONDARY_COLOR,
     width: 100,
     justifyContent: 'center'
   },
-  forgotButton: {
-    backgroundColor: 'transparent'
+  cancelButton: {
+    borderWidth: 1,
+    borderColor: theme.DANGER_COLOR,
+    width: 100,
+    justifyContent: 'center'
   },
-  forgotText: {
-    color: theme.PRIMARY_COLOR
+  cancelText: {
+    color: theme.DANGER_COLOR
   },
-  buttonText: {
-    color: theme.DARK_COLOR,
-    textShadowColor: theme.LIGHT_COLOR,
-    textShadowRadius: 5,
-    textShadowOffset: { width: 1, height: 1}
+  registerText: {
+    color: theme.SECONDARY_COLOR
   },
   container: {
     flex: 1,

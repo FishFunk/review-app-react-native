@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import theme from '../styles/theme';
 import { Text, View } from '../components/Themed';
-import { Button, Item, Input, Content } from 'native-base';
+import { Button, Item, Input, Content, Icon } from 'native-base';
 import UndrawReviewSvg from '../svgs/undraw_reviews';
 import FirebaseService from '../services/firebaseService';
 
@@ -16,9 +16,12 @@ export default function LoginScreen(props: any) {
     const onSubmit = ()=>{
       setLoading(true);
       FirebaseService.login(email, pwd)
+        .then(result=>{
+          console.log(result.message);
+        })
         .catch((error)=>{
           setError(true);
-          // console.error(error);
+          console.error(error);
         })
         .finally(()=>{
           setLoading(false);
@@ -27,6 +30,20 @@ export default function LoginScreen(props: any) {
 
     const onRegister = ()=>{
       props.navigation.push('Register');
+    }
+
+    const onFacebookLogin = ()=>{
+      FirebaseService.signInWithFacebook()
+        .then(result=>{
+          console.log(result.message);
+        })
+        .catch(error =>{
+          setError(true);
+          console.error(error);
+        })
+        .finally(()=>{
+          setLoading(false);
+        });
     }
 
     if(loading){
@@ -61,16 +78,19 @@ export default function LoginScreen(props: any) {
                   value={pwd} 
                   secureTextEntry={true} />
               </Item>
-              <View style={styles.separator} />
               <View style={styles.buttonGroup}>
-                <Button style={styles.loginButton} onPress={onSubmit}>
-                  <Text style={styles.buttonText}>Login</Text>
+                <Button transparent style={styles.loginButton} onPress={onSubmit}>
+                  <Text style={styles.loginButtonText}>Login</Text>
                 </Button>
-                <Button style={styles.registerButton} onPress={onRegister}>
-                  <Text style={styles.buttonText}>Register</Text>
+                <Button transparent style={styles.registerButton} onPress={onRegister}>
+                  <Text style={styles.registerButtonText}>Register</Text>
                 </Button>
               </View>
               <View style={styles.smallSeparator} />
+              <Button full style={styles.facebookButton} onPress={onFacebookLogin}>
+                <Text style={styles.facebookText}>Login with Facebook</Text>
+                {/* <Icon type={"FontAwesome5"} name="facebook"></Icon> */}
+              </Button>
               <Button style={styles.forgotButton} full>
                 <Text style={styles.forgotText}>Forgot Password?</Text>
               </Button>
@@ -90,12 +110,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   loginButton: {
-    backgroundColor: theme.PRIMARY_COLOR,
+    borderWidth: 1,
+    borderColor: theme.PRIMARY_COLOR,
     width: 100,
     justifyContent: 'center'
   },
   registerButton: {
-    backgroundColor: theme.SECONDARY_COLOR,
+    borderWidth: 1,
+    borderColor: theme.SECONDARY_COLOR,
     width: 100,
     justifyContent: 'center'
   },
@@ -105,11 +127,11 @@ const styles = StyleSheet.create({
   forgotText: {
     color: theme.PRIMARY_COLOR
   },
-  buttonText: {
-    color: theme.DARK_COLOR,
-    textShadowColor: theme.LIGHT_COLOR,
-    textShadowRadius: 5,
-    textShadowOffset: { width: 1, height: 1}
+  loginButtonText: {
+    color: theme.PRIMARY_COLOR
+  },
+  registerButtonText: {
+    color: theme.SECONDARY_COLOR
   },
   container: {
     flex: 1,
@@ -154,5 +176,13 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
     backgroundColor: 'rgba(255,255,255,0.3)'
+  },
+  facebookButton: {
+    backgroundColor: theme.facebookBlue,
+    justifyContent: 'center'
+  },
+  facebookText: {
+    fontWeight: 'bold',
+    color: '#fff'
   }
 });

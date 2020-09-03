@@ -2,6 +2,9 @@ import firebase from 'firebase';
 import config from './firebaseServiceConfig';
 import { reviewSummary, postReview } from '../models/reviews';
 import { appUser } from '../models/user';
+import * as Facebook from 'expo-facebook';
+import appConfig from '../app.json';
+import _ from 'lodash';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -19,8 +22,75 @@ class FirebaseService {
 		console.log(`Firebase initialized successfully`);
 	}
 
-    login(username: string, password: string): Promise<any> {
-        return this.auth.signInWithEmailAndPassword(username, password);
+    async login(email: string, password: string): Promise<{type: string, message: string}> {
+		const { user } = await this.auth.signInWithEmailAndPassword(email, password);
+		if(user) {
+			return this.initializeUser(user);
+		} else {
+			return Promise.reject("Failed to login to Firebase by email");
+		}
+	}
+
+	async registerUser(email: string, password: string): Promise<{type: string, message: string}>{
+		const { user } = await this.auth.createUserWithEmailAndPassword(email, password);
+		if( user ) {
+			return this.initializeUser(user);
+		}
+		else {
+			return Promise.reject("Failed to create new Firebase user by email");
+		}
+	}
+
+	async signInWithFacebook(): Promise<{type: string, message: string}>{
+		await Facebook.initializeAsync();
+		const result = await Facebook.logInWithReadPermissionsAsync(
+			{
+				permissions: ['public_profile', 'email']
+			});
+
+		switch (result.type) {
+			case 'success': {
+				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
+				const credential = firebase.auth.FacebookAuthProvider.credential(result.token);
+				const { user } = await this.auth.signInWithCredential(credential);  // Sign in with Facebook credential
+		
+				if(user){
+					return this.initializeUser(user);
+				} else {
+					return Promise.reject("Failed to sign in with Facebook");
+				}
+			}
+			case 'cancel': {
+				return Promise.reject('Facebook sign in cancelled');
+			}
+		}
+	}
+
+	async initializeUser(loggedInUserData: firebase.User): Promise<{type: string, message: string}>{
+		const userSnap = await this.db.ref(`users/${loggedInUserData.uid}`).once('value');
+		if(!userSnap.exists()){
+			// Initialize new user
+			const names = loggedInUserData.displayName?.split(' ');
+			const today = new Date().toDateString();
+			const newUser: appUser = {
+				id: loggedInUserData.uid,
+				firstName: _.first(names) || '',
+				lastName: _.last(names)|| '',
+				email: loggedInUserData.email|| '',
+				dateJoined: today,
+				lastActive: today,
+				friends: [],
+				placesReviewed: [],
+				mobile: loggedInUserData.phoneNumber || '',
+				photoUrl: loggedInUserData.photoURL || ''
+			}
+
+			return this.db.ref(`uesrs/${newUser.id}`).set(newUser);
+		} else {
+			// User already exists, do nothing
+			var usr = userSnap.val();
+			return Promise.resolve({ type: 'success', message: `Welcome back ${usr.firstName}!`});
+		}
 	}
 	
 	async getUserReviewIdList() {

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "review-app",
-    "slug": "review-app",
+    "name": "ReVew",
+    "slug": "ReVew",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -35,6 +35,9 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "facebookScheme": "fb3027651844010971",
+    "facebookAppId": "3027651844010971",
+    "facebookDisplayName": "ReVew"
   }
 }
