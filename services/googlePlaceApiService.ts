@@ -18,17 +18,14 @@ const findPlaceUrl = (searchQuery: string)=>{
 export const getPhotoUrl = (photoRef: string)=>{
     const url = 
         `https://maps.googleapis.com/maps/api/place/photo?&maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API_KEY}`;
-    console.log(url);
     return url;
 }
   
 export const getGooglePlaceById = (
     place_id: string, 
     fields: Array<string> = ['business_status', 'geometry', 'name', 
-        'opening_hours', 'photos', 'place_id', 'website'])=> {
+        'opening_hours', 'photos', 'place_id', 'website', 'formatted_phone_number'])=> {
     const url = getPlaceUrl(place_id, fields);
-
-    console.log(url);
 
     return new Promise<fullApiPlace>((resolve, reject)=>{
         fetch(url)
@@ -42,8 +39,6 @@ export const getGooglePlaceById = (
 
 export const getGooglePlaceIdBySearch = (searchQuery: string, fields?: Array<string>)=> {
     const url = findPlaceUrl(searchQuery);
-
-    console.log(url);
 
     return new Promise<placeId>((resolve, reject)=>{
         fetch(url)

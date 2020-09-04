@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         margin: 0
     },
     modalView: {
-        marginTop: 400,
+        marginTop: 200,
         marginRight: 0,
         marginLeft: 0,
         marginBottom: 0,

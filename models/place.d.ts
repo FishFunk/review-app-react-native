@@ -41,7 +41,7 @@ export interface apiPlace {
 }
 
 export interface fullApiPlace {
-  business_status? : OPERATIONAL,
+  business_status? : 'OPERATIONAL' | 'CLOSED_TEMPORARILY' | 'CLOSED_PERMANENTLY' | null,
   geometry? : {
     location? : {
         lat : number,
@@ -58,6 +58,7 @@ export interface fullApiPlace {
         }
     }
   },
+  formatted_phone_number? : string,
   icon? : string,
   name? : string,
   opening_hours? : {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, Linking } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -11,7 +11,8 @@ import {
     Button,
     Icon,
     Spinner,
-    Title
+    Title,
+    Label
 } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import FirebaseService from '../../services/firebaseService';
@@ -31,16 +32,20 @@ export default class PlaceDetails extends React.Component<
         isLoading: boolean,
         place: fullApiPlace,
         disableEdit: boolean,
-        photoUrls: Array<string>
+        photoUrls: Array<string>,
+        total: number
     }> {
+
+    initialPlace: fullApiPlace = {};
 
     state = {
         isLoading: true,
         showReviewModal: false,
         items: new Array<reviewSummary>(),
-        place: {},
+        place: this.initialPlace,
         photoUrls: new Array<string>(),
-        disableEdit: true
+        disableEdit: true,
+        total: 0
     }
 
 
@@ -66,9 +71,21 @@ export default class PlaceDetails extends React.Component<
             }
         }
 
+        let total = 0;
+        if(reviews && reviews.length > 0){
+            let sum = 0;
+            for(let r of reviews){
+                sum += r.avg_rating;
+            }
+            total = sum/reviews.length;
+        }
+
+        console.log(place);
+
         this.setState({
             showReviewModal: false,
             items: reviews,
+            total: total,
             place: place,
             photoUrls: photoUrls,
             isLoading: false,
@@ -95,16 +112,35 @@ export default class PlaceDetails extends React.Component<
                 this.state.isLoading ?
                 <Spinner color={theme.PRIMARY_COLOR} /> :
                 <View>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-                        <Button transparent onPress={this.onDismissPanel.bind(this)}>
-                            <Icon type="FontAwesome" name="close"></Icon>
-                        </Button>
+                    <View style={{flexDirection: 'column', justifyContent: 'center'}}>
                         <Text style={styles.title}>{this.state.place.name}</Text>
-                        <Button transparent onPress={this.onPressWriteReview.bind(this)} disabled={this.state.disableEdit}>
-                            <Icon type="FontAwesome" name="edit"></Icon>
-                        </Button>
+                        <View style={{alignSelf: 'center'}}>
+                            <ReviewStars rating={this.state.total} fontSize={22}/>
+                        </View>
                     </View>
                     <HorizontalPhotoList photoUrls={this.state.photoUrls} />
+                    <View style={styles.buttonContainer}>
+                        {
+                            this.state.place.formatted_phone_number != null ? 
+                                <Button small rounded transparent style={styles.roundButton}
+                                    onPress={()=>Linking.openURL(`tel:${this.state.place.formatted_phone_number}`)}>
+                                    <Icon type={'FontAwesome5'} name={'phone'} style={styles.buttonIcon}></Icon>
+                                </Button> : null
+                        }
+                        {
+                            this.state.place.website != null ? 
+                                <Button small rounded transparent style={styles.roundButton}
+                                    onPress={()=>Linking.openURL(`${this.state.place.website}`)}>
+                                    <Icon type={'FontAwesome5'} name={'globe'} style={styles.buttonIcon}></Icon>
+                                </Button> : null
+                        }
+
+                        <Button small rounded transparent 
+                            style={styles.roundButton} onPress={this.onPressWriteReview.bind(this)}
+                            disabled={this.state.disableEdit}>
+                            <Icon type={'FontAwesome5'} name={'edit'} style={styles.buttonIcon}></Icon>
+                        </Button>
+                    </View>
                     {       
                         this.state.items.length > 0 ?             
                         <ScrollView>
@@ -167,8 +203,22 @@ const styles = StyleSheet.create({
     },
     noReviewConatiner: {
         width: '100%',
-        marginTop: '20%',
+        marginTop: 20,
         // backgroundColor: '#DCDCDC',
         alignItems: 'center'
+    },
+    buttonContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        padding: 10
+    },
+    roundButton: {
+        borderWidth: 1,
+        borderColor: theme.PRIMARY_COLOR,
+        height: 50
+    },
+    buttonIcon:{
+        color: theme.PRIMARY_COLOR
     }
   });
