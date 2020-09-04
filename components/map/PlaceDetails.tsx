@@ -21,7 +21,7 @@ import WriteReview from '../reviews/WriteReview';
 import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
 import { fullApiPlace } from '../../models/place';
 import _indexOf from 'lodash/indexOf';
-import { Col, Row, Grid } from 'react-native-easy-grid';
+import HorizontalPhotoList from '../HorizontalPhotoList';
 
 export default class PlaceDetails extends React.Component<
     { placeId: string, toggleSummaryModal: Function },
@@ -30,14 +30,16 @@ export default class PlaceDetails extends React.Component<
         showReviewModal: boolean, 
         isLoading: boolean,
         place: fullApiPlace,
-        disableEdit: boolean
+        disableEdit: boolean,
+        photoUrls: Array<string>
     }> {
 
     state = {
         isLoading: true,
         showReviewModal: false,
-        items: [],
+        items: new Array<reviewSummary>(),
         place: {},
+        photoUrls: new Array<string>(),
         disableEdit: true
     }
 
@@ -51,12 +53,24 @@ export default class PlaceDetails extends React.Component<
         const reviews = await FirebaseService.getReviews(this.props.placeId)
         const place = await getGooglePlaceById(this.props.placeId);
         const userReviewIds = await FirebaseService.getUserReviewIdList();
+        let photoUrls = []
 
-        console.log(place.photos);
+        if(place.photos){
+            // prefetch up to 3 photos
+            for(let i=0; i<3; i++){
+                if(place.photos[i]){
+                    const url = getPhotoUrl(place.photos[i].photo_reference);
+                    await Image.prefetch(url);
+                    photoUrls.push(url);
+                }
+            }
+        }
+
         this.setState({
             showReviewModal: false,
             items: reviews,
             place: place,
+            photoUrls: photoUrls,
             isLoading: false,
             disableEdit: _indexOf(userReviewIds, place.place_id) > -1
         });
@@ -90,27 +104,7 @@ export default class PlaceDetails extends React.Component<
                             <Icon type="FontAwesome" name="edit"></Icon>
                         </Button>
                     </View>
-                    <View style={styles.photoContainer}>
-                        <Grid>
-                            <Col>
-                                <Image 
-                                    style={{width:'100%', height: '100%'}}
-                                    source={{ uri: getPhotoUrl(this.state.place.photos[0].photo_reference) }}></Image>
-                            </Col>
-                            <Col>
-                                <Row>
-                                    <Image 
-                                        style={{width:'100%', height: '100%'}}
-                                        source={{ uri: getPhotoUrl(this.state.place.photos[1].photo_reference) }}></Image>
-                                </Row>
-                                <Row>
-                                <Image 
-                                    style={{width:'100%', height: '100%'}}
-                                    source={{ uri: getPhotoUrl(this.state.place.photos[2].photo_reference) }}></Image>
-                                </Row>
-                            </Col>
-                        </Grid>
-                    </View>
+                    <HorizontalPhotoList photoUrls={this.state.photoUrls} />
                     {       
                         this.state.items.length > 0 ?             
                         <ScrollView>
@@ -160,10 +154,6 @@ const styles = StyleSheet.create({
     listItem: {
         padding: 5
     },
-    photoContainer: {
-        height: 250,
-        width: '100%'
-    },
     dismissButton: {
     },
     editButton: {
@@ -177,7 +167,7 @@ const styles = StyleSheet.create({
     },
     noReviewConatiner: {
         width: '100%',
-        marginTop: 100,
+        marginTop: '20%',
         // backgroundColor: '#DCDCDC',
         alignItems: 'center'
     }
