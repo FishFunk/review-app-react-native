@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { Container } from 'native-base';
 import useCachedResources from './hooks/useCachedResources';
-// import useColorScheme from './hooks/useColorScheme';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import FirebaseService from './services/firebaseService';
@@ -10,14 +9,14 @@ import HomeScreen from './screens/HomeScreen/HomeScreen';
 import Screen2 from './screens/Screen2/Screen2';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import LoginScreen from './screens/LoginScreen';
+import LoginScreen from './screens/LoginFacebookScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import SocialScreen from './screens/SocialScreen';
+import LoginEmailScreen from './screens/LoginEmailScreen';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
-  // const colorScheme = useColorScheme();
   // const drawerNavigator = createDrawerNavigator();
   const stackNavigator = createStackNavigator();
   const mainStackNavigator = createStackNavigator();
@@ -52,8 +51,12 @@ export default function App(props: any) {
   if(!user){
     return (
         <NavigationContainer>
-          <stackNavigator.Navigator initialRouteName="Login">
-            <stackNavigator.Screen name="Login" component={LoginScreen} 
+          <stackNavigator.Navigator initialRouteName="LoginFacebook">
+            <stackNavigator.Screen name="LoginFacebook" component={LoginScreen} 
+              options={{
+                headerShown: false
+              }}/>
+            <stackNavigator.Screen name="LoginEmail" component={LoginEmailScreen} 
               options={{
                 headerShown: false
               }}/>

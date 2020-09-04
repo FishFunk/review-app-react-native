@@ -5,26 +5,13 @@ import { Button, Item, Input, Content, Text } from 'native-base';
 import UndrawReviewSvg from '../svgs/undraw_reviews';
 import FirebaseService from '../services/firebaseService';
 
-export default function LoginScreen(props: any) {
+export default function LoginFacebookScreen(props: any) {
 
-    const [email, onChangeEmail] = React.useState('');
-    const [pwd, onChangePwd] = React.useState('');
     const [loading, setLoading] = React.useState(false);
     const [isError, setError] = React.useState(false);
 
-    const onSubmit = ()=>{
-      setLoading(true);
-      FirebaseService.login(email, pwd)
-        .then(result=>{
-          console.log(result.message);
-        })
-        .catch((error)=>{
-          setError(true);
-          console.error(error);
-        })
-        .finally(()=>{
-          setLoading(false);
-        });
+    const onLoginWithEmail = ()=>{
+      props.navigation.push('LoginEmail');
     }
 
     const onRegister = ()=>{
@@ -48,7 +35,7 @@ export default function LoginScreen(props: any) {
     if(loading){
       return (
         <Content contentContainerStyle={styles.container}>
-          <ActivityIndicator size="large" color={ theme.LIGHT_COLOR }/>
+          <ActivityIndicator size="large" color={ theme.PRIMARY_COLOR }/>
         </Content>
       )
     } else {
@@ -64,44 +51,25 @@ export default function LoginScreen(props: any) {
               <Text style={styles.warning}>
                 {isError? 'Login Failed!': ''}
               </Text>
-              <Item style={styles.inputItem}>
-                <Input 
-                  placeholder='Email'
-                  onChangeText={text => onChangeEmail(text)}
-                  value={email} />
-              </Item>
-              <Item style={styles.inputItem}>
-                <Input 
-                  placeholder='Password'
-                  onChangeText={text => onChangePwd(text)}
-                  value={pwd} 
-                  secureTextEntry={true} />
-              </Item>
-              <View style={styles.buttonGroup}>
-                <Button transparent style={styles.loginButton} onPress={onSubmit}>
-                  <Text style={styles.loginButtonText}>Login</Text>
-                </Button>
-                <Button transparent style={styles.registerButton} onPress={onRegister}>
-                  <Text style={styles.registerButtonText}>Register</Text>
-                </Button>
-              </View>
-              <View style={styles.smallSeparator} />
-              <Button full style={styles.facebookButton} onPress={onFacebookLogin}>
+              <Button style={styles.facebookButton} onPress={onFacebookLogin}>
                 <Text style={styles.facebookText}>Login with Facebook</Text>
                 {/* <Icon type={"FontAwesome5"} name="facebook"></Icon> */}
               </Button>
-              <Button style={styles.forgotButton} full>
-                <Text style={styles.forgotText}>Forgot Password?</Text>
-              </Button>
+              <View style={styles.smallSeparator}/>
+              <View style={styles.buttonGroup}>
+                <Button transparent full style={styles.loginButton} onPress={onLoginWithEmail}>
+                  <Text style={styles.loginButtonText}>Login with Email</Text>
+                </Button>
+                <Button transparent full style={styles.registerButton} onPress={onRegister}>
+                  <Text style={styles.registerButtonText}>Sign Up with Email</Text>
+                </Button>
+              </View>
           </Content>
       );
     }
 }
 
 const styles = StyleSheet.create({
-  margin: {
-    marginHorizontal: 10
-  },
   buttonGroup: {
     width: '100%',
     justifyContent: "space-evenly",
@@ -109,27 +77,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   loginButton: {
+    width: 180,
     borderWidth: 1,
-    borderColor: theme.PRIMARY_COLOR,
-    width: 100,
-    justifyContent: 'center'
+    borderColor: theme.PRIMARY_COLOR
   },
   registerButton: {
+    width: 180,
     borderWidth: 1,
-    borderColor: theme.SECONDARY_COLOR,
-    width: 100,
-    justifyContent: 'center'
-  },
-  forgotButton: {
-    backgroundColor: 'transparent'
-  },
-  forgotText: {
-    color: theme.PRIMARY_COLOR
+    borderColor: theme.SECONDARY_COLOR
   },
   loginButtonText: {
+    fontWeight: 'bold',
+    fontSize: 14,
     color: theme.PRIMARY_COLOR
   },
   registerButtonText: {
+    fontWeight: 'bold',
+    fontSize: 14,
     color: theme.SECONDARY_COLOR
   },
   container: {
@@ -157,18 +121,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold'
   },
-  separator: {
-    marginVertical: 20,
-    width: '80%',
-  },
   smallSeparator: {
     marginVertical: 10,
     width: '80%',
-  },
-  inputItem: {
-    marginLeft: 20,
-    marginRight: 20,
-    marginBottom: 15
   },
   svgWrapper: {
     alignItems: 'center',
@@ -177,11 +132,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.3)'
   },
   facebookButton: {
-    backgroundColor: theme.facebookBlue,
-    justifyContent: 'center'
+    width: 180,
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: theme.facebookBlue,
+    borderRadius: 0
   },
   facebookText: {
     fontWeight: 'bold',
-    color: '#fff'
+    color: theme.LIGHT_COLOR,
+    fontSize: 14
   }
 });

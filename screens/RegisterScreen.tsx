@@ -14,8 +14,11 @@ export default function RegisterScreen(props: any) {
     const [isError, setError] = React.useState(false);
 
     const onRegister = ()=>{
-        alert("not implemented");
-        setError(false);
+        FirebaseService.registerUser(firstName, lastName, email, pwd)
+          .catch(error => {
+            console.error(error);
+            setError(true);
+          });
     }
 
     const onCancel = ()=>{

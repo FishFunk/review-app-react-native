@@ -31,9 +31,10 @@ class FirebaseService {
 		}
 	}
 
-	async registerUser(email: string, password: string): Promise<{type: string, message: string}>{
+	async registerUser(first: string, last:string, email: string, password: string): Promise<{type: string, message: string}>{
 		const { user } = await this.auth.createUserWithEmailAndPassword(email, password);
 		if( user ) {
+			user.displayName = `${first} ${last}`;
 			return this.initializeUser(user);
 		}
 		else {
@@ -61,7 +62,7 @@ class FirebaseService {
 				}
 			}
 			case 'cancel': {
-				return Promise.reject('Facebook sign in cancelled');
+				return Promise.resolve({type: 'cancel', message: 'User cancelled Facebook login'});
 			}
 		}
 	}
