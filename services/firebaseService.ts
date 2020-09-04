@@ -46,13 +46,14 @@ class FirebaseService {
 		await Facebook.initializeAsync(appConfig.expo.facebookAppId, appConfig.expo.facebookDisplayName);
 		const result = await Facebook.logInWithReadPermissionsAsync(
 			{
-				permissions: ['public_profile', 'email']
+				permissions: ['public_profile', 'email', 'user_friends']
 			});
 
 		switch (result.type) {
 			case 'success': {
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
 				const credential = firebase.auth.FacebookAuthProvider.credential(result.token);
+				console.log(result.token);
 				const { user } = await this.auth.signInWithCredential(credential);  // Sign in with Facebook credential
 		
 				if(user){
@@ -126,15 +127,15 @@ class FirebaseService {
 			return [];
 		}
 
-		const reviews = reviewSnapshots.val();
+		const reviews: reviewSummary[] = reviewSnapshots.val();
 		let result = [];
 
 		for(let i = 0; i < reviews.length; i++){
 			const usrSnap = await this.db.ref(`users/${reviews[i].reviewer_id}`).once('value');
-			let usr = usrSnap.val();
+			let usr: appUser = usrSnap.val();
 			if(usr){
 				reviews[i].name = `${usr.firstName} ${usr.lastName}`;
-				reviews[i].img = usr.img;
+				reviews[i].img = usr.photoUrl || '';
 				result.push(reviews[i]);
 			}
 		}

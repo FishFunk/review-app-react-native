@@ -14,6 +14,13 @@ const findPlaceUrl = (searchQuery: string)=>{
     const urlExt = `/findplacefromtext/json?`;
     return `${baseUrl}${urlExt}input=${searchQuery}&inputtype=textquery&key=${GOOGLE_API_KEY}`;
 }
+
+export const getPhotoUrl = (photoRef: string)=>{
+    const url = 
+        `https://maps.googleapis.com/maps/api/place/photo?&maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API_KEY}`;
+    console.log(url);
+    return url;
+}
   
 export const getGooglePlaceById = (
     place_id: string, 

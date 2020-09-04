@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -18,9 +18,10 @@ import FirebaseService from '../../services/firebaseService';
 import { reviewSummary } from '../../models/reviews';
 import theme from '../../styles/theme';
 import WriteReview from '../reviews/WriteReview';
-import { getGooglePlaceById } from '../../services/googlePlaceApiService';
+import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
 import { fullApiPlace } from '../../models/place';
 import _indexOf from 'lodash/indexOf';
+import { Col, Row, Grid } from 'react-native-easy-grid';
 
 export default class PlaceDetails extends React.Component<
     { placeId: string, toggleSummaryModal: Function },
@@ -51,6 +52,7 @@ export default class PlaceDetails extends React.Component<
         const place = await getGooglePlaceById(this.props.placeId);
         const userReviewIds = await FirebaseService.getUserReviewIdList();
 
+        console.log(place.photos);
         this.setState({
             showReviewModal: false,
             items: reviews,
@@ -79,7 +81,7 @@ export default class PlaceDetails extends React.Component<
                 this.state.isLoading ?
                 <Spinner color={theme.PRIMARY_COLOR} /> :
                 <View>
-                    <View style={styles.header}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
                         <Button transparent onPress={this.onDismissPanel.bind(this)}>
                             <Icon type="FontAwesome" name="close"></Icon>
                         </Button>
@@ -87,6 +89,27 @@ export default class PlaceDetails extends React.Component<
                         <Button transparent onPress={this.onPressWriteReview.bind(this)} disabled={this.state.disableEdit}>
                             <Icon type="FontAwesome" name="edit"></Icon>
                         </Button>
+                    </View>
+                    <View style={styles.photoContainer}>
+                        <Grid>
+                            <Col>
+                                <Image 
+                                    style={{width:'100%', height: '100%'}}
+                                    source={{ uri: getPhotoUrl(this.state.place.photos[0].photo_reference) }}></Image>
+                            </Col>
+                            <Col>
+                                <Row>
+                                    <Image 
+                                        style={{width:'100%', height: '100%'}}
+                                        source={{ uri: getPhotoUrl(this.state.place.photos[1].photo_reference) }}></Image>
+                                </Row>
+                                <Row>
+                                <Image 
+                                    style={{width:'100%', height: '100%'}}
+                                    source={{ uri: getPhotoUrl(this.state.place.photos[2].photo_reference) }}></Image>
+                                </Row>
+                            </Col>
+                        </Grid>
                     </View>
                     {       
                         this.state.items.length > 0 ?             
@@ -96,7 +119,7 @@ export default class PlaceDetails extends React.Component<
                                     this.state.items.map((item: reviewSummary, idx: number)=> 
                                         <ListItem avatar key={idx} style={styles.listItem}>
                                             <Left>
-                                                <Thumbnail source={{ uri: item.img}} defaultSource={require('../../assets/images/profile.png')} />
+                                                <Thumbnail source={{ uri: item.img }} defaultSource={require('../../assets/images/profile.png')} />
                                             </Left>
                                             <Body>
                                                 <ReviewStars rating={item.avg_rating} fontSize={18} />
@@ -137,11 +160,9 @@ const styles = StyleSheet.create({
     listItem: {
         padding: 5
     },
-    header: {
-        padding: 5,
-        height: 60,
-        flexDirection: "row",
-        justifyContent: "space-between"
+    photoContainer: {
+        height: 250,
+        width: '100%'
     },
     dismissButton: {
     },
@@ -150,7 +171,9 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: 'bold',
         fontSize: 20,
-        marginTop: 10
+        marginTop: 10,
+        marginBottom: 10,
+        textAlign: 'center'
     },
     noReviewConatiner: {
         width: '100%',

@@ -28,10 +28,6 @@ export default class Social extends React.Component<{},
         following: new Array<string>()
      };
 
-    onPress(){
-        alert("Not implemented");
-    }
-
     onLogout(){
         FirebaseService.signOut();
     }
