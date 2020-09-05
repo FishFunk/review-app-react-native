@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, View, StyleSheet, Dimensions } from 'react-native';
+import { Modal, View, StyleSheet, Dimensions, ScrollView, NativeSyntheticEvent, TextInputKeyPressEventData, Keyboard } from 'react-native';
 import { 
     Button, 
     Text, 
@@ -15,7 +15,6 @@ import ReviewStars from './ReviewStars';
 import EditableStars from './EditableStars';
 import { fullApiPlace } from '../../models/place';
 import FirebaseService from '../../services/firebaseService';
-import { TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
@@ -57,6 +56,13 @@ export default class WriteReview extends Component<{
 
     onUpdateRating3(newRating: number){
         this.setState({ rating3: newRating });
+    }
+
+    onKeyPress(e: NativeSyntheticEvent<TextInputKeyPressEventData>){
+        if(e.nativeEvent.key === 'Enter'){
+            e.preventDefault();
+            Keyboard.dismiss();
+        }
     }
 
     async onSubmitForm(){
@@ -121,6 +127,8 @@ export default class WriteReview extends Component<{
                                 <Label>Comments</Label>
                                 <Label style={styles.sublabel}>up to 250 characters</Label>
                                 <Textarea 
+                                    returnKeyType='done'
+                                    onKeyPress={this.onKeyPress.bind(this)}
                                     value={this.state.comments}
                                     maxLength={250}
                                     multiline={true}
