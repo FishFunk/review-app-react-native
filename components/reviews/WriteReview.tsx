@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, View, StyleSheet } from 'react-native';
+import { Modal, View, StyleSheet, Dimensions } from 'react-native';
 import { 
     Button, 
     Text, 
@@ -15,6 +15,7 @@ import ReviewStars from './ReviewStars';
 import EditableStars from './EditableStars';
 import { fullApiPlace } from '../../models/place';
 import FirebaseService from '../../services/firebaseService';
+import { TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
@@ -87,7 +88,7 @@ export default class WriteReview extends Component<{
             transparent={true}
         >
             <View style={styles.container}>
-                <View style={styles.modalView}>
+                <ScrollView contentContainerStyle={styles.modalView}>
                     <View>
                         <Title>
                             <Text style={styles.title}>{this.props.place.name}</Text>
@@ -150,7 +151,7 @@ export default class WriteReview extends Component<{
                                 <Text style={{color: theme.DANGER_COLOR}}>Cancel</Text>
                         </Button>
                     </View>
-                </View>
+                </ScrollView>
             </View>
         </Modal>
         )
@@ -168,7 +169,7 @@ const styles=StyleSheet.create({
     modalView: {
         marginTop: 60,
         height: '100%',
-        width: '100%',
+        width: Dimensions.get('screen').width,
         backgroundColor: "white",
         padding: 10,
         alignItems: "center",
