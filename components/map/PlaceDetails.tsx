@@ -136,9 +136,11 @@ export default class PlaceDetails extends React.Component<
                         }
 
                         <Button small rounded transparent 
-                            style={styles.roundButton} onPress={this.onPressWriteReview.bind(this)}
+                            style={this.state.disableEdit ? styles.disabledButton : styles.roundButton} 
+                            onPress={this.onPressWriteReview.bind(this)}
                             disabled={this.state.disableEdit}>
-                            <Icon type={'FontAwesome5'} name={'edit'} style={styles.buttonIcon}></Icon>
+                            <Icon type={'FontAwesome5'} name={'edit'} 
+                                style={this.state.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
                         </Button>
                     </View>
                     {       
@@ -149,7 +151,9 @@ export default class PlaceDetails extends React.Component<
                                     this.state.items.map((item: reviewSummary, idx: number)=> 
                                         <ListItem avatar key={idx} style={styles.listItem}>
                                             <Left>
-                                                <Thumbnail source={{ uri: item.img }} defaultSource={require('../../assets/images/profile.png')} />
+                                                <Thumbnail 
+                                                    source={{ uri: item.img }} 
+                                                    defaultSource={require('../../assets/images/profile.png')} />
                                             </Left>
                                             <Body>
                                                 <ReviewStars rating={item.avg_rating} fontSize={18} />
@@ -219,6 +223,15 @@ const styles = StyleSheet.create({
         height: 50
     },
     buttonIcon:{
+        color: theme.PRIMARY_COLOR
+    },
+    disabledButton: {
+        borderWidth: 1,
+        borderColor: theme.PRIMARY_COLOR,
+        height: 50,
+        opacity: .5
+    },
+    disabledIcon: {
         color: theme.PRIMARY_COLOR
     }
   });
