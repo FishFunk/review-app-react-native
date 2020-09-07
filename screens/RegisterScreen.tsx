@@ -54,13 +54,15 @@ export default function RegisterScreen(props: any) {
                 <Input 
                   placeholder='Email'
                   onChangeText={text => onChangeEmail(text)}
-                  value={email} />
+                  value={email}
+                  textContentType='emailAddress' />
               </Item>
               <Item style={styles.inputItem}>
                 <Input 
                   placeholder='Password'
                   onChangeText={text => onChangePwd(text)}
                   value={pwd} 
+                  textContentType='password'
                   secureTextEntry={true} />
               </Item>
               <View style={styles.separator} />

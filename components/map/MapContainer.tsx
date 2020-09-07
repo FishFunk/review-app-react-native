@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Keyboard } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
@@ -140,6 +140,7 @@ export default class MapContainer extends React.Component<
     }
 
     onPressMapArea(){
+        Keyboard.dismiss();
         this.setState({ showSummaryModal: false });
     }
 

@@ -24,7 +24,7 @@ export const getPhotoUrl = (photoRef: string)=>{
 export const getGooglePlaceById = (
     place_id: string, 
     fields: Array<string> = ['business_status', 'geometry', 'name', 
-        'opening_hours', 'photos', 'place_id', 'website', 'formatted_phone_number'])=> {
+        'opening_hours', 'photos', 'place_id', 'website', 'formatted_phone_number', 'types'])=> {
     const url = getPlaceUrl(place_id, fields);
 
     return new Promise<fullApiPlace>((resolve, reject)=>{

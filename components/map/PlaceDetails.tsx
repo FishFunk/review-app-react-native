@@ -165,7 +165,7 @@ export default class PlaceDetails extends React.Component<
                             </List>
                         </ScrollView> :
                         <View style={styles.noReviewConatiner}>
-                            <Title>No Reviews Yet</Title>
+                            <Title>Hmm... No Reviews From Your Network</Title>
                             <Text>Be the first to write one!</Text>
                         </View>
                     }

@@ -15,6 +15,7 @@ import ReviewStars from './ReviewStars';
 import EditableStars from './EditableStars';
 import { fullApiPlace } from '../../models/place';
 import FirebaseService from '../../services/firebaseService';
+import _indexOf from 'lodash/indexOf';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
@@ -65,6 +66,18 @@ export default class WriteReview extends Component<{
         }
     }
 
+    isFoodEsablishment(){
+        const { place } = this.props;
+
+        if(place.types){
+            return (
+                _indexOf(place.types, 'restaurant') >= 0 || 
+                _indexOf(place.types, 'food')  >= 0);
+        }
+
+        return false;
+    }
+
     async onSubmitForm(){
         const { place_id, name } = this.props.place;
         const data = {
@@ -82,7 +95,11 @@ export default class WriteReview extends Component<{
     }
 
     avgRating(){
-        return (this.state.rating1 + this.state.rating2 + this.state.rating3) / 3;
+        if(this.isFoodEsablishment()){
+            return (this.state.rating1 + this.state.rating2 + this.state.rating3) / 3;
+        } 
+        
+        return this.state.rating1;
     }
 
     render(){
@@ -101,48 +118,78 @@ export default class WriteReview extends Component<{
                         </Title>
                     </View>
                     <View style={styles.formContainer}>
-                        <Form style={styles.form}>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Atmosphere</Label>
-                                <EditableStars 
-                                    fontSize={30}
-                                    initalRating={this.state.rating1} 
-                                    onRatingChanged={this.onUpdateRating1.bind(this)}  />
-                            </Item>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Food</Label>
-                                <EditableStars 
-                                    fontSize={30}
-                                    initalRating={this.state.rating2} 
-                                    onRatingChanged={this.onUpdateRating2.bind(this)}  />
-                            </Item>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Service</Label>
-                                <EditableStars 
-                                    fontSize={30}
-                                    initalRating={this.state.rating3} 
-                                    onRatingChanged={this.onUpdateRating3.bind(this)}  />
-                            </Item>
-                            <Item stackedLabel style={styles.textAreaItem}>
-                                <Label>Comments</Label>
-                                <Label style={styles.sublabel}>up to 250 characters</Label>
-                                <Textarea 
-                                    returnKeyType='done'
-                                    onKeyPress={this.onKeyPress.bind(this)}
-                                    value={this.state.comments}
-                                    maxLength={250}
-                                    multiline={true}
-                                    onChangeText={this.onEditComment.bind(this)}
-                                    style={styles.textArea} 
-                                    rowSpan={4} 
-                                    bordered={false} 
-                                    underline={false}/>
-                            </Item>
-                            <Item stackedLabel>
-                                <Label>Average</Label>
-                                <ReviewStars rating={this.avgRating()} fontSize={30} />
-                            </Item>
-                        </Form>
+                        {
+                            this.isFoodEsablishment() ? 
+                            // Food / Restaurant Review Form
+                            <Form style={styles.form}>
+                                <Item bordered={false} style={styles.starItem}>
+                                    <Label>Atmosphere</Label>
+                                    <EditableStars 
+                                        fontSize={30}
+                                        initalRating={this.state.rating1} 
+                                        onRatingChanged={this.onUpdateRating1.bind(this)}  />
+                                </Item>
+                                <Item bordered={false} style={styles.starItem}>
+                                    <Label>Food</Label>
+                                    <EditableStars 
+                                        fontSize={30}
+                                        initalRating={this.state.rating2} 
+                                        onRatingChanged={this.onUpdateRating2.bind(this)}  />
+                                </Item>
+                                <Item bordered={false} style={styles.starItem}>
+                                    <Label>Service</Label>
+                                    <EditableStars 
+                                        fontSize={30}
+                                        initalRating={this.state.rating3} 
+                                        onRatingChanged={this.onUpdateRating3.bind(this)}  />
+                                </Item>
+                                <Item stackedLabel style={styles.textAreaItem}>
+                                    <Label>Comments</Label>
+                                    <Label style={styles.sublabel}>up to 250 characters</Label>
+                                    <Textarea 
+                                        returnKeyType='done'
+                                        onKeyPress={this.onKeyPress.bind(this)}
+                                        value={this.state.comments}
+                                        maxLength={250}
+                                        multiline={true}
+                                        onChangeText={this.onEditComment.bind(this)}
+                                        style={styles.textArea} 
+                                        rowSpan={4} 
+                                        bordered={false} 
+                                        underline={false}/>
+                                </Item>
+                                <Item stackedLabel>
+                                    <Label>Average</Label>
+                                    <ReviewStars rating={this.avgRating()} fontSize={30} />
+                                </Item>
+                            </Form> : 
+                            // Generic Place Review Form
+                            <Form>
+                                <Item bordered={false} style={styles.starItem}>
+                                    <Label>Rating</Label>
+                                    <EditableStars 
+                                        fontSize={30}
+                                        initalRating={this.state.rating1} 
+                                        onRatingChanged={this.onUpdateRating1.bind(this)}  />
+                                </Item>
+                                <Item stackedLabel style={styles.textAreaItem}>
+                                    <Label>Comments</Label>
+                                    <Label style={styles.sublabel}>up to 250 characters</Label>
+                                    <Textarea 
+                                        returnKeyType='done'
+                                        onKeyPress={this.onKeyPress.bind(this)}
+                                        value={this.state.comments}
+                                        maxLength={250}
+                                        multiline={true}
+                                        onChangeText={this.onEditComment.bind(this)}
+                                        style={styles.textArea} 
+                                        rowSpan={4} 
+                                        bordered={false} 
+                                        underline={false}/>
+                                </Item>
+                            </Form>
+                        }
+                        
                     </View>
                     <View style={styles.buttonGroup}>
                         <Button 

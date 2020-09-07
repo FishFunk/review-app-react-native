@@ -1,6 +1,15 @@
 import theme from '../styles/theme';
 
 export default [
+  {
+    'featureType': 'poi',
+    'elementType': 'labels',
+    'stylers': [
+      {
+        'color': theme.PRIMARY_COLOR
+      }
+    ]
+  },
     {
       "elementType": "geometry.stroke",
       "stylers": [
@@ -10,7 +19,7 @@ export default [
       ]
     },
     {
-      "elementType": "labels",
+      "elementType": "labels.text",
       "stylers": [
         {
           "color": theme.DARK_COLOR

@@ -1,12 +1,13 @@
 import React from 'react';
 import PlacesInput from 'react-native-places-input';
+import { GOOGLE_API_KEY } from '../../constants/Keys';
 
 class MapInput extends React.Component<{ handleSelectPlace: Function }> {
 
     render() {
         return (
             <PlacesInput
-                googleApiKey={'AIzaSyCASruS9jkUVVJ8E2rk7ga5qRezbIYtj7s'}
+                googleApiKey={GOOGLE_API_KEY}
                 placeHolder={"Find a place"}
                 language={"en-US"}
                 onSelect={(place: any) => {
@@ -14,6 +15,10 @@ class MapInput extends React.Component<{ handleSelectPlace: Function }> {
                 }}
                 clearQueryOnSelect={true}
                 requiredCharactersBeforeSearch={2}
+                textInputProps={{
+                    autoFocus: false,
+                    clearButtonMode: 'always'
+                }}
             />
         )
     }
