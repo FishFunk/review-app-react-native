@@ -9,7 +9,8 @@ import {
   Spinner,
   Label,
   Title,
-  Footer} from 'native-base';
+  Footer,
+  Icon} from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -67,10 +68,19 @@ export default class ProfileContainer extends React.Component<{},{
                         <Title style={styles.title}>{this.state.user.firstName} {this.state.user.lastName}</Title>
                     </Row>
                     <Row style={styles.row}>
-                        <Label>Review Count: </Label><Text>{
-                            this.state.user.reviews? this.state.user.reviews.length :  0}</Text>
+                        <Text style={styles.label}>Review Count: </Text>
+                        <Text style={styles.text}>{this.state.user.reviews? this.state.user.reviews.length : 0}</Text>
                     </Row>
-                    <Row style={styles.row}></Row>
+                    <Row style={styles.row}>
+                        <Text style={styles.label}>Email Verified </Text>
+                        {           
+                            this.state.user.verified ?             
+                                <Icon type={'FontAwesome5'} name={'check'} 
+                                    fontSize={16} style={styles.verifiedIcon}></Icon> :
+                                <Icon type={'FontAwesome5'} name={'times'} 
+                                    style={styles.notVerifiedIcon}></Icon>
+                        }
+                    </Row>
                     <Row style={styles.row}></Row>
                     <Row style={styles.row}></Row>
                     <Row style={styles.row}>
@@ -92,6 +102,13 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: theme.DARK_COLOR
     },
+    label: {
+        // fontWeight: 'bold',
+        // fontSize: 18
+    },
+    text: {
+        fontSize: 20
+    },
     profileImage: {
         marginTop: 10,
         marginBottom: 10,
@@ -100,16 +117,19 @@ const styles = StyleSheet.create({
         borderRadius: 150
     },
     row: {
-        justifyContent: "center",
+        justifyContent: "space-evenly",
         flexDirection: 'row',
         minHeight: 60
     },
-    buttonContainer: {
-        flex: 1,
-        justifyContent: "space-evenly",
-        flexDirection: 'row'
-    },
     buttonText: {
         color: theme.DANGER_COLOR
+    },
+    verifiedIcon: {
+        color: theme.PRIMARY_COLOR,
+        fontSize: 20
+    },
+    notVerifiedIcon: {
+        color: theme.DANGER_COLOR,
+        fontSize: 20
     }
 });
