@@ -4,14 +4,14 @@ import {
   Container, 
   Content} from "native-base";
 import AppHeader from "../../components/AppHeader";
-import ActionList from "../../components/ActionList";
+import ProfileContainer from "../../components/profile/ProfileConatiner";
 
 export default function HomeScreen(props: any) {
     return (
       <Container>
         <AppHeader onPressButton={props.navigation.goBack} buttonIconName={'arrow-left'}/>
         <Content contentContainerStyle={styles.container}>
-            <ActionList />
+            <ProfileContainer />
         </Content>
       </Container>
     );

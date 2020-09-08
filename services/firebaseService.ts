@@ -104,6 +104,23 @@ class FirebaseService {
 			return Promise.resolve({ type: 'success', message: `Welcome back ${usr.firstName}!`});
 		}
 	}
+
+	async getUser(userId?: string): Promise<appUser>{
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		if(!userId){
+			userId = this.auth.currentUser.uid;
+		}
+
+		const userSnap = await this.db.ref(`users/${userId}`).once('value');
+		if(userSnap.exists()){
+			return userSnap.val();
+		} else {
+			throw new Error(`No user found matching id: ${userId}`);
+		}
+	}
 	
 	async getUserReviewIdList() {
 		if(!firebase.apps.length || !this.auth.currentUser){

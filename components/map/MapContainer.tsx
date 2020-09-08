@@ -33,7 +33,7 @@ export default class MapContainer extends React.Component<
     state = {
         placeId: '',
         loading: true,
-        region: this.defaultRegion,
+        region: {},
         markers: [],
         showSummaryModal: false
     };
@@ -79,6 +79,7 @@ export default class MapContainer extends React.Component<
             })
             .catch(error =>{
                 console.log("getLocation failed. using default region");
+                this.updateRegion(this.defaultRegion);
             });
     }
 

@@ -7,3 +7,7 @@ export const getFacebookNameAndEmail = (uid: string, token: string)=>{
 export const getUserFriends = (token: string)=>{
     const url = `https://graph.facebook.com/me/friends?access_token=${token}`;
 }
+
+export const getUserImage = (token: string) => {
+    const url = `https://graph.facebook.com/me/friends?access_token=${token}`
+}
