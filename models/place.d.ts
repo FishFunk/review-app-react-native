@@ -42,8 +42,8 @@ export interface apiPlace {
 
 export interface fullApiPlace {
   business_status? : 'OPERATIONAL' | 'CLOSED_TEMPORARILY' | 'CLOSED_PERMANENTLY' | null,
-  geometry : {
-    location : {
+  geometry? : {
+    location? : {
         lat : number,
         lng : number
     },
@@ -60,12 +60,12 @@ export interface fullApiPlace {
   },
   formatted_phone_number? : string,
   icon? : string,
-  name : string,
+  name? : string,
   opening_hours? : {
     open_now : boolean
   },
   photos? : Array<placePhoto>,
-  place_id : string,
+  place_id? : string,
   plus_code? : Object,
   rating? : number,
   reference? : string,

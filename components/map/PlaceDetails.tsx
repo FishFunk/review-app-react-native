@@ -36,7 +36,7 @@ export default class PlaceDetails extends React.Component<
         total: number
     }> {
 
-    initialPlace: fullApiPlace = {};
+    initialPlace: fullApiPlace = {}
 
     state = {
         isLoading: true,
@@ -55,7 +55,7 @@ export default class PlaceDetails extends React.Component<
     }
 
     async load(){
-        const reviews = await FirebaseService.getReviews(this.props.placeId)
+        const reviews = await FirebaseService.getReviewSummaries(this.props.placeId)
         const place = await getGooglePlaceById(this.props.placeId);
         const userReviewIds = await FirebaseService.getUserReviewIdList();
         let photoUrls = []
@@ -79,7 +79,7 @@ export default class PlaceDetails extends React.Component<
             }
             total = sum/reviews.length;
         }
-        
+
         this.setState({
             showReviewModal: false,
             items: reviews,

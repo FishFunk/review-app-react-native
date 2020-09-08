@@ -7,6 +7,10 @@ import appConfig from '../app.json';
 import _ from 'lodash';
 import { Email, Contact } from 'expo-contacts';
 import { fullApiPlace, dbPlace } from '../models/place';
+import _get from 'lodash/get';
+import _filter from 'lodash/filter';
+import _indexOf from 'lodash/indexOf';
+import _intersection from 'lodash/intersection';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -114,7 +118,20 @@ class FirebaseService {
 		}
 	}
 
-	async getReviews(placeId: string): Promise<Array<reviewSummary>>{
+	async getPlaceReviews(placeId: string): Promise<Array<postReview>> {
+		if (!firebase.apps.length) {
+			return Promise.reject("Firebase not initialized");;
+		}
+
+		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
+		if(!reviewSnapshots.exists()){
+			return [];
+		}
+
+		return reviewSnapshots.val();
+	}
+
+	async getReviewSummaries(placeId: string): Promise<Array<reviewSummary>>{
 		if(!placeId){
 			return Promise.resolve([]);
 		}
@@ -215,17 +232,17 @@ class FirebaseService {
 
 		// Add or update place
 		const dbPlace: dbPlace = {
-			id: place.place_id,
-			name: place.name,
-			lat: place.geometry.location.lat,
-			lng: place.geometry.location.lng,
+			id: _get(place, 'place_id', ''),
+			name: _get(place, 'name', ''),
+			lat: _get(place, 'geometry.location.lat', ''),
+			lng: _get(place, 'geometry.location.lng', ''),
 			rating: placeRating
 		}
 
 		return this.db.ref(`places/${dbPlace.id}`).set(dbPlace);
 	}
 
-	async getNearbyPlaces(lat: number, lng: number): Promise<any[]>{
+	async getNearbyPlaces(lat: number, lng: number, radiusInKm=10): Promise<any[]>{
 		if(!firebase.apps.length || !this.auth.currentUser){
 			throw new Error("Firebase not initialized correctly!");
 		}
@@ -234,12 +251,27 @@ class FirebaseService {
 		const placesSnapshot = await this.db.ref(`places`).once('value');
 		placesSnapshot.forEach((snap)=>{
 			const place = snap.val();
-			if(this._isInRadius(lat, lng, place.lat, place.lng, 15)){
+			if(this._isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
 				places.push(place);
 			}
 		});
 
-		return places;
+
+		// Filter places if they contain reviews by current user or followers
+		let filteredPlaces = [];
+		const targetFollowerIds = await this.getUserFollowingIds();
+		for(let place of places){
+			const targetReviews = await this.getPlaceReviews(place.id);
+			const matches = _filter(
+				targetReviews, (r)=> r.reviewer_id === this.auth.currentUser?.uid || 
+					_indexOf(targetFollowerIds, r.reviewer_id) >= 0);
+
+			if(matches.length > 0){
+				filteredPlaces.push(place);
+			}
+		}
+
+		return filteredPlaces;
 	}
 
 	_isInRadius(
@@ -286,10 +318,6 @@ class FirebaseService {
 
 		return this.db.ref(`users/${this.auth.currentUser.uid}`).update(data);
 	};
-
-	setNewUser = (newUser: appUser) => {
-		throw new Error("not implemented");
-	}
 
 	deleteUser = (userId: string) => {
 		throw new Error("not implemented");
