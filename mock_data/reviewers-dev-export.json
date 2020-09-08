@@ -1,0 +1,112 @@
+{
+  "reviews" : {
+    "ChIJ0XMmY40B3IARvLxm_1x1hBA" : [ {
+      "atmosphere" : 5,
+      "avg_rating" : 4.333333333333333,
+      "comments" : "Pretty good! Nice being by the ocean.",
+      "date" : "Wed Sep 02 2020",
+      "menu" : 4,
+      "place_id" : "ChIJ0XMmY40B3IARvLxm_1x1hBA",
+      "place_name" : "Taco Surf PB",
+      "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
+      "service" : 4
+    } ],
+    "ChIJ64xh0eUD3IARg7gW9skpNQc" : [ {
+      "atmosphere" : 5,
+      "avg_rating" : 5,
+      "comments" : "A must visit if you’re in San Diego!",
+      "date" : "Tue Sep 01 2020",
+      "menu" : 5,
+      "place_id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
+      "place_name" : "The Taco Stand",
+      "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
+      "service" : 5
+    }, {
+      "atmosphere" : 3,
+      "avg_rating" : 3,
+      "comments" : "",
+      "date" : "Thu Sep 03 2020",
+      "menu" : 2,
+      "place_id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
+      "place_name" : "The Taco Stand",
+      "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
+      "service" : 4
+    } ],
+    "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" : [ {
+      "atmosphere" : 5,
+      "avg_rating" : 3.6666666666666665,
+      "comments" : "Pricey but fun! Free play on first Sunday of the month.",
+      "date" : "Wed Sep 02 2020",
+      "menu" : 3,
+      "place_id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
+      "place_name" : "Coin-Op Game Room",
+      "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
+      "service" : 3
+    } ]
+  },
+  "users" : {
+    "0lwPpIyUkJVsGlzbNgYfLpK0UaB2" : {
+      "dateJoined" : "Thu Sep 03 2020",
+      "email" : "fishfry62@gmail.com",
+      "firstName" : "Daniel",
+      "following" : [ "user4" ],
+      "id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
+      "lastActive" : "Thu Sep 03 2020",
+      "lastName" : "Fishman",
+      "mobile" : "",
+      "photoUrl" : "https://graph.facebook.com/10217078532466455/picture",
+      "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc" ]
+    },
+    "7scuSNtx8bXQQwfdJUv8wJgvWrw1" : {
+      "firstName" : "Admin",
+      "id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
+      "lastName" : "Dude",
+      "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc", "ChIJ0XMmY40B3IARvLxm_1x1hBA", "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" ]
+    },
+    "sxfSsV7ob9TnwlDC34hQh1s3Dkk2" : {
+      "dateJoined" : "Thu Sep 03 2020",
+      "email" : "jimmy@email.com",
+      "firstName" : "Jimmy",
+      "id" : "sxfSsV7ob9TnwlDC34hQh1s3Dkk2",
+      "lastActive" : "Thu Sep 03 2020",
+      "lastName" : "EatWorld",
+      "mobile" : "",
+      "photoUrl" : ""
+    },
+    "user1" : {
+      "date_active" : "",
+      "date_joined" : "",
+      "email" : "testing@gmail.com",
+      "firstName" : "George",
+      "id" : "user1",
+      "lastName" : "Costanza",
+      "places_reviewed" : [ "12345" ]
+    },
+    "user2" : {
+      "date_active" : "",
+      "date_joined" : "",
+      "email" : "jdawg@gmail.com",
+      "firstName" : "Jerry",
+      "friends" : [ "user1", "user3" ],
+      "id" : "user2",
+      "lastName" : "Seinfeld",
+      "places_reviewed" : [ "12345" ]
+    },
+    "user3" : {
+      "date_active" : "",
+      "date_joined" : "",
+      "email" : "John-Appleseed@mac.com",
+      "firstName" : "Elaine",
+      "friends" : [ "user1", "user2" ],
+      "id" : "user3",
+      "lastName" : "Bennet",
+      "places_reviewed" : [ "12345" ]
+    },
+    "user4" : {
+      "email" : "hank-zakroff@mac.com",
+      "firstName" : "Christopher",
+      "id" : "user4",
+      "lastName" : "Zakroff"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Keyboard } from 'react-native';
+import { View, Keyboard, Dimensions } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
@@ -8,7 +8,7 @@ import { LocationData } from 'expo-location';
 import { searchPlace, apiPlace, marker } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
-import { MapEvent } from 'react-native-maps';
+import FirebaseService from '../../services/firebaseService';
 
 export default class MapContainer extends React.Component<
     {}, 
@@ -25,8 +25,8 @@ export default class MapContainer extends React.Component<
         // San Francisco
         latitude: 37.78825,
         longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.09
     };
 
     // initial state
@@ -58,19 +58,19 @@ export default class MapContainer extends React.Component<
     componentDidMount(){
         this.getInitialState()
             .then(async ()=>{
-                // TODO: Want to read places from firebase DB to prepopulate map
-                // const places = await getGooglePlaces(
-                //     this.state.region.latitude, 
-                //     this.state.region.longitude);
-                // const markers = this.convertPlacesToMarkers(places);
-                this.setState({ loading: false });
+                const places = await FirebaseService.getNearbyPlaces(
+                    this.state.region.latitude, this.state.region.longitude);
+                console.log(`${places.length} nearby places found. generating markers...`);
+                
+                const markers = this.convertPlacesToMarkers(places);
+                this.setState({ loading: false, markers: markers });
             });
     }
 
     getInitialState(){
         return getLocation()
             .then((data: LocationData)=>{
-                console.log("getLocation success");
+                console.log("getLocation success: " + JSON.stringify(data));
                 this.updateRegion({
                     latitude: data.coords.latitude,
                     longitude: data.coords.longitude
@@ -81,12 +81,12 @@ export default class MapContainer extends React.Component<
             });
     }
 
-    convertPlacesToMarkers(places: apiPlace[]){
+    convertPlacesToMarkers(places: any[]){
         return places.map((place)=>{
             var m: marker = {
                 latlng: {
-                    latitude: place.latitude,
-                    longitude: place.longitude
+                    latitude: place.lat,
+                    longitude: place.lng
                 },
                 title: place.name,
                 description: place.rating != null ? place.rating.toString() : place.name

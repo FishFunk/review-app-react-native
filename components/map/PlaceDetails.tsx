@@ -79,9 +79,7 @@ export default class PlaceDetails extends React.Component<
             }
             total = sum/reviews.length;
         }
-
-        console.log(place);
-
+        
         this.setState({
             showReviewModal: false,
             items: reviews,

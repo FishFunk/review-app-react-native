@@ -80,7 +80,7 @@ export default class WriteReview extends Component<{
 
     async onSubmitForm(){
         const { place_id, name } = this.props.place;
-        const data = {
+        const reviewData = {
             place_id: place_id,
             place_name: name,
             atmosphere: this.state.rating1,
@@ -90,13 +90,14 @@ export default class WriteReview extends Component<{
             avg_rating: this.avgRating()
         }
 
-        await FirebaseService.submitReview(data);
+        await FirebaseService.submitReview(this.props.place, reviewData);
         this.onDismissModal();
     }
 
     avgRating(){
         if(this.isFoodEsablishment()){
-            return (this.state.rating1 + this.state.rating2 + this.state.rating3) / 3;
+            const avg = (this.state.rating1 + this.state.rating2 + this.state.rating3) / 3;
+            return +avg.toFixed(1);
         } 
         
         return this.state.rating1;

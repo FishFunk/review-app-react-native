@@ -46,7 +46,6 @@ export default function Map(props: any) {
                     title={marker.title}
                     description={marker.description}
                     pinColor={theme.SECONDARY_COLOR}
-                    // image={require('../../assets/images/purple_map_pin.png')}
                 />
             ))}
         </MapView>

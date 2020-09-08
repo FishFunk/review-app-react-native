@@ -5,6 +5,8 @@ import { appUser } from '../models/user';
 import * as Facebook from 'expo-facebook';
 import appConfig from '../app.json';
 import _ from 'lodash';
+import { Email, Contact } from 'expo-contacts';
+import { fullApiPlace, dbPlace } from '../models/place';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -53,7 +55,7 @@ class FirebaseService {
 			case 'success': {
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
 				const credential = firebase.auth.FacebookAuthProvider.credential(result.token);
-				console.log(result.token);
+				console.log(result.token); //TODO: cache token??
 				const { user } = await this.auth.signInWithCredential(credential);  // Sign in with Facebook credential
 		
 				if(user){
@@ -143,7 +145,7 @@ class FirebaseService {
 		return result;
 	};
 
-	async findFriends(contactList: any[]): Promise<appUser[]>{
+	async findFriends(contactList: Contact[]): Promise<appUser[]>{
 		if(!firebase.apps.length || !this.auth.currentUser){
 			return Promise.reject("Firebase not initialized correctly");
 		}
@@ -153,10 +155,10 @@ class FirebaseService {
 
 		contactList.map((contact, idx)=>{
 			if(contact.contactType === "person"){
-				lastNames[contact.lastName] = 1;
+				if(contact.lastName) lastNames[contact.lastName] = 1;
 				if(contact.emails){
-					contact.emails.forEach((email: string)=>{
-						emails[email] = 1;
+					contact.emails.forEach((email: Email)=>{
+						if (email.email) emails[email.email] = 1;
 					});
 				}
 			}
@@ -174,8 +176,7 @@ class FirebaseService {
 		return matches;
 	}
 
-	async submitReview(review: any): Promise<any>{
-		// TODO: Add place to DB?
+	async submitReview(place: fullApiPlace, review: any): Promise<any>{
 		if(!firebase.apps.length || !this.auth.currentUser){
 			return Promise.reject("Firebase not initialized correctly");
 		}
@@ -196,17 +197,73 @@ class FirebaseService {
 		const existingReviewSnapshots = await this.db.ref(`reviews/${newReview.place_id}`).once('value');
 
 		// Update user review list
+		let placeRating = 0;
 		userReviewIds.push(newReview.place_id);
 		await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
 
 		// Update place review list
 		if(!existingReviewSnapshots.exists()){
-			return this.db.ref(`reviews/${newReview.place_id}`).set([newReview]);
+			placeRating = newReview.avg_rating;
+			await this.db.ref(`reviews/${newReview.place_id}`).set([newReview]);
 		} else {
 			const reviews = existingReviewSnapshots.val();
 			reviews.push(newReview);
-			return this.db.ref(`reviews/${newReview.place_id}`).set(reviews);
+			reviews.forEach((r: postReview)=> placeRating += r.avg_rating);
+			placeRating = placeRating / reviews.length;
+			await this.db.ref(`reviews/${newReview.place_id}`).set(reviews);
 		}
+
+		// Add or update place
+		const dbPlace: dbPlace = {
+			id: place.place_id,
+			name: place.name,
+			lat: place.geometry.location.lat,
+			lng: place.geometry.location.lng,
+			rating: placeRating
+		}
+
+		return this.db.ref(`places/${dbPlace.id}`).set(dbPlace);
+	}
+
+	async getNearbyPlaces(lat: number, lng: number): Promise<any[]>{
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+	
+		let places: any[] = [];
+		const placesSnapshot = await this.db.ref(`places`).once('value');
+		placesSnapshot.forEach((snap)=>{
+			const place = snap.val();
+			if(this._isInRadius(lat, lng, place.lat, place.lng, 15)){
+				places.push(place);
+			}
+		});
+
+		return places;
+	}
+
+	_isInRadius(
+		centerLat: number, 
+		centerLng: number, 
+		targetLat: number, 
+		targetLng: number, 
+		desiredRadiusKm: number): boolean{
+		var R = 6.371; // km
+		var dLat = this._toRad(targetLat-centerLat);
+		var dLon = this._toRad(targetLng-centerLng);
+		var lat1 = this._toRad(centerLat);
+		var lat2 = this._toRad(targetLat);
+
+		var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+			Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		var distance = R * c;
+
+		return distance <= desiredRadiusKm;
+	}
+
+	_toRad(val: number): number {
+		return val * Math.PI / 180;
 	}
 
 	async getUserFollowingIds(): Promise<string[]> {
