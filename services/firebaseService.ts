@@ -256,7 +256,6 @@ class FirebaseService {
 			}
 		});
 
-
 		// Filter places if they contain reviews by current user or followers
 		let filteredPlaces = [];
 		const targetFollowerIds = await this.getUserFollowingIds();
@@ -280,7 +279,7 @@ class FirebaseService {
 		targetLat: number, 
 		targetLng: number, 
 		desiredRadiusKm: number): boolean{
-		var R = 6.371; // km
+		var R = 6371; // km
 		var dLat = this._toRad(targetLat-centerLat);
 		var dLon = this._toRad(targetLng-centerLng);
 		var lat1 = this._toRad(centerLat);

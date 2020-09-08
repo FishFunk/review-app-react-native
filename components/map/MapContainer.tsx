@@ -58,13 +58,14 @@ export default class MapContainer extends React.Component<
     componentDidMount(){
         this.getInitialState()
             .then(async ()=>{
-                const places = await FirebaseService.getNearbyPlaces(
-                    this.state.region.latitude, this.state.region.longitude);
-                console.log(`${places.length} nearby places found. generating markers...`);
-                
-                const markers = this.convertPlacesToMarkers(places);
-                this.setState({ loading: false, markers: markers });
+                this.setState({ loading: false });
             });
+    }
+
+    async loadNearbyPlaceMarkers(lat: number, lng: number){
+        const places = await FirebaseService.getNearbyPlaces(lat, lng);        
+        const markers = this.convertPlacesToMarkers(places);
+        this.setState({ markers: markers });
     }
 
     getInitialState(){
@@ -100,8 +101,8 @@ export default class MapContainer extends React.Component<
             region: {
                 latitude: loc.latitude,
                 longitude: loc.longitude,
-                latitudeDelta: 0.003,
-                longitudeDelta: 0.003
+                latitudeDelta: 0.09,
+                longitudeDelta: 0.09
             }
         });
     }
@@ -123,7 +124,9 @@ export default class MapContainer extends React.Component<
     }
 
     onHandleRegionChange(region: any){
-        this.setState({ region });
+        this.setState({ region }, ()=>{
+            this.loadNearbyPlaceMarkers(region.latitude, region.longitude);
+        });
     }
 
     async onMarkerSelect(mapClickEvent: any){
