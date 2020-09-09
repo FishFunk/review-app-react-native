@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "ReVew",
+    "description": "Write and read reviews of places amongst only the people you trust most",
     "slug": "ReVew",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -30,7 +31,10 @@
       "bundleIdentifier": "com.wanderlustlabs.reviewers",
       "googleServicesFile": "./GoogleService-Info.plist",
       "config": {
-        "googleMapsApiKey": "AIzaSyCiImxwioBXuT6Stdm-Y1xMGpgHrzZUHN4"
+        "googleMapsApiKey": "AIzaSyCiImxwioBXuT6Stdm-Y1xMGpgHrzZUHN4",
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.629506538287-tf8j6ed6n61ogb7g1h3qjol8rkdbadel"
+        }
       }
     },
     "web": {

@@ -9,7 +9,7 @@ import HomeScreen from './screens/HomeScreen/HomeScreen';
 import Screen2 from './screens/Screen2/Screen2';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import LoginScreen from './screens/LoginFacebookScreen';
+import LoginScreen from './screens/LoginSocialScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import SocialScreen from './screens/SocialScreen';

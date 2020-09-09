@@ -24,5 +24,6 @@ export default {
 
 
 
-    facebookBlue: '#4267b2'
+    facebookBlue: '#4267b2',
+    googleRed: '#db3236'
 }

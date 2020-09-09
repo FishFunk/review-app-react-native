@@ -12,7 +12,7 @@ import _filter from 'lodash/filter';
 import _indexOf from 'lodash/indexOf';
 import _intersection from 'lodash/intersection';
 import { registerForPushNotificationsAsync } from './notificationService';
-import * as Google from 'expo-google-app-auth';
+import { iosClientId, androidClientId } from '../constants/Keys';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -59,20 +59,22 @@ class FirebaseService {
 
 	async signInWithGoogleAsync(){
 		const result = await Google.logInAsync({
-			// androidClientId: YOUR_CLIENT_ID_HERE,
+			iosClientId: iosClientId,
+			androidClientId: androidClientId,
 			behavior: 'web',
-			iosClientId: '824759147779-ni3jt9h5ol648egv60ffr49ea21mtb04.apps.googleusercontent.com',
-			scopes: ['profile', 'email', 'contacts']
+			scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
 		});
-	
+
 		switch (result.type) {
 			case 'success': {
+				const { idToken } = result;
+
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
-				const credential = firebase.auth.GoogleAuthProvider.credential(result.accessToken);
-				const { user } = await this.auth.signInWithCredential(credential);  // Sign in with Google credential
-		
-				if(user){
-					return this.initializeUser(user);
+				const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+				const { user: firebaseUser } = await this.auth.signInWithCredential(credential);  // Sign in with Google credential
+	
+				if(firebaseUser){
+					return this.initializeUser(firebaseUser);
 				} else {
 					return Promise.reject("Failed to sign in with Google");
 				}
@@ -108,52 +110,6 @@ class FirebaseService {
 			}
 		}
 	}
-
-	async signInWithGoogle(): Promise<{type: string, message: string}>{
-		console.log("Google Sign In");
-		var provider = new firebase.auth.GoogleAuthProvider();
-		provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-		const userCredentialOrError = await firebase.auth().signInWithPopup(provider);
-
-		console.log(userCredentialOrError);
-
-		if(userCredentialOrError.user){
-			return this.initializeUser(userCredentialOrError.user);
-		} else {
-			// Error
-			return { type: 'error', message: JSON.stringify(userCredentialOrError) };
-		}
-	}
-
-	// async advancedGoogleSignInExample(){
-	// 	// Step 1.
-	// 	// User tries to sign in to Google.
-	// 	var provider = new firebase.auth.GoogleAuthProvider();
-	// 	const userCredential = await this.auth.signInWithPopup(provider)
-	// 		.catch(async (error) => {
-	// 			// An error happened.
-	// 			if (error.code === 'auth/account-exists-with-different-credential') {
-	// 				// Step 2.
-	// 				// User's email already exists.
-	// 				// The pending Google credential.
-	// 				var pendingCred = error.credential;
-	// 				// The provider account's email address.
-	// 				var email = error.email;
-	// 				// Get sign-in methods for this email.
-	// 				const methods = await this.auth.fetchSignInMethodsForEmail(email); 
-	// 				// Step 3.
-	// 				// If the user has several sign-in methods,
-	// 				// the first method in the list will be the "recommended" method to use.
-	// 				switch(methods[0]){
-	// 					// TODO: Implement
-	// 					case('password'):
-	// 					break;
-	// 					case('facebook'):
-	// 					break;
-	// 				}
-	// 			}
-  	// 	});
-	// }
 
 	async initializeUser(loggedInUserData: firebase.User): Promise<{type: string, message: string}>{
 		this._verifyInitialized();
