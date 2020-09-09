@@ -43,6 +43,11 @@ export default class ProfileContainer extends React.Component<{},{
             const { photoUrl } = this.state.user;
             if(photoUrl.indexOf('facebook') >= 0){
                 return `${photoUrl}?type=large`;
+            } else if (photoUrl.indexOf('google')){
+                const idx = photoUrl.indexOf('=s');
+                const url = photoUrl.slice(0, idx);
+                console.log(url);
+                return `${url}=s500`;
             } else {
                 return photoUrl;
             }

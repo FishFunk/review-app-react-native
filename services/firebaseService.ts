@@ -139,8 +139,13 @@ class FirebaseService {
 
 			return Promise.resolve({ type: 'success', message: `Welcome ${newUser.firstName}!`})
 		} else {
-			// User already exists, do nothing
+			// User already exists, update user data
 			var usr = userSnap.val();
+			await this.updateUserData({
+				lastActive: new Date().toDateString(),
+				photoUrl: loggedInUserData.photoURL, 
+				mobile: loggedInUserData.phoneNumber});
+
 			return Promise.resolve({ type: 'success', message: `Welcome back ${usr.firstName}!`});
 		}
 	}
