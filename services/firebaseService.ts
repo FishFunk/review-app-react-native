@@ -13,6 +13,7 @@ import _indexOf from 'lodash/indexOf';
 import _intersection from 'lodash/intersection';
 import { registerForPushNotificationsAsync } from './notificationService';
 import { iosClientId, androidClientId } from '../constants/Keys';
+import * as Google from 'expo-google-app-auth';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;

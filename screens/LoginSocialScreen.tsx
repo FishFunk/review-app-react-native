@@ -77,17 +77,21 @@ export default function LoginSocialScreen(props: any) {
                   <Icon style={styles.googleIcon} type={"FontAwesome5"} name="google"></Icon>
                 </Button>
               </View>
+              {/* <View style={styles.smallSeparator}/>
+              <Text style={styles.subtext}>
+                Or
+              </Text>
               <View style={styles.smallSeparator}/>
               <View style={styles.buttonGroup}>
-                <Button transparent full style={styles.emailButton} onPress={onLoginWithEmail}>
+                <Button transparent small style={styles.emailButton} onPress={onLoginWithEmail}>
                   <Text style={styles.emailButtonText}>Email</Text>
                   <Icon style={styles.emailIcon} type={"FontAwesome5"} name="envelope"></Icon>
                 </Button>
-                <Button transparent full style={styles.registerButton} onPress={onRegister}>
-                  <Text style={styles.registerButtonText}>Register</Text>
+                <Button transparent small style={styles.registerButton} onPress={onRegister}>
+                  <Text style={styles.registerButtonText}>Sign Up</Text>
                   <Icon style={styles.registerIcon} type={"FontAwesome5"} name="sign-in-alt"></Icon>
                 </Button>
-              </View>
+              </View> */}
           </Content>
       );
     }
@@ -122,27 +126,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   emailButton: {
-    width: buttonWidth,
-    borderWidth: 1,
-    borderColor: theme.PRIMARY_COLOR,
-    justifyContent: 'space-between'
   },
   emailButtonText: {
     fontWeight: 'bold',
-    fontSize: buttonFontSize,
-    color: theme.PRIMARY_COLOR
+    fontSize: buttonFontSize - 4,
+    color: theme.PRIMARY_COLOR,
+    textAlign: 'center'
   },
   emailIcon: {
     color: theme.PRIMARY_COLOR
   },
   registerButton: {
-    width: buttonWidth,
-    borderWidth: 1,
-    borderColor: theme.SECONDARY_COLOR
   },
   registerButtonText: {
     fontWeight: 'bold',
-    fontSize: buttonFontSize,
+    fontSize: buttonFontSize - 4,
     color: theme.SECONDARY_COLOR
   },
   registerIcon: {

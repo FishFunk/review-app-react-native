@@ -31,7 +31,7 @@
     "expo-device": "~2.0.0",
     "expo-facebook": "~8.0.0",
     "expo-font": "~8.0.0",
-    "expo-google-sign-in": "~8.0.0",
+    "expo-google-app-auth": "^8.1.2",
     "expo-linking": "^1.0.1",
     "expo-location": "~8.0.0",
     "expo-splash-screen": "~0.3.1",
