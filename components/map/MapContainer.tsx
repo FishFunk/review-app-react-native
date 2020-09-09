@@ -59,6 +59,7 @@ export default class MapContainer extends React.Component<
         this.getInitialState()
             .then(async ()=>{
                 this.setState({ loading: false });
+                FirebaseService.registerPushNotificationToken();
             });
     }
 

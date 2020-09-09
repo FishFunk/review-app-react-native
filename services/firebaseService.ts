@@ -11,6 +11,8 @@ import _get from 'lodash/get';
 import _filter from 'lodash/filter';
 import _indexOf from 'lodash/indexOf';
 import _intersection from 'lodash/intersection';
+import { registerForPushNotificationsAsync } from './notificationService';
+import * as Google from 'expo-google-app-auth';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -26,6 +28,13 @@ class FirebaseService {
 		this.auth = firebase.auth();
 
 		console.log(`Firebase initialized successfully`);
+	}
+
+	async registerPushNotificationToken(){
+		const result = await registerForPushNotificationsAsync();
+		if(result?.status === 'success'){
+			return this.db.ref(`users/${this.auth.currentUser?.uid}/push_token`).set(result.token);
+		}
 	}
 
     async login(email: string, password: string): Promise<{type: string, message: string}> {
@@ -45,6 +54,32 @@ class FirebaseService {
 		}
 		else {
 			return Promise.reject("Failed to create new Firebase user by email");
+		}
+	}
+
+	async signInWithGoogleAsync(){
+		const result = await Google.logInAsync({
+			// androidClientId: YOUR_CLIENT_ID_HERE,
+			behavior: 'web',
+			iosClientId: '824759147779-ni3jt9h5ol648egv60ffr49ea21mtb04.apps.googleusercontent.com',
+			scopes: ['profile', 'email', 'contacts']
+		});
+	
+		switch (result.type) {
+			case 'success': {
+				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
+				const credential = firebase.auth.GoogleAuthProvider.credential(result.accessToken);
+				const { user } = await this.auth.signInWithCredential(credential);  // Sign in with Google credential
+		
+				if(user){
+					return this.initializeUser(user);
+				} else {
+					return Promise.reject("Failed to sign in with Google");
+				}
+			}
+			case 'cancel': {
+				return { type: 'cancel', message: 'User cancelled Google login' };
+			}
 		}
 	}
 
@@ -69,12 +104,60 @@ class FirebaseService {
 				}
 			}
 			case 'cancel': {
-				return Promise.resolve({type: 'cancel', message: 'User cancelled Facebook login'});
+				return { type: 'cancel', message: 'User cancelled Facebook login' };
 			}
 		}
 	}
 
+	async signInWithGoogle(): Promise<{type: string, message: string}>{
+		console.log("Google Sign In");
+		var provider = new firebase.auth.GoogleAuthProvider();
+		provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+		const userCredentialOrError = await firebase.auth().signInWithPopup(provider);
+
+		console.log(userCredentialOrError);
+
+		if(userCredentialOrError.user){
+			return this.initializeUser(userCredentialOrError.user);
+		} else {
+			// Error
+			return { type: 'error', message: JSON.stringify(userCredentialOrError) };
+		}
+	}
+
+	// async advancedGoogleSignInExample(){
+	// 	// Step 1.
+	// 	// User tries to sign in to Google.
+	// 	var provider = new firebase.auth.GoogleAuthProvider();
+	// 	const userCredential = await this.auth.signInWithPopup(provider)
+	// 		.catch(async (error) => {
+	// 			// An error happened.
+	// 			if (error.code === 'auth/account-exists-with-different-credential') {
+	// 				// Step 2.
+	// 				// User's email already exists.
+	// 				// The pending Google credential.
+	// 				var pendingCred = error.credential;
+	// 				// The provider account's email address.
+	// 				var email = error.email;
+	// 				// Get sign-in methods for this email.
+	// 				const methods = await this.auth.fetchSignInMethodsForEmail(email); 
+	// 				// Step 3.
+	// 				// If the user has several sign-in methods,
+	// 				// the first method in the list will be the "recommended" method to use.
+	// 				switch(methods[0]){
+	// 					// TODO: Implement
+	// 					case('password'):
+	// 					break;
+	// 					case('facebook'):
+	// 					break;
+	// 				}
+	// 			}
+  	// 	});
+	// }
+
 	async initializeUser(loggedInUserData: firebase.User): Promise<{type: string, message: string}>{
+		this._verifyInitialized();
+
 		const userSnap = await this.db.ref(`users/${loggedInUserData.uid}`).once('value');
 		if(!userSnap.exists()){
 			// Initialize new user
@@ -106,9 +189,7 @@ class FirebaseService {
 	}
 
 	async getUser(userId?: string): Promise<appUser>{
-		if(!firebase.apps.length || !this.auth.currentUser){
-			throw new Error("Firebase not initialized correctly!");
-		}
+		this._verifyInitialized();
 
 		if(!userId){
 			userId = this.auth.currentUser.uid;
@@ -123,9 +204,7 @@ class FirebaseService {
 	}
 	
 	async getUserReviewIdList() {
-		if(!firebase.apps.length || !this.auth.currentUser){
-			throw new Error("Firebase not initialized correctly!");
-		}
+		this._verifyInitialized();
 
 		const userReviewsSnapshot = await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).once('value');
 		if(!userReviewsSnapshot.exists()){
@@ -136,9 +215,7 @@ class FirebaseService {
 	}
 
 	async getPlaceReviews(placeId: string): Promise<Array<postReview>> {
-		if (!firebase.apps.length) {
-			return Promise.reject("Firebase not initialized");;
-		}
+		this._verifyInitialized();
 
 		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
 		if(!reviewSnapshots.exists()){
@@ -149,14 +226,11 @@ class FirebaseService {
 	}
 
 	async getReviewSummaries(placeId: string): Promise<Array<reviewSummary>>{
+		this._verifyInitialized();
+
 		if(!placeId){
 			return Promise.resolve([]);
 		}
-
-		if (!firebase.apps.length) {
-			return Promise.reject("Firebase not initialized");;
-		}
-
 
 		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
 		if(!reviewSnapshots.exists()){
@@ -180,9 +254,7 @@ class FirebaseService {
 	};
 
 	async findFriends(contactList: Contact[]): Promise<appUser[]>{
-		if(!firebase.apps.length || !this.auth.currentUser){
-			return Promise.reject("Firebase not initialized correctly");
-		}
+		this._verifyInitialized();
 
 		const emails = <any>{};
 		const lastNames = <any>{};
@@ -211,9 +283,7 @@ class FirebaseService {
 	}
 
 	async submitReview(place: fullApiPlace, review: any): Promise<any>{
-		if(!firebase.apps.length || !this.auth.currentUser){
-			return Promise.reject("Firebase not initialized correctly");
-		}
+		this._verifyInitialized();
 
 		const newReview: postReview = {
 			place_id: review.place_id,
@@ -260,9 +330,7 @@ class FirebaseService {
 	}
 
 	async getNearbyPlaces(lat: number, lng: number, radiusInKm=10): Promise<any[]>{
-		if(!firebase.apps.length || !this.auth.currentUser){
-			throw new Error("Firebase not initialized correctly!");
-		}
+		this._verifyInitialized();
 	
 		let places: any[] = [];
 		const placesSnapshot = await this.db.ref(`places`).once('value');
@@ -288,6 +356,12 @@ class FirebaseService {
 		}
 
 		return filteredPlaces;
+	}
+
+	_verifyInitialized(){
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
 	}
 
 	_isInRadius(
