@@ -301,7 +301,7 @@ class FirebaseService {
 		return this.db.ref(`places/${dbPlace.id}`).set(dbPlace);
 	}
 
-	async getNearbyPlaces(lat: number, lng: number, radiusInKm=10): Promise<any[]>{
+	async getNearbyPlaces(lat: number, lng: number, radiusInKm=15): Promise<any[]>{
 		this._verifyInitialized();
 	
 		let places: any[] = [];

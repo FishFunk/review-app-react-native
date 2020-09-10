@@ -31,6 +31,17 @@
       "place_name" : "The Taco Stand",
       "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
       "service" : 4
+    },
+    {
+      "atmosphere" : 5,
+      "avg_rating" : 5,
+      "comments" : "Mmmmmmm, SO GOOD!!",
+      "date" : "Thu Sep 03 2020",
+      "menu" : 5,
+      "place_id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
+      "place_name" : "The Taco Stand",
+      "reviewer_id" : "mockUser1",
+      "service" : 5
     } ],
     "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" : [ {
       "atmosphere" : 5,
@@ -58,55 +69,112 @@
       "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc" ]
     },
     "7scuSNtx8bXQQwfdJUv8wJgvWrw1" : {
+      "dateJoined" : "Thu Sep 03 2020",
+      "email": "admin@email.com",
       "firstName" : "Admin",
+      "following" : [],
       "id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
+      "lastActive" : "Thu Sep 03 2020",
       "lastName" : "Dude",
+      "mobile": "",
+      "photoUrl" : "https://steamusercontent-a.akamaihd.net/ugc/797620606620125695/1ABBE563C02FFDDFC3200B514FECDBBFCBE7A63B/",
       "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc", "ChIJ0XMmY40B3IARvLxm_1x1hBA", "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" ]
     },
-    "sxfSsV7ob9TnwlDC34hQh1s3Dkk2" : {
-      "dateJoined" : "Thu Sep 03 2020",
-      "email" : "jimmy@email.com",
-      "firstName" : "Jimmy",
-      "id" : "sxfSsV7ob9TnwlDC34hQh1s3Dkk2",
-      "lastActive" : "Thu Sep 03 2020",
-      "lastName" : "EatWorld",
+    "mockUser1" : {
+      "dateJoined" : "",
+      "email" : "mockUser1@gmail.com",
+      "firstName" : "Scarlett",
+      "following" : [],
+      "id" : "mockUser1",
+      "lastActive" : "",
+      "lastName" : "Johansson",
       "mobile" : "",
-      "photoUrl" : ""
+      "photoUrl" : "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTxYsXjiCoWGn5Pt4MUfVJ0mjR95sD_BbJ7Wg&usqp=CAU",
+      "reviews" : []
     },
-    "user1" : {
-      "date_active" : "",
-      "date_joined" : "",
-      "email" : "testing@gmail.com",
+    "mockUser2" : {
+      "dateJoined" : "",
+      "email" : "mockUser2@gmail.com",
+      "firstName" : "Samuel",
+      "following" : [],
+      "id" : "mockUser2",
+      "lastActive" : "",
+      "lastName" : "Tarly",
+      "mobile" : "",
+      "photoUrl" : "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/samtarly2-1558188483.jpg?crop=0.565xw:1.00xh;0.274xw,0&resize=480:*",
+      "reviews" : []
+    },
+    "mockUser3" : {
+      "dateJoined" : "",
+      "email" : "mockUser3@gmail.com",
+      "firstName" : "Rachel",
+      "following" : [],
+      "id" : "mockUser3",
+      "lastActive" : "",
+      "lastName" : "McAdams",
+      "mobile" : "",
+      "photoUrl" : "https://cdnph.upi.com/svc/sv/upi/3971598026405/2020/1/693d7ae2327ca88756b94be902e9a168/Rachel-McAdams-pregnant-with-second-child.jpg",
+      "reviews" : []
+    },
+    "mockUser4" : {
+      "dateJoined" : "",
+      "email" : "mockUser4@gmail.com",
       "firstName" : "George",
-      "id" : "user1",
+      "following" : [],
+      "id" : "mockUser4",
+      "lastActive" : "",
       "lastName" : "Costanza",
-      "places_reviewed" : [ "12345" ]
+      "mobile" : "",
+      "photoUrl" : "https://i1.sndcdn.com/avatars-000200220721-8c6odf-t500x500.jpg",
+      "reviews" : []
     },
-    "user2" : {
-      "date_active" : "",
-      "date_joined" : "",
-      "email" : "jdawg@gmail.com",
+    "mockUser5" : {
+      "dateJoined" : "",
+      "email" : "mockUser5@gmail.com",
       "firstName" : "Jerry",
-      "friends" : [ "user1", "user3" ],
-      "id" : "user2",
+      "following" : [],
+      "id" : "mockUser5",
+      "lastActive" : "",
       "lastName" : "Seinfeld",
-      "places_reviewed" : [ "12345" ]
+      "mobile" : "",
+      "photoUrl" : "https://www.pngkey.com/png/full/174-1747765_seinfeld-scripts-jerry-avatar-jerry-seinfeld.png",
+      "reviews" : []
     },
-    "user3" : {
-      "date_active" : "",
-      "date_joined" : "",
-      "email" : "John-Appleseed@mac.com",
-      "firstName" : "Elaine",
-      "friends" : [ "user1", "user2" ],
-      "id" : "user3",
-      "lastName" : "Bennet",
-      "places_reviewed" : [ "12345" ]
+    "mockUser6" : {
+      "dateJoined" : "",
+      "email" : "mockUser6@gmail.com",
+      "firstName" : "Cozmo",
+      "following" : [],
+      "id" : "mockUser6",
+      "lastActive" : "",
+      "lastName" : "Kramer",
+      "mobile" : "",
+      "photoUrl" : "https://i2.sndcdn.com/avatars-KL0BzFursNhODoIN-1yNBjA-t500x500.jpg",
+      "reviews" : []
     },
-    "user4" : {
-      "email" : "hank-zakroff@mac.com",
-      "firstName" : "Christopher",
-      "id" : "user4",
-      "lastName" : "Zakroff"
+    "mockUser7" : {
+      "dateJoined" : "",
+      "email" : "kate-bell@mac.com",
+      "firstName" : "Katie",
+      "following" : [],
+      "id" : "mockUser6",
+      "lastActive" : "",
+      "lastName" : "Bell",
+      "mobile" : "(555) 564-8583",
+      "photoUrl" : "",
+      "reviews" : []
+    },
+    "mockUser8" : {
+      "dateJoined" : "",
+      "email" : "john-appleseed@mac.com",
+      "firstName" : "Johnny",
+      "following" : [],
+      "id" : "mockUser6",
+      "lastActive" : "",
+      "lastName" : "",
+      "mobile" : "(888) 555-5512",
+      "photoUrl" : "",
+      "reviews" : []
     }
   }
 }

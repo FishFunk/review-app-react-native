@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Dimensions } from 'react-native';
 import PlaceDetails from "./PlaceDetails";
 import Modal from "react-native-modal";
-import { fullApiPlace } from "../../models/place";
+import theme from "../../styles/theme";
 
 export default class MapPlaceSummaryModal extends React.Component<
     { isOpen: boolean, placeId: string, toggleSummaryModal: Function }>{
@@ -18,11 +18,9 @@ export default class MapPlaceSummaryModal extends React.Component<
                 onSwipeComplete={() => this.props.toggleSummaryModal()}
                 swipeDirection="down"
             >
-                <View style={styles.modalView}>
-                    <PlaceDetails 
-                        placeId={this.props.placeId} 
-                        toggleSummaryModal={this.props.toggleSummaryModal}/>
-                </View>
+                <PlaceDetails 
+                    placeId={this.props.placeId} 
+                    toggleSummaryModal={this.props.toggleSummaryModal}/>
             </Modal>
         )
     }
@@ -30,16 +28,10 @@ export default class MapPlaceSummaryModal extends React.Component<
 
 const styles = StyleSheet.create({
     modal: {
-        margin: 0
-    },
-    modalView: {
-        marginTop: 200,
-        marginRight: 0,
-        marginLeft: 0,
-        marginBottom: 0,
-        padding: 0,
-        height: '100%',
+        marginTop: 100,
+        height: Dimensions.get('screen').height - 100,
         width: '100%',
-        backgroundColor: "white"
+        backgroundColor: theme.LIGHT_COLOR,
+        margin: 0
     }
 });

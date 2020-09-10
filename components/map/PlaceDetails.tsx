@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image, Linking } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, Linking, Dimensions } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -104,14 +104,14 @@ export default class PlaceDetails extends React.Component<
 
     render() {
         return (
-        <View style={styles.container}>
+        <View>
             {
                 this.state.isLoading ?
                 <Spinner color={theme.PRIMARY_COLOR} /> :
                 <View>
-                    <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+                    <View style={styles.titleView}>
                         <Text style={styles.title}>{this.state.place.name}</Text>
-                        <View style={{alignSelf: 'center'}}>
+                        <View style={styles.starsView}>
                             <ReviewStars rating={this.state.total} fontSize={22}/>
                         </View>
                     </View>
@@ -141,30 +141,32 @@ export default class PlaceDetails extends React.Component<
                         </Button>
                     </View>
                     {       
-                        this.state.items.length > 0 ?             
-                        <ScrollView>
-                            <List style={styles.list}>
-                                {
-                                    this.state.items.map((item: reviewSummary, idx: number)=> 
-                                        <ListItem avatar key={idx} style={styles.listItem}>
-                                            <Left>
-                                                <Thumbnail 
-                                                    source={{ uri: item.img }} 
-                                                    defaultSource={require('../../assets/images/profile.png')} />
-                                            </Left>
-                                            <Body>
-                                                <ReviewStars rating={item.avg_rating} fontSize={18} />
-                                                <Text>{item.name}</Text>
-                                                <Text note>{item.comments}</Text>
-                                            </Body>
-                                            <Right>
-                                                <Text note>{ item.date }</Text>
-                                            </Right>
-                                        </ListItem>
-                                    )
-                                }
-                            </List>
-                        </ScrollView> :
+                        this.state.items.length > 0 ?     
+                        <View>        
+                            <ScrollView style={{height: 250}}>
+                                <List style={styles.list}>
+                                    {
+                                        this.state.items.map((item: reviewSummary, idx: number)=> 
+                                            <ListItem avatar key={idx} style={styles.listItem}>
+                                                <Left>
+                                                    <Thumbnail 
+                                                        source={{ uri: item.img }} 
+                                                        defaultSource={require('../../assets/images/profile.png')} />
+                                                </Left>
+                                                <Body>
+                                                    <ReviewStars rating={item.avg_rating} fontSize={18} />
+                                                    <Text>{item.name}</Text>
+                                                    <Text note>{item.comments}</Text>
+                                                </Body>
+                                                <Right>
+                                                    <Text note>{ item.date }</Text>
+                                                </Right>
+                                            </ListItem>
+                                        )
+                                    }
+                                </List>
+                            </ScrollView>
+                        </View> :
                         <View style={styles.noReviewConatiner}>
                             <Title>Hmm... No Reviews From Your Network</Title>
                             <Text>Be the first to write one!</Text>
@@ -181,9 +183,14 @@ export default class PlaceDetails extends React.Component<
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        height: '100%'
+    titleView: {
+        flexDirection: 'column', 
+        justifyContent: 'center',
+        marginTop: 10
+    },
+    starsView: {
+        marginTop: 5,
+        alignSelf: 'center'
     },
     list: {
         padding: 5
@@ -191,21 +198,14 @@ const styles = StyleSheet.create({
     listItem: {
         padding: 5
     },
-    dismissButton: {
-    },
-    editButton: {
-    },
     title: {
         fontWeight: 'bold',
         fontSize: 20,
-        marginTop: 10,
-        marginBottom: 10,
         textAlign: 'center'
     },
     noReviewConatiner: {
         width: '100%',
         marginTop: 20,
-        // backgroundColor: '#DCDCDC',
         alignItems: 'center'
     },
     buttonContainer: {

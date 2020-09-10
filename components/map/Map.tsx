@@ -90,7 +90,8 @@ const styles = StyleSheet.create({
         borderColor: theme.DARK_COLOR,
         borderWidth: 0.5,
         padding: 15,
-        width: 150
+        minWidth: 150,
+        maxWidth: 250
     },
     stars: {
         alignSelf: 'center'
