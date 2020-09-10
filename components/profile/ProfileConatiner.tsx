@@ -1,15 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import { 
   Text, 
   Button, 
   Grid,
   Row,
-  Col,
   Spinner,
-  Label,
   Title,
-  Footer,
   Icon} from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
@@ -17,10 +14,10 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { appUser } from '../../models/user';
 
 export default class ProfileContainer extends React.Component<{},{
-    user: appUser
+    user: appUser, emailSent: boolean
 }> {
   
-    state: any = { user: {} };
+    state: any = { user: {}, emailSent: false };
 
     onLogout(){
         FirebaseService.signOut();
@@ -33,9 +30,12 @@ export default class ProfileContainer extends React.Component<{},{
 
     async load(){
         const currentUser = await FirebaseService.getUser();
-
-
         this.setState({ user: currentUser });
+    }
+
+    async sendVerificationEmail(){
+        await FirebaseService.sendUserEmailVerification();
+        this.setState({ emailSent: true });
     }
 
     getPhotoUrl(){
@@ -76,16 +76,27 @@ export default class ProfileContainer extends React.Component<{},{
                         <Text style={styles.text}>{this.state.user.reviews? this.state.user.reviews.length : 0}</Text>
                     </Row>
                     <Row style={styles.row}>
-                        <Text style={styles.label}>Email Verified </Text>
+                        <Text style={styles.label}>Email Verified</Text>
                         {           
-                            this.state.user.verified ?             
+                            this.state.user.email_verified ?             
                                 <Icon type={'FontAwesome5'} name={'check'} 
                                     fontSize={16} style={styles.verifiedIcon}></Icon> :
                                 <Icon type={'FontAwesome5'} name={'times'} 
                                     style={styles.notVerifiedIcon}></Icon>
                         }
                     </Row>
-                    <Row style={styles.row}></Row>
+                    {
+                        !this.state.user.email_verified ? 
+                            <Row style={styles.row}>
+                                {        
+                                    !this.state.emailSent ?                         
+                                    <Button full transparent onPress={this.sendVerificationEmail.bind(this)}>
+                                        <Text>Resend Email Verification Link</Text>
+                                    </Button> : 
+                                    <Text>Email Sent!</Text>
+                                }
+                            </Row> : null
+                    }
                     <Row style={styles.row}></Row>
                     <Row style={styles.row}>
                         <Button transparent onPress={this.onLogout} style={{alignSelf: 'center'}}>

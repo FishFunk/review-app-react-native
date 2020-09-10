@@ -137,6 +137,8 @@ class FirebaseService {
 				return Promise.reject(error);
 			});
 
+			await loggedInUserData.sendEmailVerification();
+
 			return Promise.resolve({ type: 'success', message: `Welcome ${newUser.firstName}!`})
 		} else {
 			// User already exists, update user data
@@ -144,10 +146,17 @@ class FirebaseService {
 			await this.updateUserData({
 				lastActive: new Date().toDateString(),
 				photoUrl: loggedInUserData.photoURL, 
-				mobile: loggedInUserData.phoneNumber});
+				mobile: loggedInUserData.phoneNumber,
+				email_verified: loggedInUserData.emailVerified
+			});
 
 			return Promise.resolve({ type: 'success', message: `Welcome back ${usr.firstName}!`});
 		}
+	}
+
+	sendUserEmailVerification(){
+		this._verifyInitialized();
+		return this.auth.currentUser?.sendEmailVerification();
 	}
 
 	async getPlace(placeId: string): Promise<dbPlace | null>{

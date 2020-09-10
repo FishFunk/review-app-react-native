@@ -9,4 +9,5 @@ export interface appUser {
     placesReviewed?: array[];
     mobile?: string;
     photoUrl?: string;
+    email_verified?: boolean;
 }
