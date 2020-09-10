@@ -233,10 +233,10 @@ class FirebaseService {
 
 		contactList.map((contact, idx)=>{
 			if(contact.contactType === "person"){
-				if(contact.lastName) lastNames[contact.lastName] = 1;
+				if(contact.lastName) lastNames[contact.lastName.toLowerCase()] = 1;
 				if(contact.emails){
 					contact.emails.forEach((email: Email)=>{
-						if (email.email) emails[email.email] = 1;
+						if (email.email) emails[email.email.toLowerCase()] = 1;
 					});
 				}
 			}
@@ -246,7 +246,7 @@ class FirebaseService {
 		const usersSnapshot = await this.db.ref(`users`).once('value');
 		usersSnapshot.forEach((snap)=>{
 			const user = snap.val();
-			if(emails[user.email] || lastNames[user.lastName]){
+			if(emails[user.email.toLowerCase()] || lastNames[user.lastName.toLowerCase()]){
 				matches.push(user);
 			}
 		});

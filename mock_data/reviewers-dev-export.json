@@ -1,4 +1,27 @@
 {
+  "places" : {
+    "ChIJ0XMmY40B3IARvLxm_1x1hBA" : {
+      "id" : "ChIJ0XMmY40B3IARvLxm_1x1hBA",
+      "lat" : 32.7988484,
+      "lng" : -117.2560483,
+      "name" : "Taco Surf PB",
+      "rating" : 3.8166666666666664
+    },
+    "ChIJ64xh0eUD3IARg7gW9skpNQc" : {
+      "id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
+      "lat" : 32.8393106,
+      "lng" : -117.2768657,
+      "name" : "The Taco Stand",
+      "rating" : 9.667
+    },
+    "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" : {
+      "id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
+      "lat" : 32.7490528,
+      "lng" : -117.1304167,
+      "name" : "Coin-Op Game Room",
+      "rating" : 3.833333333333333
+    }
+  },
   "reviews" : {
     "ChIJ0XMmY40B3IARvLxm_1x1hBA" : [ {
       "atmosphere" : 5,
@@ -10,6 +33,16 @@
       "place_name" : "Taco Surf PB",
       "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
       "service" : 4
+    }, {
+      "atmosphere" : 3,
+      "avg_rating" : 3.3,
+      "comments" : "Pretty good. Not a fan of the salsas. Definitely better to be had in the area.",
+      "date" : "Thu Sep 10 2020",
+      "menu" : 4,
+      "place_id" : "ChIJ0XMmY40B3IARvLxm_1x1hBA",
+      "place_name" : "Taco Surf PB",
+      "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
+      "service" : 3
     } ],
     "ChIJ64xh0eUD3IARg7gW9skpNQc" : [ {
       "atmosphere" : 5,
@@ -31,8 +64,7 @@
       "place_name" : "The Taco Stand",
       "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
       "service" : 4
-    },
-    {
+    }, {
       "atmosphere" : 5,
       "avg_rating" : 5,
       "comments" : "Mmmmmmm, SO GOOD!!",
@@ -53,6 +85,16 @@
       "place_name" : "Coin-Op Game Room",
       "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
       "service" : 3
+    }, {
+      "atmosphere" : 4,
+      "avg_rating" : 4,
+      "comments" : "Lots of fun but can be expensive!",
+      "date" : "Thu Sep 10 2020",
+      "menu" : 0,
+      "place_id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
+      "place_name" : "Coin-Op Game Room",
+      "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
+      "service" : 0
     } ]
   },
   "users" : {
@@ -60,23 +102,22 @@
       "dateJoined" : "Thu Sep 03 2020",
       "email" : "fishfry62@gmail.com",
       "firstName" : "Daniel",
-      "following" : [ "user4" ],
+      "following" : [ "mockUser4" ],
       "id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
       "lastActive" : "Thu Sep 03 2020",
       "lastName" : "Fishman",
       "mobile" : "",
       "photoUrl" : "https://graph.facebook.com/10217078532466455/picture",
-      "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc" ]
+      "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc", "ChIJ0XMmY40B3IARvLxm_1x1hBA", "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" ]
     },
     "7scuSNtx8bXQQwfdJUv8wJgvWrw1" : {
       "dateJoined" : "Thu Sep 03 2020",
-      "email": "admin@email.com",
+      "email" : "admin@email.com",
       "firstName" : "Admin",
-      "following" : [],
       "id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
       "lastActive" : "Thu Sep 03 2020",
       "lastName" : "Dude",
-      "mobile": "",
+      "mobile" : "",
       "photoUrl" : "https://steamusercontent-a.akamaihd.net/ugc/797620606620125695/1ABBE563C02FFDDFC3200B514FECDBBFCBE7A63B/",
       "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc", "ChIJ0XMmY40B3IARvLxm_1x1hBA", "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" ]
     },
@@ -84,97 +125,81 @@
       "dateJoined" : "",
       "email" : "mockUser1@gmail.com",
       "firstName" : "Scarlett",
-      "following" : [],
       "id" : "mockUser1",
       "lastActive" : "",
       "lastName" : "Johansson",
       "mobile" : "",
-      "photoUrl" : "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTxYsXjiCoWGn5Pt4MUfVJ0mjR95sD_BbJ7Wg&usqp=CAU",
-      "reviews" : []
+      "photoUrl" : "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTxYsXjiCoWGn5Pt4MUfVJ0mjR95sD_BbJ7Wg&usqp=CAU"
     },
     "mockUser2" : {
       "dateJoined" : "",
       "email" : "mockUser2@gmail.com",
       "firstName" : "Samuel",
-      "following" : [],
       "id" : "mockUser2",
       "lastActive" : "",
       "lastName" : "Tarly",
       "mobile" : "",
-      "photoUrl" : "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/samtarly2-1558188483.jpg?crop=0.565xw:1.00xh;0.274xw,0&resize=480:*",
-      "reviews" : []
+      "photoUrl" : "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/samtarly2-1558188483.jpg?crop=0.565xw:1.00xh;0.274xw,0&resize=480:*"
     },
     "mockUser3" : {
       "dateJoined" : "",
       "email" : "mockUser3@gmail.com",
       "firstName" : "Rachel",
-      "following" : [],
       "id" : "mockUser3",
       "lastActive" : "",
       "lastName" : "McAdams",
       "mobile" : "",
-      "photoUrl" : "https://cdnph.upi.com/svc/sv/upi/3971598026405/2020/1/693d7ae2327ca88756b94be902e9a168/Rachel-McAdams-pregnant-with-second-child.jpg",
-      "reviews" : []
+      "photoUrl" : "https://cdnph.upi.com/svc/sv/upi/3971598026405/2020/1/693d7ae2327ca88756b94be902e9a168/Rachel-McAdams-pregnant-with-second-child.jpg"
     },
     "mockUser4" : {
       "dateJoined" : "",
       "email" : "mockUser4@gmail.com",
       "firstName" : "George",
-      "following" : [],
       "id" : "mockUser4",
       "lastActive" : "",
       "lastName" : "Costanza",
       "mobile" : "",
-      "photoUrl" : "https://i1.sndcdn.com/avatars-000200220721-8c6odf-t500x500.jpg",
-      "reviews" : []
+      "photoUrl" : "https://i1.sndcdn.com/avatars-000200220721-8c6odf-t500x500.jpg"
     },
     "mockUser5" : {
       "dateJoined" : "",
       "email" : "mockUser5@gmail.com",
       "firstName" : "Jerry",
-      "following" : [],
       "id" : "mockUser5",
       "lastActive" : "",
       "lastName" : "Seinfeld",
       "mobile" : "",
-      "photoUrl" : "https://www.pngkey.com/png/full/174-1747765_seinfeld-scripts-jerry-avatar-jerry-seinfeld.png",
-      "reviews" : []
+      "photoUrl" : "https://www.pngkey.com/png/full/174-1747765_seinfeld-scripts-jerry-avatar-jerry-seinfeld.png"
     },
     "mockUser6" : {
       "dateJoined" : "",
       "email" : "mockUser6@gmail.com",
       "firstName" : "Cozmo",
-      "following" : [],
       "id" : "mockUser6",
       "lastActive" : "",
       "lastName" : "Kramer",
       "mobile" : "",
-      "photoUrl" : "https://i2.sndcdn.com/avatars-KL0BzFursNhODoIN-1yNBjA-t500x500.jpg",
-      "reviews" : []
+      "photoUrl" : "https://i2.sndcdn.com/avatars-KL0BzFursNhODoIN-1yNBjA-t500x500.jpg"
     },
     "mockUser7" : {
       "dateJoined" : "",
       "email" : "kate-bell@mac.com",
       "firstName" : "Katie",
-      "following" : [],
-      "id" : "mockUser6",
+      "id" : "mockUser7",
       "lastActive" : "",
       "lastName" : "Bell",
       "mobile" : "(555) 564-8583",
-      "photoUrl" : "",
-      "reviews" : []
+      "photoUrl" : ""
     },
     "mockUser8" : {
       "dateJoined" : "",
       "email" : "john-appleseed@mac.com",
       "firstName" : "Johnny",
-      "following" : [],
-      "id" : "mockUser6",
+      "id" : "mockUser8",
       "lastActive" : "",
       "lastName" : "",
       "mobile" : "(888) 555-5512",
-      "photoUrl" : "",
-      "reviews" : []
+      "photoUrl" : ""
     }
   }
 }

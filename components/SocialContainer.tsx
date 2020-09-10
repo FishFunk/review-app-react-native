@@ -8,7 +8,9 @@ import {
   Right, 
   Icon, 
   Button, 
-  Spinner} from 'native-base';
+  Spinner,
+  Thumbnail
+} from 'native-base';
 import FirebaseService from '../services/firebaseService';
 import { 
     getContacts, 
@@ -81,6 +83,7 @@ export default class SocialContainer extends React.Component<{},
         const { followingFriends, suggestedFriends } = this.state;
         let newIds = new Array<string>();
         let newFriends = new Array<appUser>();
+
         for (let f of followingFriends){
             if(f.id && f.id !== user.id){
                 newIds.push(f.id);
@@ -89,6 +92,7 @@ export default class SocialContainer extends React.Component<{},
         }
 
         suggestedFriends.push(user);
+
         this.setState({ followingFriends: newFriends, suggestedFriends: suggestedFriends });
         this.updateUserFollowingIds(newIds);
     }
@@ -121,7 +125,10 @@ export default class SocialContainer extends React.Component<{},
                             this.state.suggestedFriends.map((user: appUser)=>
                                 <ListItem key={user.id}>
                                     <Left>
-                                        <Text>{user.firstName} {user.lastName}</Text>
+                                        <Thumbnail 
+                                            source={{ uri: user.photoUrl }} 
+                                            defaultSource={require('../assets/images/profile.png')}/>
+                                        <Text style={styles.name}>{user.firstName} {user.lastName}</Text>
                                     </Left>
                                     <Right>
                                         {
@@ -144,11 +151,14 @@ export default class SocialContainer extends React.Component<{},
                                 </ListItem>  : null
                         }
                         {
-                            this.state.followingFriends.map((user: appUser)=>
+                            this.state.followingFriends.map((user: appUser, idx)=>
                                 <ListItem key={user.id}>
                                     <Left>
-                                        <Text>{user.firstName} {user.lastName}</Text>
-                                    </Left>
+                                        <Thumbnail 
+                                            source={{ uri: user.photoUrl }} 
+                                            defaultSource={require('../assets/images/profile.png')}/>
+                                        <Text style={styles.name}>{user.firstName} {user.lastName}</Text>
+                                   </Left>
                                     <Right>
                                         {
                                             <Button 
@@ -226,5 +236,8 @@ const styles = StyleSheet.create({
     },
     emptyListButton: {
         alignSelf: 'center'
+    },
+    name: {
+        paddingLeft: 10
     }
 });
