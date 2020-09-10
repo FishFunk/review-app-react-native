@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-native';
 import { 
   Container, 
   Content} from "native-base";
-import AppHeader from "../../components/AppHeader";
-import MapContainer from '../../components/map/MapContainer';
+import AppHeader from "../components/AppHeader";
+import MapContainer from '../components/map/MapContainer';
 
 export default function HomeScreen(props: any) {
 

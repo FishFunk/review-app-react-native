@@ -17,15 +17,17 @@ import {
 import theme from '../styles/theme';
 import { appUser } from '../models/user';
 import _without from 'lodash/without';
+import _indexOf from 'lodash/indexOf';
+import _map from 'lodash/map';
 import UndrawFollowingSvg from '../svgs/undraw_following';
 
-export default class Social extends React.Component<{},
-    { friends: appUser[], following: string[], loading: boolean }> {
+export default class SocialContainer extends React.Component<{},
+    { suggestedFriends: Array<appUser>, followingFriends: Array<appUser>, loading: boolean }> {
   
     state = {
         loading: true,
-        friends: new Array<appUser>(),
-        following: new Array<string>()
+        suggestedFriends: new Array<appUser>(),
+        followingFriends: new Array<appUser>()
      };
 
     onLogout(){
@@ -41,28 +43,57 @@ export default class Social extends React.Component<{},
         const isGranted = await checkContactsPermission();
         if(isGranted){
             const contacts = await getContacts();
-            const friends = await FirebaseService.findFriends(contacts);
+            const allSuggestedFriends = await FirebaseService.findFriends(contacts);
             const followingIds = await FirebaseService.getUserFollowingIds();
-            this.setState({ friends: friends, following: followingIds });
+            let followingFriends = [];
+            let suggestedFriends = [];
+
+            for(let possibleFriend of allSuggestedFriends){
+                // Suggested Friends not yet following
+                if(_indexOf(followingIds, possibleFriend.id) === -1){
+                    suggestedFriends.push(possibleFriend);
+                } else {
+                    // Following Friends
+                    followingFriends.push(possibleFriend);
+                }
+            }
+            
+            this.setState({ 
+                suggestedFriends: suggestedFriends, 
+                followingFriends: followingFriends });
         } else {
             await requestContactsPermission();
         }
     }
 
     onAddContact(user: appUser){
-        const { following } = this.state;
-        following.push(user.id);
-        this.setState({ following: following }, this.updateUserFollowingIds);
+        const { followingFriends, suggestedFriends } = this.state;
+
+        const newSuggested = _without(suggestedFriends, user);
+        followingFriends.push(user);
+        const newIds = _map(followingFriends, f => f.id);
+
+        this.setState({ followingFriends: followingFriends, suggestedFriends: newSuggested });
+        this.updateUserFollowingIds(newIds);
     }
 
     onRemoveContact(user: appUser){
-        const { following } = this.state;
-        const newList = _without(following, user.id);
-        this.setState({ following: newList }, this.updateUserFollowingIds);
+        const { followingFriends, suggestedFriends } = this.state;
+        let newIds = new Array<string>();
+        let newFriends = new Array<appUser>();
+        for (let f of followingFriends){
+            if(f.id && f.id !== user.id){
+                newIds.push(f.id);
+                newFriends.push(f);
+            }
+        }
+
+        suggestedFriends.push(user);
+        this.setState({ followingFriends: newFriends, suggestedFriends: suggestedFriends });
+        this.updateUserFollowingIds(newIds);
     }
 
-    updateUserFollowingIds(){
-        const { following: ids } = this.state;
+    updateUserFollowingIds(ids: string[]){
         FirebaseService.updateUserData({ following: ids })
             .catch((error)=> console.error(error));
     }
@@ -77,30 +108,53 @@ export default class Social extends React.Component<{},
                 <UndrawFollowingSvg width='75%' height='200px'/>
             </View>
             {
-                this.state.friends.length > 0 ?
+                this.state.followingFriends.length > 0 || this.state.suggestedFriends.length > 0?
                     <List>
-                        <ListItem itemDivider style={styles.itemDivider}>
-                            <Text style={styles.dividerText}>People You May Know</Text>
-                            <Text style={styles.dividerText}>Follow</Text>
-                        </ListItem> 
+                        {                      
+                            this.state.suggestedFriends.length > 0 ?  
+                                <ListItem itemDivider style={styles.itemDivider}>
+                                    <Text style={styles.dividerText}>People You May Know</Text>
+                                    <Text style={styles.dividerText}>Follow</Text>
+                                </ListItem> : null
+                        }
                         {
-                            this.state.friends.map((user: appUser, idx: number)=>
-                                <ListItem key={idx}>
+                            this.state.suggestedFriends.map((user: appUser)=>
+                                <ListItem key={user.id}>
                                     <Left>
                                         <Text>{user.firstName} {user.lastName}</Text>
                                     </Left>
                                     <Right>
                                         {
-                                            this.state.following.indexOf(user.id) > -1 ?
-                                            <Button 
-                                                transparent
-                                                onPress={this.onRemoveContact.bind(this, user)}>
-                                                <Icon style={styles.followingIcon} type={"SimpleLineIcons"} name="user-following" />
-                                            </Button> :
                                             <Button 
                                                 transparent
                                                 onPress={this.onAddContact.bind(this, user)}>
                                                 <Icon style={styles.followIcon} type={"SimpleLineIcons"} name="user-follow" />
+                                            </Button>
+                                        }
+            
+                                    </Right>
+                                </ListItem>
+                            )
+                        }
+                        {                      
+                            this.state.followingFriends.length > 0 ?  
+                                <ListItem itemDivider style={styles.itemDivider}>
+                                    <Text style={styles.dividerText}>People You Follow</Text>
+                                    <Text style={styles.dividerText}>Unfollow</Text>
+                                </ListItem>  : null
+                        }
+                        {
+                            this.state.followingFriends.map((user: appUser)=>
+                                <ListItem key={user.id}>
+                                    <Left>
+                                        <Text>{user.firstName} {user.lastName}</Text>
+                                    </Left>
+                                    <Right>
+                                        {
+                                            <Button 
+                                                transparent
+                                                onPress={this.onRemoveContact.bind(this, user)}>
+                                                <Icon style={styles.followingIcon} type={"SimpleLineIcons"} name="user-following" />
                                             </Button>
                                         }
             

@@ -4,7 +4,7 @@ import {
   Container, 
   Content} from "native-base";
 import AppHeader from "../components/AppHeader";
-import Social from '../components/Social';
+import SocialContainer from '../components/SocialContainer';
 
 export default function SocialScreen(props: any){
     return(
@@ -14,7 +14,7 @@ export default function SocialScreen(props: any){
                 buttonIconName={'arrow-left'} 
                 title={'Friend Finder'}/>
             <Content contentContainerStyle={styles.container}>
-                <Social />
+                <SocialContainer />
             </Content>
         </Container>
     )
