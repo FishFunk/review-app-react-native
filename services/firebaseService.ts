@@ -150,6 +150,16 @@ class FirebaseService {
 		}
 	}
 
+	async getPlace(placeId: string): Promise<dbPlace | null>{
+		this._verifyInitialized();
+		const placeSnap = await this.db.ref(`places/${placeId}`).once('value');
+		if(placeSnap.exists()){
+			return placeSnap.val();
+		} else {
+			return null;
+		}
+	}
+
 	async getUser(userId?: string): Promise<appUser>{
 		this._verifyInitialized();
 

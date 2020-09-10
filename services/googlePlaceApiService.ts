@@ -37,7 +37,7 @@ export const getGooglePlaceById = (
 });
 }
 
-export const getGooglePlaceIdBySearch = (searchQuery: string, fields?: Array<string>)=> {
+export const getGooglePlaceIdBySearch = (searchQuery: string)=> {
     const url = _findPlaceUrl(searchQuery);
 
     return new Promise<placeId>((resolve, reject)=>{

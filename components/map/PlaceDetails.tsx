@@ -11,8 +11,7 @@ import {
     Button,
     Icon,
     Spinner,
-    Title,
-    Label
+    Title
 } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import FirebaseService from '../../services/firebaseService';

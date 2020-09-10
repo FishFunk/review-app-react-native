@@ -46,7 +46,6 @@ export default class ProfileContainer extends React.Component<{},{
             } else if (photoUrl.indexOf('google')){
                 const idx = photoUrl.indexOf('=s');
                 const url = photoUrl.slice(0, idx);
-                console.log(url);
                 return `${url}=s500`;
             } else {
                 return photoUrl;

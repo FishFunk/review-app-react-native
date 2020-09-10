@@ -5,26 +5,28 @@ import Map from './Map';
 import { getLocation } from '../../services/locationService';
 import { get } from 'lodash';
 import { LocationData } from 'expo-location';
-import { searchPlace, apiPlace, marker } from '../../models/place';
+import { searchPlace, apiPlace, marker, dbPlace } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
+import { Region } from 'react-native-maps';
 
 export default class MapContainer extends React.Component<
     {}, 
     {
         loading: boolean, 
-        region: {}, 
+        region: Region, 
         markers: marker[], 
         showSummaryModal: boolean,
-        placeId: string
+        placeId: string,
+        searchNearby: boolean
     }> {
 
 
     defaultRegion = {
-        // San Francisco
-        latitude: 37.78825,
-        longitude: -122.4324,
+        // San Diego
+        latitude: 32.7157,
+        longitude: -117.1611,
         latitudeDelta: 0.09,
         longitudeDelta: 0.09
     };
@@ -33,9 +35,10 @@ export default class MapContainer extends React.Component<
     state = {
         placeId: '',
         loading: true,
-        region: {},
+        region: this.defaultRegion,
         markers: [],
-        showSummaryModal: false
+        showSummaryModal: false,
+        searchNearby: true
     };
 
     styles = {
@@ -75,16 +78,16 @@ export default class MapContainer extends React.Component<
                 console.log("getLocation success: " + JSON.stringify(data));
                 this.updateRegion({
                     latitude: data.coords.latitude,
-                    longitude: data.coords.longitude
-                });
+                    longitude: data.coords.longitude,
+                }, true);
             })
             .catch(error =>{
                 console.log("getLocation failed. using default region");
-                this.updateRegion(this.defaultRegion);
+                this.updateRegion(this.defaultRegion, true);
             });
     }
 
-    convertPlacesToMarkers(places: any[]){
+    convertPlacesToMarkers(places: dbPlace[]){
         return places.map((place)=>{
             var m: marker = {
                 latlng: {
@@ -92,43 +95,52 @@ export default class MapContainer extends React.Component<
                     longitude: place.lng
                 },
                 title: place.name,
-                description: place.rating != null ? place.rating.toString() : place.name
+                rating: place.rating
             }
             return m;
         });
     }
 
-    updateRegion(loc: any){
+    updateRegion(loc: any, searchNearby: boolean){
         this.setState({
             region: {
                 latitude: loc.latitude,
                 longitude: loc.longitude,
                 latitudeDelta: 0.09,
                 longitudeDelta: 0.09
-            }
+            },
+            searchNearby: searchNearby
         });
     }
 
-    handleSelectPlace(place: searchPlace){
+    async handleSelectPlace(place: searchPlace){
         const loc = {
             latitude: get(place, 'result.geometry.location.lat'),
             longitude: get(place, 'result.geometry.location.lng')
         };
 
+        const placeId = await getGooglePlaceIdBySearch(place.result.name);
+        const dbPlace = await FirebaseService.getPlace(placeId.place_id);
+
         const marker: marker = {
             latlng: loc,
             title: place.result.name,
-            description: place.result.formatted_address
+            rating: dbPlace ? dbPlace.rating : undefined
         }
 
-        this.updateRegion(loc);
+        this.updateRegion(loc, false);
         this.setState({ markers: [marker] });
     }
 
     onHandleRegionChange(region: any){
-        this.setState({ region }, ()=>{
-            this.loadNearbyPlaceMarkers(region.latitude, region.longitude);
-        });
+        if(this.state.searchNearby){
+            this.setState({ region: region }, ()=>{
+                this.loadNearbyPlaceMarkers(region.latitude, region.longitude);
+            });
+        } else {
+            this.setState({ searchNearby: true });
+        }
+
     }
 
     async onMarkerSelect(mapClickEvent: any){

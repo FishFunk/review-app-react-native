@@ -82,7 +82,8 @@ export interface marker {
     longitude: number
   },
   title: string,
-  description: string
+  description?: string,
+  rating?: number
 }
 
 export interface placePhoto {
