@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image, Linking, Dimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, Linking } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -104,7 +104,7 @@ export default class PlaceDetails extends React.Component<
 
     render() {
         return (
-        <View>
+        <View style={styles.container}>
             {
                 this.state.isLoading ?
                 <Spinner color={theme.PRIMARY_COLOR} /> :
@@ -143,11 +143,11 @@ export default class PlaceDetails extends React.Component<
                     {       
                         this.state.items.length > 0 ?     
                         <View>        
-                            <ScrollView style={{height: 250}}>
+                            <ScrollView>
                                 <List style={styles.list}>
                                     {
                                         this.state.items.map((item: reviewSummary, idx: number)=> 
-                                            <ListItem avatar key={idx} style={styles.listItem}>
+                                            <ListItem avatar key={idx}>
                                                 <Left>
                                                     <Thumbnail 
                                                         source={{ uri: item.img }} 
@@ -183,30 +183,23 @@ export default class PlaceDetails extends React.Component<
 }
 
 const styles = StyleSheet.create({
+    container: {
+        height: '100%'
+    },
     titleView: {
         flexDirection: 'column', 
         justifyContent: 'center',
-        marginTop: 10
-    },
-    starsView: {
-        marginTop: 5,
-        alignSelf: 'center'
-    },
-    list: {
-        padding: 5
-    },
-    listItem: {
-        padding: 5
+        marginTop: 10,
+        height: 40
     },
     title: {
         fontWeight: 'bold',
         fontSize: 20,
         textAlign: 'center'
     },
-    noReviewConatiner: {
-        width: '100%',
-        marginTop: 20,
-        alignItems: 'center'
+    starsView: {
+        marginTop: 5,
+        alignSelf: 'center'
     },
     buttonContainer: {
         width: '100%',
@@ -230,5 +223,14 @@ const styles = StyleSheet.create({
     },
     disabledIcon: {
         color: theme.PRIMARY_COLOR
+    },
+    list: {
+        paddingRight: 5
+    },
+    noReviewConatiner: {
+        minHeight: 200,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
   });

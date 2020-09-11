@@ -30,7 +30,6 @@ export default class MapPlaceSummaryModal extends React.Component<
 const styles = StyleSheet.create({
     modal: {
         marginTop: 100,
-        height: Dimensions.get('screen').height - 100,
         width: '100%',
         backgroundColor: theme.LIGHT_COLOR,
         margin: 0
