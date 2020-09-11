@@ -1,5 +1,5 @@
 const prodConfig = {
-    // only dev for now
+    //TODO: only dev for now
   };
 
 const devConfig = {
@@ -13,6 +13,6 @@ const devConfig = {
     measurementId: "G-SVFJ2NRX7H"
   };
 
-const config = process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
+// const config = process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
 
-export default config;
+export default devConfig;
