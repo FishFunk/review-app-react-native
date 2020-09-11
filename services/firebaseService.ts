@@ -58,7 +58,7 @@ class FirebaseService {
 		}
 	}
 
-	async signInWithGoogleAsync(){
+	async signInWithGoogleAsync(failedCredential?: firebase.auth.AuthCredential){
 		const result = await Google.logInAsync({
 			iosClientId: iosClientId,
 			androidClientId: androidClientId,
@@ -72,8 +72,26 @@ class FirebaseService {
 
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
 				const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
-				const { user: firebaseUser } = await this.auth.signInWithCredential(credential);  // Sign in with Google credential
-	
+
+				let firebaseUser;
+				try{
+					const cred = await this.auth.signInWithCredential(credential);  // Sign in with Google credential
+					firebaseUser = cred.user;
+				} catch(error){
+					var errorCode = error.code;
+					if (errorCode === 'auth/account-exists-with-different-credential') {
+						console.log('Email already associated with another account. Login with Facebook');
+						return this.signInWithFacebook(error.credential);
+					} else {
+						console.error(error);
+						throw error;
+					}
+				}
+
+				if(failedCredential && firebaseUser){
+					await firebaseUser.linkWithCredential(failedCredential);
+				}
+
 				if(firebaseUser){
 					return this.initializeUser(firebaseUser);
 				} else {
@@ -86,7 +104,7 @@ class FirebaseService {
 		}
 	}
 
-	async signInWithFacebook(): Promise<{type: string, message: string}>{
+	async signInWithFacebook(failedCredential?: firebase.auth.AuthCredential): Promise<{type: string, message: string}>{
 		await Facebook.initializeAsync(appConfig.expo.facebookAppId, appConfig.expo.facebookDisplayName);
 		const result = await Facebook.logInWithReadPermissionsAsync(
 			{
@@ -97,11 +115,30 @@ class FirebaseService {
 			case 'success': {
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
 				const credential = firebase.auth.FacebookAuthProvider.credential(result.token);
-				console.log(result.token); //TODO: cache token??
-				const { user } = await this.auth.signInWithCredential(credential);  // Sign in with Facebook credential
+				
+				//TODO: cache token for API usage?
+
+				let firebaseUser;
+				try{
+					const cred = await this.auth.signInWithCredential(credential);  // Sign in with Facebook credential
+					firebaseUser = cred.user;
+				} catch(error){
+					var errorCode = error.code;
+					if (errorCode === 'auth/account-exists-with-different-credential') {
+						console.log('Email already associated with another account. Login with google');
+						return this.signInWithGoogleAsync(error.credential);
+					} else {
+						console.error(error);
+						throw error;
+					}
+				}
+
+				if(failedCredential && firebaseUser){
+					await firebaseUser.linkWithCredential(failedCredential);
+				}
 		
-				if(user){
-					return this.initializeUser(user);
+				if(firebaseUser){
+					return this.initializeUser(firebaseUser);
 				} else {
 					return Promise.reject("Failed to sign in with Facebook");
 				}

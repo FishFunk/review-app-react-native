@@ -19,6 +19,7 @@ export default function LoginSocialScreen(props: any) {
     }
 
     const onFacebookLogin = ()=>{
+      setLoading(true);
       FirebaseService.signInWithFacebook()
         .then(result=>{
           console.log(result.message);
@@ -26,13 +27,11 @@ export default function LoginSocialScreen(props: any) {
         .catch(error =>{
           setError(true);
           console.error(error);
-        })
-        .finally(()=>{
-          setLoading(false);
         });
     }
 
     const onGoogleLogin = ()=>{
+      setLoading(true);
       FirebaseService.signInWithGoogleAsync()
         .then(result=>{
           console.log(result.message);
@@ -40,8 +39,7 @@ export default function LoginSocialScreen(props: any) {
         .catch(error =>{
           setError(true);
           console.error(error);
-        })
-        .finally(()=> setLoading(false));
+        });
     }
 
     if(loading){
