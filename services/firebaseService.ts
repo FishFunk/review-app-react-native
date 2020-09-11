@@ -21,13 +21,12 @@ class FirebaseService {
 
 	constructor(){
 		if (Object.entries(config).length === 0) {
-			console.warn('Missing Firebase Configuration');
+			throw new Error('Missing Firebase Configuration!');
 		}
 
 		firebase.initializeApp(config);
 		this.db = firebase.database();
 		this.auth = firebase.auth();
-
 		console.log(`Firebase initialized successfully`);
 	}
 
@@ -58,20 +57,31 @@ class FirebaseService {
 		}
 	}
 
-	async signInWithGoogleAsync(failedCredential?: firebase.auth.AuthCredential){
-		const result = await Google.logInAsync({
-			iosClientId: iosClientId,
-			androidClientId: androidClientId,
-			behavior: 'web',
-			scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
-		});
+	async signInWithGoogleAsync(failedCredential?: firebase.auth.AuthCredential, loginHint?: string){
+		let result;
+		try{
+			result = await Google.logInAsync({
+				loginHint: loginHint,
+				iosClientId: iosClientId,
+				androidClientId: androidClientId,
+				behavior: 'web',
+				scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
+			});
+		} catch(error){
+			// User cancelled
+			if(error.code == '-3'){
+				console.log(3);
+				return { type: 'cancel', message: 'User cancelled Google login' };
+			} else {
+				throw error;
+			}
+		}
 
 		switch (result.type) {
 			case 'success': {
 				const { idToken } = result;
-
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
-				const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+				const credential = firebase.auth.GoogleAuthProvider.credential(idToken); //TODO: store token for API usage?
 
 				let firebaseUser;
 				try{
@@ -80,10 +90,10 @@ class FirebaseService {
 				} catch(error){
 					var errorCode = error.code;
 					if (errorCode === 'auth/account-exists-with-different-credential') {
-						console.log('Email already associated with another account. Login with Facebook');
+						// TODO: Convert alert to toast or modal
+						alert(`Email already associated with another account. Let's link your Facebook account.`);
 						return this.signInWithFacebook(error.credential);
 					} else {
-						console.error(error);
 						throw error;
 					}
 				}
@@ -114,9 +124,7 @@ class FirebaseService {
 		switch (result.type) {
 			case 'success': {
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
-				const credential = firebase.auth.FacebookAuthProvider.credential(result.token);
-				
-				//TODO: cache token for API usage?
+				const credential = firebase.auth.FacebookAuthProvider.credential(result.token); //TODO: store token for API usage?
 
 				let firebaseUser;
 				try{
@@ -125,10 +133,10 @@ class FirebaseService {
 				} catch(error){
 					var errorCode = error.code;
 					if (errorCode === 'auth/account-exists-with-different-credential') {
-						console.log('Email already associated with another account. Login with google');
-						return this.signInWithGoogleAsync(error.credential);
+						// TODO: Convert alert to toast or modal
+						alert(`Email already associated with another account. Let's link your Google account.`);
+						return this.signInWithGoogleAsync(error.credential, error.email);
 					} else {
-						console.error(error);
 						throw error;
 					}
 				}
@@ -423,6 +431,15 @@ class FirebaseService {
 		} else {
 			return userFriendsSnapshot.val();
 		}
+	}
+
+	log(log: string | Object | Error){
+		if(!firebase.apps.length){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		const today = new Date().toISOString();
+		return this.db.ref(`logs/${today}`).set(log);
 	}
 
 	updateUserData = (data: any) => {

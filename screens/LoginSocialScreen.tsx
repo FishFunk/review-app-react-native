@@ -7,92 +7,73 @@ import FirebaseService from '../services/firebaseService';
 
 export default function LoginSocialScreen(props: any) {
 
-    const [loading, setLoading] = React.useState(false);
     const [isError, setError] = React.useState(false);
 
-    const onLoginWithEmail = ()=>{
-      props.navigation.push('LoginEmail');
-    }
-
-    const onRegister = ()=>{
-      props.navigation.push('Register');
-    }
-
     const onFacebookLogin = ()=>{
-      setLoading(true);
       FirebaseService.signInWithFacebook()
         .then(result=>{
           console.log(result.message);
         })
         .catch(error =>{
           setError(true);
-          console.error(error);
-        });
+          FirebaseService.log(error);
+        })
     }
 
     const onGoogleLogin = ()=>{
-      setLoading(true);
       FirebaseService.signInWithGoogleAsync()
         .then(result=>{
           console.log(result.message);
         })
         .catch(error =>{
           setError(true);
-          console.error(error);
+          FirebaseService.log(error);
         });
     }
 
-    if(loading){
-      return (
+    return (
         <Content contentContainerStyle={styles.container}>
-          <ActivityIndicator size="large" color={ theme.PRIMARY_COLOR }/>
+            <View style={styles.svgWrapper}>
+              <UndrawReviewSvg width='75%' height='200px'/>
+            </View>
+            <Text style={styles.title}>It's time we reviewed our reviews</Text>
+            <Text style={styles.subtext}>
+              Welcome to Reviewly! Real reviews from people you trust.
+            </Text>
+            <Text style={styles.warning}>
+              {isError? 'Login Failed!': ''}
+            </Text>
+            <Text style={styles.subtext}>
+              Log In With
+            </Text>
+            <View style={styles.smallSeparator}/>
+            <View style={styles.buttonGroup}>
+              <Button transparent style={styles.facebookButton} onPress={onFacebookLogin}>
+                <Text style={styles.facebookText}>Facebook</Text>
+                <Icon style={styles.facebookIcon} type={"FontAwesome5"} name="facebook"></Icon>
+              </Button>
+              <Button transparent style={styles.googleButton} onPress={onGoogleLogin}>
+                <Text style={styles.googleText}>Google</Text>
+                <Icon style={styles.googleIcon} type={"FontAwesome5"} name="google"></Icon>
+              </Button>
+            </View>
+            {/* <View style={styles.smallSeparator}/>
+            <Text style={styles.subtext}>
+              Or
+            </Text>
+            <View style={styles.smallSeparator}/>
+            <View style={styles.buttonGroup}>
+              <Button transparent small style={styles.emailButton} onPress={onLoginWithEmail}>
+                <Text style={styles.emailButtonText}>Email</Text>
+                <Icon style={styles.emailIcon} type={"FontAwesome5"} name="envelope"></Icon>
+              </Button>
+              <Button transparent small style={styles.registerButton} onPress={onRegister}>
+                <Text style={styles.registerButtonText}>Sign Up</Text>
+                <Icon style={styles.registerIcon} type={"FontAwesome5"} name="sign-in-alt"></Icon>
+              </Button>
+            </View> */}
         </Content>
-      )
-    } else {
-      return (
-          <Content contentContainerStyle={styles.container}>
-              <View style={styles.svgWrapper}>
-                <UndrawReviewSvg width='75%' height='200px'/>
-              </View>
-              <Text style={styles.title}>It's time we reviewed our reviews</Text>
-              <Text style={styles.subtext}>
-                Welcome to Reviewly! Real reviews from people you trust.
-              </Text>
-              <Text style={styles.warning}>
-                {isError? 'Login Failed!': ''}
-              </Text>
-              <Text style={styles.subtext}>
-                Log In With
-              </Text>
-              <View style={styles.smallSeparator}/>
-              <View style={styles.buttonGroup}>
-                <Button transparent style={styles.facebookButton} onPress={onFacebookLogin}>
-                  <Text style={styles.facebookText}>Facebook</Text>
-                  <Icon style={styles.facebookIcon} type={"FontAwesome5"} name="facebook"></Icon>
-                </Button>
-                <Button transparent style={styles.googleButton} onPress={onGoogleLogin}>
-                  <Text style={styles.googleText}>Google</Text>
-                  <Icon style={styles.googleIcon} type={"FontAwesome5"} name="google"></Icon>
-                </Button>
-              </View>
-              {/* <View style={styles.smallSeparator}/>
-              <Text style={styles.subtext}>
-                Or
-              </Text>
-              <View style={styles.smallSeparator}/>
-              <View style={styles.buttonGroup}>
-                <Button transparent small style={styles.emailButton} onPress={onLoginWithEmail}>
-                  <Text style={styles.emailButtonText}>Email</Text>
-                  <Icon style={styles.emailIcon} type={"FontAwesome5"} name="envelope"></Icon>
-                </Button>
-                <Button transparent small style={styles.registerButton} onPress={onRegister}>
-                  <Text style={styles.registerButtonText}>Sign Up</Text>
-                  <Icon style={styles.registerIcon} type={"FontAwesome5"} name="sign-in-alt"></Icon>
-                </Button>
-              </View> */}
-          </Content>
-      );
-    }
+    );
 }
 
 const buttonWidth = 160;
