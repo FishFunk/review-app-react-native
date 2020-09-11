@@ -24,7 +24,7 @@ import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 
 export default class PlaceDetails extends React.Component<
-    { placeId: string, toggleSummaryModal: Function },
+    { apiKey: string, placeId: string, toggleSummaryModal: Function },
     { 
         items: Array<reviewSummary>, 
         showReviewModal: boolean, 
@@ -55,7 +55,7 @@ export default class PlaceDetails extends React.Component<
 
     async load(){
         const reviews = await FirebaseService.getReviewSummaries(this.props.placeId)
-        const place = await getGooglePlaceById(this.props.placeId);
+        const place = await getGooglePlaceById(this.props.apiKey, this.props.placeId);
         const userReviewIds = await FirebaseService.getUserReviewIdList();
         let photoUrls = []
 
@@ -63,7 +63,7 @@ export default class PlaceDetails extends React.Component<
             // prefetch up to 3 photos
             for(let i=0; i<3; i++){
                 if(place.photos[i]){
-                    const url = getPhotoUrl(place.photos[i].photo_reference);
+                    const url = getPhotoUrl(this.props.apiKey, place.photos[i].photo_reference);
                     await Image.prefetch(url);
                     photoUrls.push(url);
                 }

@@ -10,6 +10,8 @@ import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import { Region } from 'react-native-maps';
+import { Spinner } from 'native-base';
+import theme from '../../styles/theme';
 
 export default class MapContainer extends React.Component<
     {}, 
@@ -19,7 +21,8 @@ export default class MapContainer extends React.Component<
         markers: marker[], 
         showSummaryModal: boolean,
         placeId: string,
-        searchNearby: boolean
+        searchNearby: boolean,
+        apiKey: string
     }> {
 
 
@@ -38,7 +41,8 @@ export default class MapContainer extends React.Component<
         region: this.defaultRegion,
         markers: [],
         showSummaryModal: false,
-        searchNearby: true
+        searchNearby: true,
+        apiKey: ''
     };
 
     styles = {
@@ -59,7 +63,7 @@ export default class MapContainer extends React.Component<
     };
 
     componentDidMount(){
-        this.getInitialState()
+        this.load()
             .then(async ()=>{
                 this.setState({ loading: false });
                 FirebaseService.registerPushNotificationToken();
@@ -72,19 +76,21 @@ export default class MapContainer extends React.Component<
         this.setState({ markers: markers });
     }
 
-    getInitialState(){
-        return getLocation()
-            .then((data: LocationData)=>{
-                console.log("getLocation success: " + JSON.stringify(data));
-                this.updateRegion({
-                    latitude: data.coords.latitude,
-                    longitude: data.coords.longitude,
-                }, true);
-            })
-            .catch(error =>{
-                console.log("getLocation failed. using default region");
-                this.updateRegion(this.defaultRegion, true);
-            });
+    async load(){
+        try{
+            const data = await getLocation();
+            console.log("getLocation success: " + JSON.stringify(data));
+            this.updateRegion({
+                latitude: data.coords.latitude,
+                longitude: data.coords.longitude,
+            }, true);
+        } catch (ex){
+            console.log("getLocation failed. using default region");
+            this.updateRegion(this.defaultRegion, true);
+        }
+
+        const googleApiKey = await FirebaseService.getKey('GOOGLE_API_KEY');
+        this.setState({ apiKey: googleApiKey });
     }
 
     convertPlacesToMarkers(places: dbPlace[]){
@@ -119,7 +125,7 @@ export default class MapContainer extends React.Component<
             longitude: get(place, 'result.geometry.location.lng')
         };
 
-        const placeId = await getGooglePlaceIdBySearch(place.result.name);
+        const placeId = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
         const dbPlace = await FirebaseService.getPlace(placeId.place_id);
 
         const marker: marker = {
@@ -146,7 +152,7 @@ export default class MapContainer extends React.Component<
     async onMarkerSelect(mapClickEvent: any){
         if(!mapClickEvent.placeId){
             const query = mapClickEvent.name || mapClickEvent.id;
-            const place = await getGooglePlaceIdBySearch(query).catch(error => {
+            const place = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
                 return Promise.reject(error);
             });
 
@@ -171,13 +177,15 @@ export default class MapContainer extends React.Component<
 
     render() {
         if(this.state.loading){
-            // show loading
+            return <Spinner color={theme.PRIMARY_COLOR}/>
         }
 
         return (
             <View style={{ width: '100%', height: '100%' }}>
                 <View style={{zIndex: 9999, marginLeft: 10, marginRight: 10}}>
-                    <MapInput handleSelectPlace={this.handleSelectPlace.bind(this)}/>
+                    <MapInput 
+                        handleSelectPlace={this.handleSelectPlace.bind(this)}
+                        apiKey={this.state.apiKey} />
                 </View>
                 {
                     this.state.region.latitude ?
@@ -193,6 +201,7 @@ export default class MapContainer extends React.Component<
                 }
 
                 <MapPlaceSummaryModal 
+                    apiKey={this.state.apiKey}
                     isOpen={this.state.showSummaryModal} 
                     placeId={this.state.placeId} 
                     toggleSummaryModal={this.onToggleSummaryModal.bind(this)}/>

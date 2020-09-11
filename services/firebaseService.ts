@@ -159,6 +159,12 @@ class FirebaseService {
 		return this.auth.currentUser?.sendEmailVerification();
 	}
 
+	async getKey(keyName: string): Promise<string>{
+		this._verifyInitialized();
+		const snap = await this.db.ref(`keys/${keyName}`).once('value');
+		return snap.val();
+	}
+
 	async getPlace(placeId: string): Promise<dbPlace | null>{
 		this._verifyInitialized();
 		const placeSnap = await this.db.ref(`places/${placeId}`).once('value');

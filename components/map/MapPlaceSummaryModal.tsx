@@ -1,11 +1,11 @@
 import React from "react";
-import { StyleSheet, View, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import PlaceDetails from "./PlaceDetails";
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";
 
 export default class MapPlaceSummaryModal extends React.Component<
-    { isOpen: boolean, placeId: string, toggleSummaryModal: Function }>{
+    { apiKey: string, isOpen: boolean, placeId: string, toggleSummaryModal: Function }>{
 
     render(){
         return (
@@ -19,6 +19,7 @@ export default class MapPlaceSummaryModal extends React.Component<
                 swipeDirection="down"
             >
                 <PlaceDetails 
+                    apiKey={this.props.apiKey}
                     placeId={this.props.placeId} 
                     toggleSummaryModal={this.props.toggleSummaryModal}/>
             </Modal>
