@@ -1,4 +1,5 @@
-import { Notifications, Permissions } from "expo";
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 import { isDevice } from 'expo-device';
 import { Platform } from "react-native";
 
@@ -25,13 +26,13 @@ export const registerForPushNotificationsAsync = async () => {
     }
   
     if (Platform.OS === 'android') {
-      Notifications.createChannelAndroidAsync('default', {
+      Notifications.setNotificationChannelAsync('default', {
         name: 'default',
-        sound: true,
-        priority: 'max',
-        vibrate: [0, 250, 250, 250],
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
       });
-
-      return result;
     }
+    
+    return result;
 };

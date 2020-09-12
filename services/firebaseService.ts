@@ -70,7 +70,6 @@ class FirebaseService {
 		} catch(error){
 			// User cancelled
 			if(error.code == '-3'){
-				console.log(3);
 				return { type: 'cancel', message: 'User cancelled Google login' };
 			} else {
 				throw error;
