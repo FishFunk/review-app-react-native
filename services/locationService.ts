@@ -1,14 +1,20 @@
 import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
 
-export const getLocation = (): Promise<Location.LocationData> => {
-    return new Promise(async (resolve, reject)=>{
-        let response = await Location.requestPermissionsAsync().catch(error=>reject(error));
-        if (response && response.status !== 'granted') {
-          reject('Permission to access location was denied');
-          return;
-        }
-  
-        let location = await Location.getCurrentPositionAsync({}).catch(error=>reject(error));
-        if(location) resolve(location);
-    });
+export const getLocation = async (): Promise<Location.LocationData | null> => {
+
+  const { status: existingStatus } = await Permissions.getAsync(Permissions.LOCATION);
+  let finalStatus = existingStatus;
+
+  if (existingStatus !== 'granted') {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    finalStatus = status;
+  }
+
+  if(finalStatus !== 'granted') {
+    return null;
+  } else {
+    const location = await Location.getCurrentPositionAsync({timeout: 3000});
+    return location;
+  }
 }

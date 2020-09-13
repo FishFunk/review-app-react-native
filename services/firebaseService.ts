@@ -14,6 +14,7 @@ import _intersection from 'lodash/intersection';
 import { registerForPushNotificationsAsync } from './notificationService';
 import { iosClientId, androidClientId } from '../constants/Keys';
 import * as Google from 'expo-google-app-auth';
+import { generateRandomString } from './utils';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -78,9 +79,9 @@ class FirebaseService {
 
 		switch (result.type) {
 			case 'success': {
-				const { idToken } = result;
+				const { idToken, accessToken } = result;
 				await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
-				const credential = firebase.auth.GoogleAuthProvider.credential(idToken); //TODO: store token for API usage?
+				const credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken); //TODO: store token for API usage?
 
 				let firebaseUser;
 				try{
@@ -305,8 +306,11 @@ class FirebaseService {
 		const usersSnapshot = await this.db.ref(`users`).once('value');
 		usersSnapshot.forEach((snap)=>{
 			const user = snap.val();
-			if(emails[user.email.toLowerCase()] || lastNames[user.lastName.toLowerCase()]){
-				matches.push(user);
+			if(this.auth.currentUser.uid !== user.id){ // Exclude self from results
+				if(emails[user.email.toLowerCase()] || 
+					lastNames[user.lastName.toLowerCase()]){
+					matches.push(user);
+				}
 			}
 		});
 
@@ -437,8 +441,13 @@ class FirebaseService {
 			throw new Error("Firebase not initialized correctly!");
 		}
 
-		const today = new Date().toISOString();
-		return this.db.ref(`logs/${today}`).set(log);
+		const key = generateRandomString();
+		const data = {
+			data: log,
+			timeStamp: new Date().toISOString()
+		}
+		
+		return this.db.ref(`logs/${key}`).set(data);
 	}
 
 	updateUserData = (data: any) => {

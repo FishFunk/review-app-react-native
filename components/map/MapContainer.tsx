@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, Keyboard, Dimensions } from 'react-native';
+import { View, Keyboard } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
 import { get } from 'lodash';
-import { LocationData } from 'expo-location';
-import { searchPlace, apiPlace, marker, dbPlace } from '../../models/place';
+import { searchPlace, marker, dbPlace } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
@@ -66,7 +65,7 @@ export default class MapContainer extends React.Component<
         this.load()
             .then(async ()=>{
                 this.setState({ loading: false });
-                FirebaseService.registerPushNotificationToken();
+                // FirebaseService.registerPushNotificationToken();
             });
     }
 
@@ -79,18 +78,20 @@ export default class MapContainer extends React.Component<
     async load(){
         try{
             const data = await getLocation();
-            console.log("getLocation success: " + JSON.stringify(data));
-            this.updateRegion({
-                latitude: data.coords.latitude,
-                longitude: data.coords.longitude,
-            }, true);
-        } catch (ex){
-            console.log("getLocation failed. using default region");
-            this.updateRegion(this.defaultRegion, true);
-        }
+            if(data){
+                this.updateRegion({
+                    latitude: data.coords.latitude,
+                    longitude: data.coords.longitude,
+                }, true);
+            } else {
+                this.updateRegion(this.defaultRegion, true);
+            }
 
-        const googleApiKey = await FirebaseService.getKey('GOOGLE_API_KEY');
-        this.setState({ apiKey: googleApiKey });
+            const googleApiKey = await FirebaseService.getKey('GOOGLE_API_KEY');
+            this.setState({ apiKey: googleApiKey });
+        } catch (ex){
+            FirebaseService.log(ex);
+        }
     }
 
     convertPlacesToMarkers(places: dbPlace[]){

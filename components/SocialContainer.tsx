@@ -99,7 +99,7 @@ export default class SocialContainer extends React.Component<{},
 
     updateUserFollowingIds(ids: string[]){
         FirebaseService.updateUserData({ following: ids })
-            .catch((error)=> console.error(error));
+            .catch((error)=> FirebaseService.log(error));
     }
 
     render(){

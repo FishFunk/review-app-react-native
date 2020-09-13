@@ -3,7 +3,7 @@
     "name": "ReVew",
     "description": "Write and read reviews of places amongst only the people you trust most",
     "slug": "ReVew",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
