@@ -15,6 +15,7 @@ import { registerForPushNotificationsAsync } from './notificationService';
 import { iosClientId, androidClientId } from '../constants/Keys';
 import * as Google from 'expo-google-app-auth';
 import { generateRandomString } from './utils';
+import { Platform } from 'react-native';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -60,12 +61,12 @@ class FirebaseService {
 
 	async signInWithGoogleAsync(failedCredential?: firebase.auth.AuthCredential, loginHint?: string){
 		let result;
+		let clientId = Platform.OS === 'android' ? androidClientId : iosClientId;
 		try{
 			result = await Google.logInAsync({
 				loginHint: loginHint,
-				iosClientId: iosClientId,
-				androidClientId: androidClientId,
-				behavior: 'web',
+				clientId: clientId,
+				// behavior: 'web',
 				scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
 			});
 		} catch(error){

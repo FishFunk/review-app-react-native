@@ -12,6 +12,8 @@ import LoginScreen from './screens/LoginSocialScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import SocialScreen from './screens/SocialScreen';
+import { checkForUpdates } from './services/updateService';
+import { hasStartedLocationUpdatesAsync } from 'expo-location';
 // import LoginEmailScreen from './screens/LoginEmailScreen';
 
 export default function App(props: any) {
@@ -23,11 +25,18 @@ export default function App(props: any) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [fontLoaded, setFontLoaded] = useState(false);
+  const [updating, setUpdating] = useState(true);
 
   function onAuthStateChanged(user: any){
     setUser(user);
     if(initializing) setInitializing(false);
   }
+
+  useEffect(()=>{
+    checkForUpdates()
+      .then(()=>setUpdating(false))
+      .catch(error=>console.error(error));
+  })
 
   useEffect(()=>{
     Font.loadAsync({
@@ -42,7 +51,7 @@ export default function App(props: any) {
     return subscriber;
   }, []);
 
-  if (!isLoadingComplete || initializing || !fontLoaded) {
+  if (!isLoadingComplete || initializing || !fontLoaded || updating) {
     return <AppLoading/>;
   }
   
