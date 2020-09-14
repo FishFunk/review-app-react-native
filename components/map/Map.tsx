@@ -1,5 +1,5 @@
 import React from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE, AnimatedRegion, MapEvent, Callout, Region } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region } from 'react-native-maps';
 import theme from '../../styles/theme';
 import mapJson from '../../constants/MapJson';
 import { View, StyleSheet } from 'react-native';

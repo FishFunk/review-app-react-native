@@ -436,10 +436,12 @@ class FirebaseService {
 		}
 	}
 
-	log(log: string | Object | Error){
+	logError(log: string | Object | Error){
 		if(!firebase.apps.length){
 			throw new Error("Firebase not initialized correctly!");
 		}
+
+		console.error(log);
 
 		const key = generateRandomString();
 		const data = {

@@ -17,7 +17,7 @@ export default function LoginSocialScreen(props: any) {
         .catch(error =>{
           setError(true);
           console.error(error);
-          FirebaseService.log(error);
+          FirebaseService.logError(error);
         })
     }
 
@@ -29,7 +29,7 @@ export default function LoginSocialScreen(props: any) {
         .catch(error =>{
           setError(true);
           console.error(error);
-          FirebaseService.log(error);
+          FirebaseService.logError(error);
         });
     }
 
