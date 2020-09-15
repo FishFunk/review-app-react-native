@@ -4,15 +4,15 @@ import theme from '../styles/theme';
 import { Button, Content, Text, Icon } from 'native-base';
 import UndrawReviewSvg from '../svgs/undraw_reviews';
 import FirebaseService from '../services/firebaseService';
-import { isDevice } from 'expo-device';
+import Constants, { AppOwnership } from 'expo-constants';
 
 export default function LoginSocialScreen(props: any) {
 
     const [isError, setError] = React.useState(false);
 
     const onFacebookLogin = ()=>{
-      if(isDevice){
-        FirebaseService.signInWithFacebook()
+      if(Constants.appOwnership === AppOwnership.Standalone){
+        FirebaseService.loginWithFacebook()
         .then(result=>{
           console.log(result.message);
         })
@@ -27,7 +27,7 @@ export default function LoginSocialScreen(props: any) {
     }
 
     const onGoogleLogin = ()=>{
-      FirebaseService.signInWithGoogle()
+      FirebaseService.loginWithGoogle()
         .then(result=>{
           console.log(result.message);
         })
