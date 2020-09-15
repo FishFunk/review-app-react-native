@@ -13,7 +13,7 @@ export default function HomeScreen(props: any) {
         <AppHeader 
           onPressButton={()=> props.navigation.navigate('Account')} 
           buttonIconName={'user-circle'} 
-          title={'Review App'}
+          title={'ReVew'}
           rightButtonIconName={'user-friends'}
           onPressRightButton={()=> props.navigation.navigate('Social')}/>
         <Content contentContainerStyle={styles.container}>

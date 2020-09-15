@@ -3,7 +3,7 @@
     "name": "ReVew",
     "description": "Write and read reviews of places amongst only the people you trust most",
     "slug": "ReVew",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -24,7 +24,7 @@
       "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCASruS9jkUVVJ8E2rk7ga5qRezbIYtj7s"
+          "apiKey": "AIzaSyDobz23IU0wHUTYVHp3rfMCQ4mzlBWscrE"
         }
       }
     },
@@ -33,7 +33,7 @@
       "bundleIdentifier": "com.wanderlustlabs.reviewers",
       "googleServicesFile": "./GoogleService-Info.plist",
       "config": {
-        "googleMapsApiKey": "AIzaSyCASruS9jkUVVJ8E2rk7ga5qRezbIYtj7s",
+        "googleMapsApiKey": "AIzaSyDobz23IU0wHUTYVHp3rfMCQ4mzlBWscrE",
         "googleSignIn": {
           "reservedClientId": "com.googleusercontent.apps.111193503088-2kmo6qaqvmhv9ndbi5dq9qpncph1s8dl"
         }

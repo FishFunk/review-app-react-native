@@ -186,6 +186,7 @@ export default class SocialContainer extends React.Component<{},
                             You can also connect a social media account!
                         </Text>
                         <Button small style={styles.emptyListButton}><Text>Connect Facebook</Text></Button>
+                        <Button small style={styles.emptyListButton}><Text>Connect Google</Text></Button>
                     </View>
             }
           </View>

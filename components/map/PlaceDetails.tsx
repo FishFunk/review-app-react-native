@@ -59,7 +59,7 @@ export default class PlaceDetails extends React.Component<
         const userReviewIds = await FirebaseService.getUserReviewIdList();
         let photoUrls = []
 
-        if(place.photos){
+        if(place && place.photos){
             // prefetch up to 3 photos
             for(let i=0; i<3; i++){
                 if(place.photos[i]){
@@ -69,6 +69,8 @@ export default class PlaceDetails extends React.Component<
                 }
             }
         }
+
+        console.log(photoUrls);
 
         let total = 0;
         if(reviews && reviews.length > 0){

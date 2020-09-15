@@ -1,6 +1,7 @@
 import React from 'react';
 import PlacesInput from 'react-native-places-input';
 import { searchPlace } from '../../models/place';
+import theme from '../../styles/theme';
 
 class MapInput extends React.Component<
     { handleSelectPlace: (place: searchPlace)=>void, apiKey: string }> {
@@ -16,7 +17,10 @@ class MapInput extends React.Component<
                 }}
                 clearQueryOnSelect={true}
                 requiredCharactersBeforeSearch={2}
+                stylesItemText={{color: theme.DARK_COLOR}}
                 textInputProps={{
+                    color: theme.DARK_COLOR,
+                    placeholderTextColor: 'rgba(53, 64, 70, 0.7)',
                     autoFocus: false,
                     clearButtonMode: 'always'
                 }}

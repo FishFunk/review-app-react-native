@@ -17,16 +17,17 @@ export const signInWithGoogle =
 }
 
 const _signInWithGoogleAuth = async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
-    let result;
+    let result: GoogleSignIn.GoogleSignInAuthResult;
     let clientId = Platform.OS === 'android' ? androidClientId : iosClientId;
     try{
-        await GoogleSignIn.initAsync({
-            clientId: clientId, 
-            scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
-        });
+        // await GoogleSignIn.initAsync({
+        //     // clientId: clientId, 
+        //     scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
+        // });
 
         result = await GoogleSignIn.signInAsync();
     } catch(error){
+        alert('error');
         // User cancelled
         if(error.code == '-3'){
             return { type: 'cancel', message: 'User cancelled Google login' };
@@ -83,8 +84,11 @@ const _handleAuthTypeSuccess = async (
 
     try{
         await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
+
         const oAuthCred = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken); //TODO: store token for API usage?
+
         const userCred = await firebase.auth().signInWithCredential(oAuthCred);  // Sign in with Google credential
+
         firebaseUser = userCred.user;
     } catch(error){
         var errorCode = error.code;

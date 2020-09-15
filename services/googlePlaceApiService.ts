@@ -31,7 +31,11 @@ export const getGooglePlaceById = (
         fetch(url)
         .then(res => res.json())
         .then(res => {
-            resolve(res.result);
+            if(res.result){
+                resolve(res.result);
+            } else {
+                reject(new Error("getGooglePlaceById returned no results"));
+            }
         })
         .catch(error => reject(error));
 });
