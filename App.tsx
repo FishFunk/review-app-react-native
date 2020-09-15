@@ -13,7 +13,6 @@ import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import SocialScreen from './screens/SocialScreen';
 import { checkForUpdates } from './services/updateService';
-import { hasStartedLocationUpdatesAsync } from 'expo-location';
 // import LoginEmailScreen from './screens/LoginEmailScreen';
 
 export default function App(props: any) {
@@ -36,7 +35,7 @@ export default function App(props: any) {
     checkForUpdates()
       .then(()=>setUpdating(false))
       .catch(error=>console.error(error));
-  })
+  }, [])
 
   useEffect(()=>{
     Font.loadAsync({
@@ -44,7 +43,7 @@ export default function App(props: any) {
       Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf')
     })
     .then(()=>setFontLoaded(true));
-  })
+  }, [])
 
   useEffect(()=>{
     const subscriber = FirebaseService.auth.onAuthStateChanged(onAuthStateChanged);

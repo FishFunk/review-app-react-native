@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet } from 'react-native';
 import { 
   Container, 
-  Content} from "native-base";
+  Content } from "native-base";
 import AppHeader from "../components/AppHeader";
 import MapContainer from '../components/map/MapContainer';
 

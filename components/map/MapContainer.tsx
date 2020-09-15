@@ -44,23 +44,6 @@ export default class MapContainer extends React.Component<
         apiKey: ''
     };
 
-    styles = {
-        container: {
-          flex: 1,
-          zIndex: 1,
-          backgroundColor: 'white',
-          alignItems: 'center',
-          justifyContent: 'center'
-        },
-        dragHandler: {
-          alignSelf: 'stretch',
-          height: 64,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#ccc'
-        }
-    };
-
     componentDidMount(){
         this.load()
             .then((newState)=>{
@@ -80,20 +63,21 @@ export default class MapContainer extends React.Component<
     async load(){
         let newState: any = {};
         const googleApiKey = await FirebaseService.getKey('GOOGLE_API_KEY');
-        // await FirebaseService.registerPushNotificationToken();
+        await FirebaseService.registerPushNotificationToken();
 
-        // const data = await getLocation();
-        // if(data){
-        //     newState.region = {
-        //         latitudeDelta: 0.09,
-        //         longitudeDelta: 0.09
-        //     };
-        //     newState.region.latitude = data.coords.latitude;
-        //     newState.region.longitude = data.coords.longitude;
-        //     newState.searchNearby = true;
-        // } else {
-        //     this.loadNearbyPlaceMarkers(this.defaultRegion.latitude, this.defaultRegion.longitude);
-        // }
+        alert(googleApiKey);
+        const data = await getLocation();
+        if(data){
+            newState.region = {
+                latitudeDelta: 0.09,
+                longitudeDelta: 0.09
+            };
+            newState.region.latitude = data.coords.latitude;
+            newState.region.longitude = data.coords.longitude;
+            newState.searchNearby = true;
+        } else {
+            this.loadNearbyPlaceMarkers(this.defaultRegion.latitude, this.defaultRegion.longitude);
+        }
 
         newState.apiKey = googleApiKey;
         return newState;
@@ -145,13 +129,13 @@ export default class MapContainer extends React.Component<
     }
 
     onHandleRegionChange(region: any){
-        // if(this.state.searchNearby){
-        //     this.setState({ region: region }, ()=>{
-        //         this.loadNearbyPlaceMarkers(region.latitude, region.longitude);
-        //     });
-        // } else {
-        //     this.setState({ searchNearby: true });
-        // }
+        if(this.state.searchNearby){
+            this.setState({ region: region }, ()=>{
+                this.loadNearbyPlaceMarkers(region.latitude, region.longitude);
+            });
+        } else {
+            this.setState({ searchNearby: true });
+        }
     }
 
     async onMarkerSelect(mapClickEvent: any){
