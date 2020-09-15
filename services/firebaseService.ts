@@ -13,9 +13,11 @@ import _indexOf from 'lodash/indexOf';
 import _intersection from 'lodash/intersection';
 import { registerForPushNotificationsAsync } from './notificationService';
 import { iosClientId, androidClientId } from '../constants/Keys';
-import * as Google from 'expo-google-app-auth';
 import { generateRandomString } from './utils';
 import { Platform } from 'react-native';
+import * as Google from 'expo-google-app-auth';
+import * as GoogleSignIn from 'expo-google-sign-in';
+import { isDevice } from 'expo-device';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -59,12 +61,81 @@ class FirebaseService {
 		}
 	}
 
-	async signInWithGoogleAsync(failedCredential?: firebase.auth.AuthCredential, loginHint?: string){
+	async signInWithGoogle(){
+		if(isDevice){
+			return this._signInWithGoogleAuth();
+		} else {
+			return this._signInWithGoogleExpo();
+		}
+	}
+
+	async _signInWithGoogleAuth(failedCredential?: firebase.auth.AuthCredential){
+		let result;
+		let clientId = Platform.OS === 'android' ? androidClientId : iosClientId;
+		try{
+			await GoogleSignIn.initAsync({
+				clientId: clientId, 
+				scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
+			});
+
+			result = await GoogleSignIn.signInAsync();
+		} catch(error){
+			// User cancelled
+			if(error.code == '-3'){
+				return { type: 'cancel', message: 'User cancelled Google login' };
+			} else {
+				throw error;
+			}
+		}
+
+		const { type, user } = result;
+
+		switch (type) {
+			case 'success': {
+				let firebaseUser;
+				if(user && user.auth){
+					try{
+						const { idToken, accessToken } = user.auth;
+						await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
+						const oAuthCred = await firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);  // Sign in with Google credential
+						const userCred = await this.auth.signInWithCredential(oAuthCred); 
+						firebaseUser = userCred.user;
+					} catch(error){
+						var errorCode = error.code;
+						if (errorCode === 'auth/account-exists-with-different-credential') {
+							// TODO: Convert alert to toast or modal
+							alert(`Email already associated with another account. Let's link your Facebook account.`);
+							return this.signInWithFacebook(error.credential);
+						} else {
+							throw error;
+						}
+					}
+	
+					if(failedCredential && firebaseUser){
+						await firebaseUser.linkWithCredential(failedCredential);
+					}
+	
+					if(firebaseUser){
+						return this.initializeUser(firebaseUser);
+					} else {
+						return Promise.reject("Failed to sign in with Google");
+					}
+				}
+				else {
+					return Promise.reject("Invalid user received from Google sign in");
+				}
+			}
+			case 'cancel': {
+				return { type: 'cancel', message: 'User cancelled Google login' };
+			}
+		}
+	}
+
+	async _signInWithGoogleExpo(failedCredential?: firebase.auth.AuthCredential){
 		let result;
 		let clientId = Platform.OS === 'android' ? androidClientId : iosClientId;
 		try{
 			result = await Google.logInAsync({
-				loginHint: loginHint,
 				clientId: clientId,
 				// behavior: 'web',
 				scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
@@ -136,7 +207,7 @@ class FirebaseService {
 					if (errorCode === 'auth/account-exists-with-different-credential') {
 						// TODO: Convert alert to toast or modal
 						alert(`Email already associated with another account. Let's link your Google account.`);
-						return this.signInWithGoogleAsync(error.credential, error.email);
+						return this._signInWithGoogleAuth(error.credential);
 					} else {
 						throw error;
 					}

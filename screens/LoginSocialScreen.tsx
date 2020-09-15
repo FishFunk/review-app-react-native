@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import theme from '../styles/theme';
 import { Button, Content, Text, Icon } from 'native-base';
 import UndrawReviewSvg from '../svgs/undraw_reviews';
 import FirebaseService from '../services/firebaseService';
+import { isDevice } from 'expo-device';
 
 export default function LoginSocialScreen(props: any) {
 
     const [isError, setError] = React.useState(false);
 
     const onFacebookLogin = ()=>{
-      FirebaseService.signInWithFacebook()
+      if(isDevice){
+        FirebaseService.signInWithFacebook()
         .then(result=>{
           console.log(result.message);
         })
@@ -18,11 +20,14 @@ export default function LoginSocialScreen(props: any) {
           setError(true);
           console.error(error);
           FirebaseService.logError(error);
-        })
+        });
+      } else {
+        alert("Facebook login does not work in Expo");
+      }
     }
 
     const onGoogleLogin = ()=>{
-      FirebaseService.signInWithGoogleAsync()
+      FirebaseService.signInWithGoogle()
         .then(result=>{
           console.log(result.message);
         })
