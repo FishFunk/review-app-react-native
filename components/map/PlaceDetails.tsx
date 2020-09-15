@@ -123,7 +123,7 @@ export default class PlaceDetails extends React.Component<
                         </Badge> : null
                     } */}
                     {
-                        this.state.place.business_status ?
+                        this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
                         <Badge style={styles.badge}>
                             <Text style={styles.badgeText}>Closed Temporarily</Text>
                         </Badge> : null
