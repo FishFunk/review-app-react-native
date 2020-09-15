@@ -36,21 +36,21 @@ export default class Map extends React.Component<
     render() {
         return (
             <MapView
-                // ref={ref => this.mapViewRef = ref}
-                // zoomEnabled={true}
-                // provider={PROVIDER_GOOGLE}
+                ref={ref => this.mapViewRef = ref}
+                zoomEnabled={true}
+                provider={PROVIDER_GOOGLE}
                 style={{flex: 1}}
-                // region={this.props.region}
-                // onRegionChangeComplete={this.onRegionChange.bind(this)} 
-                // showsMyLocationButton={true}
-                // zoomControlEnabled={true}
-                // zoomTapEnabled={true}
-                // onPoiClick={this.onPoiClick.bind(this)}
-                // onMarkerPress={this.onPressMarker.bind(this)}
-                // onPress={this.props.onPress}
-                // customMapStyle={mapJson}
+                region={this.props.region}
+                onRegionChangeComplete={this.onRegionChange.bind(this)} 
+                showsMyLocationButton={true}
+                zoomControlEnabled={true}
+                zoomTapEnabled={true}
+                onPoiClick={this.onPoiClick.bind(this)}
+                onMarkerPress={this.onPressMarker.bind(this)}
+                onPress={this.props.onPress}
+                customMapStyle={mapJson}
             >
-                {/* {this.props.markers.map((marker: marker, idx: number) => (
+                {this.props.markers.map((marker: marker, idx: number) => (
                     <Marker
                         ref={ref => this.markerRef = ref}
                         key={idx}
@@ -76,7 +76,7 @@ export default class Map extends React.Component<
                             </View>
                         </Callout>
                     </Marker>
-                ))} */}
+                ))}
             </MapView>
         )
     }

@@ -64,8 +64,7 @@ export default class MapContainer extends React.Component<
         let newState: any = {};
         const googleApiKey = await FirebaseService.getKey('GOOGLE_API_KEY');
         await FirebaseService.registerPushNotificationToken();
-
-        alert(googleApiKey);
+        
         const data = await getLocation();
         if(data){
             newState.region = {
