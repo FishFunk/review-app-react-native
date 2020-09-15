@@ -11,7 +11,8 @@ import {
     Button,
     Icon,
     Spinner,
-    Title
+    Title,
+    Badge
 } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import FirebaseService from '../../services/firebaseService';
@@ -70,8 +71,6 @@ export default class PlaceDetails extends React.Component<
             }
         }
 
-        console.log(photoUrls);
-
         let total = 0;
         if(reviews && reviews.length > 0){
             let sum = 0;
@@ -117,6 +116,24 @@ export default class PlaceDetails extends React.Component<
                             <ReviewStars rating={this.state.total} fontSize={22}/>
                         </View>
                     </View>
+                    {/* {
+                        this.state.place.business_status === 'OPERATIONAL' ?
+                        <Badge style={{backgroundColor: theme.SECONDARY_COLOR}}>
+                            <Text style={{fontSize: 12}}>Open!</Text>
+                        </Badge> : null
+                    } */}
+                    {
+                        this.state.place.business_status ?
+                        <Badge style={styles.badge}>
+                            <Text style={styles.badgeText}>Closed Temporarily</Text>
+                        </Badge> : null
+                    }
+                    {
+                        this.state.place.business_status === 'CLOSED_PERMANENTLY' ?
+                        <Badge style={styles.badge}>
+                            <Text style={styles.badgeText}>Closed Permanently</Text>
+                        </Badge> : null
+                    }
                     <HorizontalPhotoList photoUrls={this.state.photoUrls} />
                     <View style={styles.buttonContainer}>
                         {
@@ -143,9 +160,8 @@ export default class PlaceDetails extends React.Component<
                         </Button>
                     </View>
                     {       
-                        this.state.items.length > 0 ?     
-                        <View>        
-                            <ScrollView>
+                        this.state.items.length > 0 ?       
+                            <ScrollView style={styles.scrollView}>
                                 <List style={styles.list}>
                                     {
                                         this.state.items.map((item: reviewSummary, idx: number)=> 
@@ -168,7 +184,7 @@ export default class PlaceDetails extends React.Component<
                                     }
                                 </List>
                             </ScrollView>
-                        </View> :
+                        :
                         <View style={styles.noReviewConatiner}>
                             <Title>Hmm... No Reviews From Your Network</Title>
                             <Text>Be the first to write one!</Text>
@@ -191,8 +207,7 @@ const styles = StyleSheet.create({
     titleView: {
         flexDirection: 'column', 
         justifyContent: 'center',
-        marginTop: 10,
-        height: 40
+        marginTop: 10
     },
     title: {
         fontWeight: 'bold',
@@ -234,5 +249,15 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    scrollView: {
+        height: 200
+    },
+    badge: {
+        margin: 5,
+        alignSelf: 'center'
+    },
+    badgeText: {
+        fontSize: 14
     }
   });
