@@ -164,7 +164,9 @@ class FirebaseService {
 		const usersSnapshot = await this.db.ref(`users`).once('value');
 		usersSnapshot.forEach((snap)=>{
 			const user = snap.val();
-			matches.push(user);
+			if(user.id !== this.auth.currentUser?.uid){
+				matches.push(user);
+			}
 		});
 
 		return matches;
