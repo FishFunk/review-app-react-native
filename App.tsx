@@ -6,13 +6,14 @@ import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import FirebaseService from './services/firebaseService';
 import HomeScreen from './screens/HomeScreen';
-import Screen2 from './screens/ProfileScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './screens/LoginSocialScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import SocialScreen from './screens/SocialScreen';
 import { checkForUpdates } from './services/updateService';
+import SearchScreen from './screens/SearchScreen';
+import ProfileScreen from './screens/ProfileScreen';
 // import LoginEmailScreen from './screens/LoginEmailScreen';
 
 export default function App(props: any) {
@@ -82,8 +83,9 @@ export default function App(props: any) {
             headerShown: false,
           }}>
             <mainStackNavigator.Screen name="Home" component={HomeScreen} />
-            <mainStackNavigator.Screen options={{gestureDirection: 'horizontal-inverted'}} name="Account" component={Screen2} />
+            <mainStackNavigator.Screen name="Account" options={{gestureDirection: 'horizontal-inverted'}} component={ProfileScreen} />
             <mainStackNavigator.Screen name="Social" component={SocialScreen} />
+            <mainStackNavigator.Screen name="Search" component={SearchScreen} />
           </mainStackNavigator.Navigator>
         </NavigationContainer>  
       </Container>

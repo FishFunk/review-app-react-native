@@ -32,7 +32,7 @@ export default function LoginEmailScreen(props: any) {
     }
 
     const onFacebookLogin = ()=>{
-      FirebaseService.signInWithFacebook()
+      FirebaseService.loginWithFacebook()
         .then(result=>{
           console.log(result.message);
         })

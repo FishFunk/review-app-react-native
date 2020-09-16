@@ -154,6 +154,21 @@ class FirebaseService {
 			throw new Error(`No user found matching id: ${userId}`);
 		}
 	}
+
+	async searchUsers(searchValue: string): Promise<appUser[]>{
+
+		// TODO: Query results based on search value. Caller is doing filtering currently
+		this._verifyInitialized();
+
+		let matches = new Array<appUser>();
+		const usersSnapshot = await this.db.ref(`users`).once('value');
+		usersSnapshot.forEach((snap)=>{
+			const user = snap.val();
+			matches.push(user);
+		});
+
+		return matches;
+	}
 	
 	async getUserReviewIdList() {
 		this._verifyInitialized();

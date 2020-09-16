@@ -4,24 +4,21 @@ import {
   List, 
   ListItem, 
   Text, 
-  Left, 
-  Right, 
-  Icon, 
   Button, 
-  Spinner,
-  Thumbnail
+  Spinner
 } from 'native-base';
-import FirebaseService from '../services/firebaseService';
+import FirebaseService from '../../services/firebaseService';
 import { 
     getContacts, 
     checkContactsPermission, 
-    requestContactsPermission } from '../services/contactService';
-import theme from '../styles/theme';
-import { appUser } from '../models/user';
+    requestContactsPermission } from '../../services/contactService';
+import theme from '../../styles/theme';
+import { appUser } from '../../models/user';
 import _without from 'lodash/without';
 import _indexOf from 'lodash/indexOf';
 import _map from 'lodash/map';
-import UndrawFollowingSvg from '../svgs/undraw_following';
+import UndrawFollowingSvg from '../../svgs/undraw_following';
+import UserListItem from './UserListItem';
 
 export default class SocialContainer extends React.Component<{},
     { suggestedFriends: Array<appUser>, followingFriends: Array<appUser>, loading: boolean }> {
@@ -99,7 +96,7 @@ export default class SocialContainer extends React.Component<{},
 
     updateUserFollowingIds(ids: string[]){
         FirebaseService.updateUserData({ following: ids })
-            .catch((error)=> FirebaseService.logError(error));
+            .catch((error: any)=> FirebaseService.logError(error));
     }
 
     render(){
@@ -123,25 +120,10 @@ export default class SocialContainer extends React.Component<{},
                         }
                         {
                             this.state.suggestedFriends.map((user: appUser)=>
-                                <ListItem key={user.id}>
-                                    <Left>
-                                        <Thumbnail 
-                                            source={{ uri: user.photoUrl }} 
-                                            defaultSource={require('../assets/images/profile.png')}/>
-                                        <Text style={styles.name}>{user.firstName} {user.lastName}</Text>
-                                    </Left>
-                                    <Right>
-                                        {
-                                            <Button 
-                                                transparent
-                                                onPress={this.onAddContact.bind(this, user)}>
-                                                <Icon style={styles.followIcon} type={"SimpleLineIcons"} name="user-follow" />
-                                            </Button>
-                                        }
-            
-                                    </Right>
-                                </ListItem>
-                            )
+                                <UserListItem 
+                                    user={user} 
+                                    following={false} 
+                                    onButtonPress={this.onAddContact.bind(this, user)}/>)
                         }
                         {                      
                             this.state.followingFriends.length > 0 ?  
@@ -152,25 +134,10 @@ export default class SocialContainer extends React.Component<{},
                         }
                         {
                             this.state.followingFriends.map((user: appUser, idx)=>
-                                <ListItem key={user.id}>
-                                    <Left>
-                                        <Thumbnail 
-                                            source={{ uri: user.photoUrl }} 
-                                            defaultSource={require('../assets/images/profile.png')}/>
-                                        <Text style={styles.name}>{user.firstName} {user.lastName}</Text>
-                                   </Left>
-                                    <Right>
-                                        {
-                                            <Button 
-                                                transparent
-                                                onPress={this.onRemoveContact.bind(this, user)}>
-                                                <Icon style={styles.followingIcon} type={"SimpleLineIcons"} name="user-following" />
-                                            </Button>
-                                        }
-            
-                                    </Right>
-                                </ListItem>
-                            )
+                                <UserListItem 
+                                    user={user} 
+                                    following={true} 
+                                    onButtonPress={this.onRemoveContact.bind(this, user)}/>)
                         }
                     </List> : 
                     <View style={styles.emptyListView}>
@@ -211,14 +178,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    followIcon: {
-        fontSize: 28,
-        color: theme.PRIMARY_COLOR
-    },
-    followingIcon: {
-        fontSize: 28,
-        color: theme.SECONDARY_COLOR
-    },
     emptyListView: {
         flex: 1,
         width: '100%',
@@ -237,8 +196,5 @@ const styles = StyleSheet.create({
     },
     emptyListButton: {
         alignSelf: 'center'
-    },
-    name: {
-        paddingLeft: 10
     }
 });
