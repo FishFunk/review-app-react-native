@@ -8,7 +8,7 @@ class ReviewStars extends Component<{ rating: number, fontSize: number }> {
   styles = StyleSheet.create({
     star: {
       fontSize: this.props.fontSize,
-      color: theme.SECONDARY_COLOR
+      color: theme.STAR_COLOR
     }
   });
 

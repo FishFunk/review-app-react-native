@@ -16,7 +16,7 @@ const _findPlaceUrl = (apiKey: string, searchQuery: string)=>{
 
 export const getPhotoUrl = (apiKey: string,photoRef: string)=>{
     const url = 
-        `${baseUrl}/photo?&maxwidth=400&photoreference=${photoRef}&key=${apiKey}`;
+        `${baseUrl}/photo?&maxwidth=300&photoreference=${photoRef}&key=${apiKey}`;
     return url;
 }
   

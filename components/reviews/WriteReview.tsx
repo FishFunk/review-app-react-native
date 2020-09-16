@@ -280,7 +280,7 @@ const styles=StyleSheet.create({
         marginBottom: 10
     },
     title: {
-        fontSize: 30,
+        fontSize: 20,
         color: theme.DARK_COLOR
     },
     sublabel: {

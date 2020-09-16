@@ -13,7 +13,7 @@ class EditableStars extends Component<{
 
     styles = StyleSheet.create({
         star: {
-            color: theme.SECONDARY_COLOR,
+            color: theme.STAR_COLOR,
             fontSize: this.props.fontSize || this.defaultFontSize
         }
     });

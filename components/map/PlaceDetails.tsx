@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image, Linking } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, Linking, Dimensions } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -12,7 +12,8 @@ import {
     Icon,
     Spinner,
     Title,
-    Badge
+    Badge,
+    Label
 } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import FirebaseService from '../../services/firebaseService';
@@ -109,19 +110,13 @@ export default class PlaceDetails extends React.Component<
             {
                 this.state.isLoading ?
                 <Spinner color={theme.PRIMARY_COLOR} /> :
-                <View>
+                <View style={{flex: 1}}>
                     <View style={styles.titleView}>
                         <Text style={styles.title}>{this.state.place.name}</Text>
                         <View style={styles.starsView}>
                             <ReviewStars rating={this.state.total} fontSize={22}/>
                         </View>
                     </View>
-                    {/* {
-                        this.state.place.business_status === 'OPERATIONAL' ?
-                        <Badge style={{backgroundColor: theme.SECONDARY_COLOR}}>
-                            <Text style={{fontSize: 12}}>Open!</Text>
-                        </Badge> : null
-                    } */}
                     {
                         this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
                         <Badge style={styles.badge}>
@@ -134,34 +129,57 @@ export default class PlaceDetails extends React.Component<
                             <Text style={styles.badgeText}>Closed Permanently</Text>
                         </Badge> : null
                     }
-                    <HorizontalPhotoList photoUrls={this.state.photoUrls} />
+                    <View>
+                        <HorizontalPhotoList photoUrls={this.state.photoUrls} />
+                    </View>
                     <View style={styles.buttonContainer}>
-                        {
-                            this.state.place.formatted_phone_number != null ? 
+                        <ScrollView 
+                            horizontal 
+                            showsHorizontalScrollIndicator={false}>
+                            {
                                 <Button small rounded transparent style={styles.roundButton}
-                                    onPress={()=>Linking.openURL(`tel:${this.state.place.formatted_phone_number}`)}>
-                                    <Icon type={'FontAwesome5'} name={'phone'} style={styles.buttonIcon}></Icon>
-                                </Button> : null
-                        }
-                        {
-                            this.state.place.website != null ? 
+                                    onPress={()=>{alert("not implemented")}}>
+                                    <Icon type={'FontAwesome5'} name={'directions'} style={styles.buttonIcon}></Icon>
+                                    <Label style={{fontSize: 12}}>Directions</Label>
+                                </Button>
+                            }
+                            {
                                 <Button small rounded transparent style={styles.roundButton}
-                                    onPress={()=>Linking.openURL(`${this.state.place.website}`)}>
-                                    <Icon type={'FontAwesome5'} name={'globe'} style={styles.buttonIcon}></Icon>
-                                </Button> : null
-                        }
+                                    onPress={()=>{alert("not implemented")}}>
+                                    <Icon type={'FontAwesome5'} name={'star'} style={styles.buttonIcon}></Icon>
+                                    <Label style={{fontSize: 12}}>Favorite</Label>
+                                </Button>
+                            }
+                            {
+                                this.state.place.formatted_phone_number != null ? 
+                                    <Button small rounded transparent style={styles.roundButton}
+                                        onPress={()=>Linking.openURL(`tel:${this.state.place.formatted_phone_number}`)}>
+                                        <Icon type={'FontAwesome5'} name={'phone'} style={styles.buttonIcon}></Icon>
+                                        <Label style={{fontSize: 12}}>Call</Label>
+                                    </Button> : null
+                            }
+                            {
+                                this.state.place.website != null ? 
+                                    <Button small rounded transparent style={styles.roundButton}
+                                        onPress={()=>Linking.openURL(`${this.state.place.website}`)}>
+                                        <Icon type={'FontAwesome5'} name={'globe'} style={styles.buttonIcon}></Icon>
+                                        <Label style={{fontSize: 12}}>Website</Label>
+                                    </Button> : null
+                            }
 
-                        <Button small rounded transparent 
-                            style={this.state.disableEdit ? styles.disabledButton : styles.roundButton} 
-                            onPress={this.onPressWriteReview.bind(this)}
-                            disabled={this.state.disableEdit}>
-                            <Icon type={'FontAwesome5'} name={'edit'} 
-                                style={this.state.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
-                        </Button>
+                            <Button small rounded transparent 
+                                style={this.state.disableEdit ? styles.disabledButton : styles.roundButton} 
+                                onPress={this.onPressWriteReview.bind(this)}
+                                disabled={this.state.disableEdit}>
+                                <Icon type={'FontAwesome5'} name={'edit'} 
+                                    style={this.state.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
+                                <Label style={{fontSize: 12}}>Review</Label>
+                            </Button>
+                        </ScrollView>
                     </View>
                     {       
                         this.state.items.length > 0 ?       
-                            <ScrollView style={styles.scrollView}>
+                            <ScrollView>
                                 <List style={styles.list}>
                                     {
                                         this.state.items.map((item: reviewSummary, idx: number)=> 
@@ -202,7 +220,7 @@ export default class PlaceDetails extends React.Component<
 
 const styles = StyleSheet.create({
     container: {
-        height: '100%'
+        height: Dimensions.get('screen').height - 100
     },
     titleView: {
         flexDirection: 'column', 
@@ -216,26 +234,30 @@ const styles = StyleSheet.create({
     },
     starsView: {
         marginTop: 5,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginBottom: 5
     },
     buttonContainer: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        padding: 10
+        margin: 5
     },
     roundButton: {
+        margin: 5,
+        width: 80,
         borderWidth: 1,
         borderColor: theme.PRIMARY_COLOR,
-        height: 50
+        height: 50,
+        flexDirection: 'column'
     },
     buttonIcon:{
         color: theme.PRIMARY_COLOR
     },
     disabledButton: {
+        margin: 5,
+        width: 80,
         borderWidth: 1,
         borderColor: theme.PRIMARY_COLOR,
         height: 50,
+        flexDirection: 'column',
         opacity: .5
     },
     disabledIcon: {
@@ -250,12 +272,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    scrollView: {
-        height: 200
-    },
     badge: {
-        margin: 5,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginBottom: 5
     },
     badgeText: {
         fontSize: 14

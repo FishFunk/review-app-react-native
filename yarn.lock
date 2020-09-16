@@ -7931,10 +7931,10 @@ react-native-modal@^11.5.6:
     prop-types "^15.6.2"
     react-native-animatable "1.3.3"
 
-react-native-places-input@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/react-native-places-input/-/react-native-places-input-1.1.6.tgz#ae31de6f8e70c0a73c106f4ef0c495aaa9160623"
-  integrity sha512-DUwHw+dEazZoc+O1PagaEE0tT3AKqPWA07WTvSX3S+hHIbY9EGh8CPKenUa/D0+IjkoJSMQn//KRpEKz9HelrA==
+react-native-places-input@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/react-native-places-input/-/react-native-places-input-1.1.7.tgz#8e36fdd87e1f855d72029f7e2b670f7832a2872c"
+  integrity sha512-Gxl6bNFGK8vCagTRjONKspdgpGs+pGSu/Y3Bp7XZqFaowekhDdQYfs6yXe+WZofH/EmNzFH40jKc83URvqYPXQ==
   dependencies:
     prop-types "^15.7.2"
 

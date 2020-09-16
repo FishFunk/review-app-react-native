@@ -1,12 +1,15 @@
 import React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { List, ListItem } from 'native-base';
-import { StyleSheet, Image, StyleProp, ViewStyle } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 
 export default function HorizontalPhotoList(
-    props: { photoUrls: string[], containerStyle?: StyleProp<ViewStyle> }){
+    props: { photoUrls: string[] }){
     return (
-        <ScrollView horizontal style={props.containerStyle}>
+        <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollView}>
             <List style={styles.photoList}>
             {
                 props.photoUrls.map((url: string, idx: number)=> <ListItem 
@@ -15,27 +18,30 @@ export default function HorizontalPhotoList(
                         key={idx}
                         style={styles.photo}
                         source={{ uri: url }}>
-                    </Image></ListItem>)
+                    </Image>
+                </ListItem>)
             }
             </List>
         </ScrollView>
     )
 }
 
+const photoWidth = 250;
+const photoHeight = 150;
 const styles = StyleSheet.create({
+    scrollView: {
+        height: photoHeight
+    },
     photoList: {
-        flex:1, 
         flexDirection:'row',
-        height: 200
+        height: photoHeight
     },
     photoListItem: {
-        padding: 0,
-        margin: 0
+        height: photoHeight,
+        width: photoWidth
     },
     photo: {
-        height: 200,
-        width: 300,
-        padding: 0,
-        margin: 0
+        height: photoHeight,
+        width: photoWidth
     }
   });

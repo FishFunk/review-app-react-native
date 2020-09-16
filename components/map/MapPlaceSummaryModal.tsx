@@ -3,6 +3,7 @@ import { StyleSheet, Dimensions } from 'react-native';
 import PlaceDetails from "./PlaceDetails";
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";
+import { Content } from "native-base";
 
 export default class MapPlaceSummaryModal extends React.Component<
     { apiKey: string, isOpen: boolean, placeId: string, toggleSummaryModal: Function }>{
@@ -18,10 +19,12 @@ export default class MapPlaceSummaryModal extends React.Component<
                 onSwipeComplete={() => this.props.toggleSummaryModal()}
                 swipeDirection="down"
             >
-                <PlaceDetails 
-                    apiKey={this.props.apiKey}
-                    placeId={this.props.placeId} 
-                    toggleSummaryModal={this.props.toggleSummaryModal}/>
+                <Content scrollEnabled={false}>
+                    <PlaceDetails 
+                        apiKey={this.props.apiKey}
+                        placeId={this.props.placeId} 
+                        toggleSummaryModal={this.props.toggleSummaryModal}/>
+                </Content>
             </Modal>
         )
     }
@@ -30,8 +33,8 @@ export default class MapPlaceSummaryModal extends React.Component<
 const styles = StyleSheet.create({
     modal: {
         marginTop: 100,
-        width: '100%',
         backgroundColor: theme.LIGHT_COLOR,
+        width: '100%',
         margin: 0
     }
 });
