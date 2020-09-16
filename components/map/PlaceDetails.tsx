@@ -24,6 +24,7 @@ import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiSe
 import { fullApiPlace } from '../../models/place';
 import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
+import openMap from 'react-native-open-maps';
 
 export default class PlaceDetails extends React.Component<
     { apiKey: string, placeId: string, toggleSummaryModal: Function },
@@ -104,6 +105,16 @@ export default class PlaceDetails extends React.Component<
         this.load();
     }
 
+    onOpenMaps(){
+        const { formatted_address, name } = this.state.place;
+        
+        openMap({ 
+            // latitude: lat,
+            // longitude: lng, 
+            query: name, 
+            end: formatted_address });
+    }
+
     render() {
         return (
         <View style={styles.container}>
@@ -138,7 +149,7 @@ export default class PlaceDetails extends React.Component<
                             showsHorizontalScrollIndicator={false}>
                             {
                                 <Button small rounded transparent style={styles.roundButton}
-                                    onPress={()=>{alert("not implemented")}}>
+                                    onPress={this.onOpenMaps.bind(this)}>
                                     <Icon type={'FontAwesome5'} name={'directions'} style={styles.buttonIcon}></Icon>
                                     <Label style={{fontSize: 12}}>Directions</Label>
                                 </Button>

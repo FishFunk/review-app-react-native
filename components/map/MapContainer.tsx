@@ -6,7 +6,7 @@ import { getLocation } from '../../services/locationService';
 import { get } from 'lodash';
 import { searchPlace, marker, dbPlace } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
-import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
+import { getGooglePlaceIdBySearch, getGooglePlaceById } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import { Region } from 'react-native-maps';
 import { Spinner } from 'native-base';
@@ -138,21 +138,63 @@ export default class MapContainer extends React.Component<
     }
 
     async onMarkerSelect(mapClickEvent: any){
+        let placeId;
         if(!mapClickEvent.placeId){
             const query = mapClickEvent.name || mapClickEvent.id;
-            const place = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
+            const result = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
                 return Promise.reject(error);
             });
-
-            this.setState({ placeId: place.place_id, showSummaryModal: true });
+            placeId = result.place_id;
         } else {
-            this.setState({ placeId: mapClickEvent.placeId, showSummaryModal: true });
+            placeId = mapClickEvent.placeId;
+        }
+
+        this.setState({ placeId: placeId });
+    }
+
+    async onPoiSelect(mapClickEvent: any){
+        let placeId: string;
+        if(!mapClickEvent.placeId){
+            const query = mapClickEvent.name || mapClickEvent.id;
+            const result = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
+                return Promise.reject(error);
+            });
+            placeId = result.place_id;
+        } else {
+            placeId = mapClickEvent.placeId;
+        }
+        
+        let marker: marker;
+        const { geometry, name } = await getGooglePlaceById(this.state.apiKey, placeId, ['geometry', 'name']);
+
+        if(geometry && name){
+            marker = {
+                latlng: { latitude: geometry?.location.lat, longitude: geometry?.location.lng },
+                title: name,
+                rating: undefined
+            }
+            
+            this.updateRegion(marker.latlng, false);
+            this.setState({ markers: [marker] });
         }
     }
 
     onPressMapArea(){
         Keyboard.dismiss();
         this.setState({ showSummaryModal: false });
+    }
+
+    async onShowDetails(event: any){
+        let placeId: string;
+        if(event.id){
+            const query = event.id;
+            const result = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
+                return Promise.reject(error);
+            });
+            placeId = result.place_id;
+
+            this.setState({ placeId: placeId, showSummaryModal: true });
+        }
     }
 
     onToggleSummaryModal(forceVal?: boolean){
@@ -183,7 +225,9 @@ export default class MapContainer extends React.Component<
                                 markers={this.state.markers}
                                 onPress={this.onPressMapArea.bind(this)}
                                 onMarkerSelect={this.onMarkerSelect.bind(this)}
+                                onPoiSelect={this.onPoiSelect.bind(this)}
                                 onRegionChange={this.onHandleRegionChange.bind(this)}
+                                onShowDetails={this.onShowDetails.bind(this)}
                             />
                         </View> : null
                 }

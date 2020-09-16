@@ -24,7 +24,8 @@ export const getGooglePlaceById = (
     apiKey: string,
     place_id: string, 
     fields: Array<string> = ['business_status', 'geometry', 'name', 
-        'opening_hours', 'photos', 'place_id', 'website', 'formatted_phone_number', 'types'])=> {
+        'opening_hours', 'photos', 'place_id', 'website', 'formatted_phone_number', 
+        'formatted_address', 'types'])=> {
     const url = _getPlaceUrl(apiKey, place_id, fields);
 
     return new Promise<fullApiPlace>((resolve, reject)=>{

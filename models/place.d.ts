@@ -43,11 +43,11 @@ export interface apiPlace {
 export interface fullApiPlace {
   business_status? : 'OPERATIONAL' | 'CLOSED_TEMPORARILY' | 'CLOSED_PERMANENTLY' | null,
   geometry? : {
-    location? : {
+    location : {
         lat : number,
         lng : number
     },
-    viewport? : {
+    viewport : {
         northeast : {
           lat : number,
           lng : number
@@ -58,6 +58,7 @@ export interface fullApiPlace {
         }
     }
   },
+  formatted_address?: string,
   formatted_phone_number? : string,
   icon? : string,
   name? : string,

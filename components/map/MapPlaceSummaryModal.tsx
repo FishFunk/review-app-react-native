@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import PlaceDetails from "./PlaceDetails";
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";

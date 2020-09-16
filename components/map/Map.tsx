@@ -3,7 +3,7 @@ import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region } from 'rea
 import theme from '../../styles/theme';
 import mapJson from '../../constants/MapJson';
 import { View, StyleSheet } from 'react-native';
-import { Title, Text } from 'native-base';
+import { Title, Text, Button } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import { marker } from '../../models/place';
 
@@ -13,7 +13,9 @@ export default class Map extends React.Component<
         markers: Array<marker>,
         onPress: (event: MapEvent) => void,
         onMarkerSelect: Function,
-        onRegionChange: (region: Region) => void
+        onPoiSelect: Function,
+        onRegionChange: (region: Region) => void,
+        onShowDetails: Function
     },
     {}>{
 
@@ -21,16 +23,27 @@ export default class Map extends React.Component<
     markerRef: Marker | null  = null;
 
     onPressMarker(event: MapEvent<{ action: "marker-press"; id: string }>){
+        event.preventDefault();
         this.props.onMarkerSelect(event.nativeEvent);
     }
 
     onPoiClick(event: MapEvent<{ placeId: string; name: string }>){
-        this.props.onMarkerSelect(event.nativeEvent);
+        event.preventDefault();
+        this.props.onPoiSelect(event.nativeEvent);
     }
 
     onRegionChange(region: Region){
         this.markerRef?.hideCallout();
         this.props.onRegionChange(region);
+    }
+
+    onMapPress(event: MapEvent<{}>){
+        event.preventDefault();
+        this.props.onPress(event);
+    }
+
+    onPressCallout(event: MapEvent<{}>){
+        this.props.onShowDetails(event.nativeEvent);
     }
 
     render() {
@@ -46,8 +59,7 @@ export default class Map extends React.Component<
                 zoomControlEnabled={true}
                 zoomTapEnabled={true}
                 onPoiClick={this.onPoiClick.bind(this)}
-                onMarkerPress={this.onPressMarker.bind(this)}
-                onPress={this.props.onPress}
+                onPress={this.onMapPress.bind(this)}
                 customMapStyle={mapJson}
             >
                 {this.props.markers.map((marker: marker, idx: number) => (
@@ -57,20 +69,26 @@ export default class Map extends React.Component<
                         identifier={marker.title}
                         coordinate={marker.latlng}
                         pinColor={theme.SECONDARY_COLOR}
+                        onPress={this.onPressMarker.bind(this)}
                     >
-                        <Callout tooltip>
+                        <Callout tooltip onPress={this.onPressCallout.bind(this)}>
                             <View>
                                 <View style={styles.bubble}>
                                     <Title>{marker.title}</Title>
                                     {
                                         marker.rating ?
                                         <View style={styles.stars}><ReviewStars rating={5} fontSize={12}/></View> :
-                                        <Text>No Reviews</Text>
+                                        <Text style={styles.subtext}>No Reviews</Text>
                                     }
                                     {
                                         marker.description ?
-                                        <Text>{marker.description}</Text> : null
+                                        <Text style={styles.subtext}>{marker.description}</Text> : null
                                     }
+                                    <Button 
+                                        small 
+                                        transparent 
+                                        style={styles.button}
+                                        ><Text>Details</Text></Button>
                                 </View>
                                 <View style={styles.arrow}/>
                             </View>
@@ -103,5 +121,11 @@ const styles = StyleSheet.create({
         borderWidth: 16,
         alignSelf: 'center',
         marginTop: -0.5
+    },
+    button: {
+        alignSelf: 'center'
+    },
+    subtext: {
+        alignSelf: 'center'
     }
 });
