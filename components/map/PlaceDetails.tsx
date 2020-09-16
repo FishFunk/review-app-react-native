@@ -166,6 +166,13 @@ export default class PlaceDetails extends React.Component<
                                         <Label style={{fontSize: 12}}>Website</Label>
                                     </Button> : null
                             }
+                            {
+                                <Button small rounded transparent style={styles.roundButton}
+                                    onPress={()=>{alert("not implemented")}}>
+                                    <Icon type={'FontAwesome5'} name={'share'} style={styles.buttonIcon}></Icon>
+                                    <Label style={{fontSize: 12}}>Share</Label>
+                                </Button>
+                            }
 
                             <Button small rounded transparent 
                                 style={this.state.disableEdit ? styles.disabledButton : styles.roundButton} 
