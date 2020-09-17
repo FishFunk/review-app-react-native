@@ -12,6 +12,7 @@ export default class Map extends React.Component<
     {
         region: Region,
         markers: Array<markerData>,
+        setMapRef: (ref: MapView | null) => void,
         onPress: () => void,
         onMarkerSelect: (marker: markerData) => void,
         onPoiSelect: (placeId: string) => void,
@@ -58,10 +59,15 @@ export default class Map extends React.Component<
         this.props.onShowDetails(marker.placeId);
     }
 
+    setMapViewRef(ref: MapView | null){
+        this.mapViewRef = ref;
+        this.props.setMapRef(ref);
+    }
+
     render() {
         return (
             <MapView
-                ref={ref => this.mapViewRef = ref}
+                ref={ref => this.setMapViewRef(ref)}
                 zoomEnabled={true}
                 provider={PROVIDER_GOOGLE}
                 style={{flex: 1}}
@@ -84,26 +90,20 @@ export default class Map extends React.Component<
                         onPress={(event)=>this.onPressMarker(event, marker)}
                     >
                         <Callout tooltip onPress={(event)=>this.onPressCallout(event, marker)}>
-                            <View>
-                                <View style={styles.bubble}>
-                                    <Title>{marker.title}</Title>
-                                    {
-                                        marker.rating ?
-                                        <View style={styles.stars}><ReviewStars rating={marker.rating} fontSize={12}/></View> :
-                                        <Text style={styles.subtext}>No Reviews</Text>
-                                    }
-                                    {
-                                        marker.description ?
-                                        <Text style={styles.subtext}>{marker.description}</Text> : null
-                                    }
-                                    <Button 
-                                        small 
-                                        transparent 
-                                        style={styles.button}
-                                        ><Text>Details</Text></Button>
-                                </View>
-                                <View style={styles.arrow}/>
+                            <View style={styles.bubble}>
+                                <Title style={styles.title}>{marker.title}</Title>
+                                {
+                                    marker.rating ?
+                                    <View style={styles.stars}><ReviewStars rating={marker.rating} fontSize={12}/></View> :
+                                    <Text style={styles.subtext}>No Reviews</Text>
+                                }
+                                {
+                                    marker.description ?
+                                    <Text style={styles.subtext}>{marker.description}</Text> : null
+                                }
+                                <Text style={styles.actionText}>Details</Text>
                             </View>
+                            <View style={styles.arrow}/>
                         </Callout>
                     </Marker>
                 ))}
@@ -117,11 +117,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: theme.LIGHT_COLOR,
         borderRadius: 6,
-        borderColor: theme.DARK_COLOR,
+        borderColor: theme.PRIMARY_COLOR,
         borderWidth: 0.5,
-        padding: 15,
+        padding: 10,
         minWidth: 150,
-        maxWidth: 250
+        maxWidth: 250,
+    },
+    title: {
+        fontSize: 16,
+        color: theme.DARK_COLOR
     },
     stars: {
         alignSelf: 'center'
@@ -130,11 +134,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         borderColor: 'transparent',
         borderTopColor: theme.PRIMARY_COLOR,
-        borderWidth: 16,
+        borderWidth: 10,
         alignSelf: 'center',
         marginTop: -0.5
     },
-    button: {
+    actionText: {
+        marginTop: 5,
+        fontSize: 12,
+        color: theme.PRIMARY_COLOR,
         alignSelf: 'center'
     },
     subtext: {

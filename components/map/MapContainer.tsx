@@ -8,7 +8,7 @@ import { searchPlace, markerData, dbPlace } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch, getGooglePlaceById } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
-import { Region, Marker } from 'react-native-maps';
+import MapView, { Region, Marker } from 'react-native-maps';
 import { Spinner, Button, Icon, Label } from 'native-base';
 import theme from '../../styles/theme';
 import { isInRadius, getPlaceAvgRating } from '../../services/utils';
@@ -33,6 +33,8 @@ export default class MapContainer extends React.Component<
         longitudeDelta: 0.09
     };
 
+    mapViewRef: MapView | null = null;
+
     // initial state
     state = {
         placeId: '',
@@ -55,10 +57,28 @@ export default class MapContainer extends React.Component<
             });
     }
 
+    setMapRef(ref: MapView | null){
+        this.mapViewRef = ref;
+    }
+
     async loadNearbyPlaceMarkers(){
         const { latitude: lat, longitude: lng } = this.state.region;
         const places = await FirebaseService.getNearbyPlaces(lat, lng);
         const markers = this.convertPlacesToMarkers(places);
+
+        if(this.mapViewRef){
+            const latLngs = markers.map(m=>m.latlng);
+
+            // include current region within scope
+            latLngs.push({ 
+                latitude: lat, 
+                longitude: lng });
+
+            this.mapViewRef.fitToCoordinates(latLngs, 
+                { animated: true, 
+                    edgePadding: {top: 80, right: 80, bottom: 80, left: 80 }});
+        }
+
         this.setState({ markers: markers });
     }
 
@@ -70,11 +90,11 @@ export default class MapContainer extends React.Component<
         const data = await getLocation();
         if(data){
             newState.region = {
+                latitude: data.coords.latitude,
+                longitude: data.coords.longitude,
                 latitudeDelta: 0.09,
                 longitudeDelta: 0.09
             };
-            newState.region.latitude = data.coords.latitude;
-            newState.region.longitude = data.coords.longitude;
         }
         
         newState.apiKey = googleApiKey;
@@ -91,7 +111,7 @@ export default class MapContainer extends React.Component<
                 longitudeDelta: 0.09
             };
             
-            this.updateRegion(region);
+            this.mapViewRef?.animateToRegion(region);
         }
     }
 
@@ -110,13 +130,9 @@ export default class MapContainer extends React.Component<
         });
     }
 
-    updateRegion(data: any){
-        this.setState({ region:  { ...data }} );
-    }
-
     async handleSelectPlace(place: searchPlace){
         Keyboard.dismiss();
-        const loc = {
+        const region = {
             latitude: get(place, 'result.geometry.location.lat'),
             longitude: get(place, 'result.geometry.location.lng'),
             latitudeDelta: 0.09,
@@ -130,14 +146,15 @@ export default class MapContainer extends React.Component<
         const rating = getPlaceAvgRating(dbPlace, reviews);
 
         const marker: markerData = {
-            latlng: loc,
+            latlng: region,
             title: place.result.name,
             rating: rating,
             placeId: place_id
         }
 
-        this.updateRegion(loc);
         this.setState({ markers: [marker], placeId: place_id });
+
+        this.mapViewRef?.animateToRegion(region);
     }
 
     onHandleRegionChange(region: Region, marker: Marker | null){
@@ -152,7 +169,7 @@ export default class MapContainer extends React.Component<
             if(hideCallout) marker.hideCallout(); 
         }
 
-        this.updateRegion(region);
+        this.setState({ region:  { ...region }} );
     }
 
     async onMarkerSelect(marker: markerData){
@@ -164,7 +181,9 @@ export default class MapContainer extends React.Component<
             longitudeDelta: this.state.region.longitudeDelta
         };
 
-        this.setState({ placeId: marker.placeId, region: { ...region } });
+        this.setState({placeId: marker.placeId});
+
+        this.mapViewRef?.animateToRegion(region);
     }
 
     async loadSingleMarker(placeId: string){
@@ -196,15 +215,18 @@ export default class MapContainer extends React.Component<
                 longitudeDelta: this.state.region.longitudeDelta
             }
             
-            this.updateRegion(region);
             this.setState({ markers: [marker], placeId: placeId });
+
+            this.mapViewRef?.animateToRegion(region);
         }
     }
 
     reloadPlaceReviews(){
-        // Reload marker
-        const { placeId } = this.state;
-        this.loadSingleMarker(placeId);
+        // Reload single marker
+        const { placeId, markers } = this.state;
+        if(markers.length === 1){
+            this.loadSingleMarker(placeId);      
+        }
     }
 
     onPressMapArea(){
@@ -242,6 +264,7 @@ export default class MapContainer extends React.Component<
                     this.state.region.latitude ?
                         <View style={{width: '100%', height: '100%'}}>
                             <Map 
+                                setMapRef={this.setMapRef.bind(this)}
                                 region={this.state.region}
                                 markers={this.state.markers}
                                 onPress={this.onPressMapArea.bind(this)}
