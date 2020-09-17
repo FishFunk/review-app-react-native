@@ -77,14 +77,15 @@ export interface fullApiPlace {
   vicinity? : string
 }
 
-export interface marker {
+export interface markerData {
   latlng: {
     latitude: number,
     longitude: number
   },
   title: string,
   description?: string,
-  rating?: number
+  rating?: number,
+  placeId: string
 }
 
 export interface placePhoto {

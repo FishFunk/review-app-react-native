@@ -5,18 +5,18 @@ import mapJson from '../../constants/MapJson';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Title, Text, Button } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
-import { marker } from '../../models/place';
+import { markerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';
 
 export default class Map extends React.Component<
     {
         region: Region,
-        markers: Array<marker>,
-        onPress: (event: MapEvent) => void,
-        onMarkerSelect: Function,
-        onPoiSelect: Function,
-        onRegionChange: (region: Region, markerRef: Marker) => void,
-        onShowDetails: Function
+        markers: Array<markerData>,
+        onPress: () => void,
+        onMarkerSelect: (marker: markerData) => void,
+        onPoiSelect: (placeId: string) => void,
+        onRegionChange: (region: Region, markerRef: Marker | null) => void,
+        onShowDetails: (placeId: string) => void
     },
     {}>{
 
@@ -34,14 +34,14 @@ export default class Map extends React.Component<
         }
     }
 
-    onPressMarker(event: MapEvent<{ action: "marker-press"; id: string }>){
+    onPressMarker(event: MapEvent<{}>, marker: markerData){
         event.preventDefault();
-        this.props.onMarkerSelect(event.nativeEvent);
+        this.props.onMarkerSelect(marker);
     }
 
     onPoiClick(event: MapEvent<{ placeId: string; name: string }>){
         event.preventDefault();
-        this.props.onPoiSelect(event.nativeEvent);
+        this.props.onPoiSelect(event.nativeEvent.placeId);
     }
 
     onRegionChange(region: Region){
@@ -50,11 +50,12 @@ export default class Map extends React.Component<
 
     onMapPress(event: MapEvent<{}>){
         event.preventDefault();
-        this.props.onPress(event);
+        this.props.onPress();
     }
 
-    onPressCallout(event: MapEvent<{}>){
-        this.props.onShowDetails(event.nativeEvent);
+    onPressCallout(event: MapEvent<{}>, marker: markerData){
+        event.preventDefault();
+        this.props.onShowDetails(marker.placeId);
     }
 
     render() {
@@ -73,16 +74,16 @@ export default class Map extends React.Component<
                 onPress={this.onMapPress.bind(this)}
                 customMapStyle={mapJson}
             >
-                {this.props.markers.map((marker: marker, idx: number) => (
+                {this.props.markers.map((marker: markerData, idx: number) => (
                     <Marker
                         ref={ref => this.markerRef = ref}
                         key={idx}
                         identifier={marker.title}
                         coordinate={marker.latlng}
                         pinColor={theme.SECONDARY_COLOR}
-                        onPress={this.onPressMarker.bind(this)}
+                        onPress={(event)=>this.onPressMarker(event, marker)}
                     >
-                        <Callout tooltip onPress={this.onPressCallout.bind(this)}>
+                        <Callout tooltip onPress={(event)=>this.onPressCallout(event, marker)}>
                             <View>
                                 <View style={styles.bubble}>
                                     <Title>{marker.title}</Title>

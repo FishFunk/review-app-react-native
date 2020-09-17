@@ -20,8 +20,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
         onDismissModal: Function,
-        place: fullApiPlace,
-        onReviewSubmit: Function
+        place: fullApiPlace
     },
     {
         rating1: number,
@@ -95,7 +94,6 @@ export default class WriteReview extends Component<{
 
         await FirebaseService.submitReview(this.props.place, reviewData);
         this.onDismissModal();
-        this.props.onReviewSubmit();
     }
 
     avgRating(){

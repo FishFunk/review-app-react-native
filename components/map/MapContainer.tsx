@@ -4,12 +4,12 @@ import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
 import { get } from 'lodash';
-import { searchPlace, marker, dbPlace } from '../../models/place';
+import { searchPlace, markerData, dbPlace } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch, getGooglePlaceById } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import { Region, Marker } from 'react-native-maps';
-import { Spinner, Button, Text, Icon, Label } from 'native-base';
+import { Spinner, Button, Icon, Label } from 'native-base';
 import theme from '../../styles/theme';
 import { isInRadius, getPlaceAvgRating } from '../../services/utils';
 
@@ -18,7 +18,7 @@ export default class MapContainer extends React.Component<
     {
         loading: boolean, 
         region: Region, 
-        markers: marker[], 
+        markers: markerData[], 
         showSummaryModal: boolean,
         placeId: string,
         apiKey: string
@@ -97,13 +97,14 @@ export default class MapContainer extends React.Component<
 
     convertPlacesToMarkers(places: dbPlace[]){
         return places.map((place)=>{
-            var m: marker = {
+            var m: markerData = {
                 latlng: {
                     latitude: place.lat,
                     longitude: place.lng
                 },
                 title: place.name,
-                rating: place.rating
+                rating: place.rating,
+                placeId: place.id
             }
             return m;
         });
@@ -114,6 +115,7 @@ export default class MapContainer extends React.Component<
     }
 
     async handleSelectPlace(place: searchPlace){
+        Keyboard.dismiss();
         const loc = {
             latitude: get(place, 'result.geometry.location.lat'),
             longitude: get(place, 'result.geometry.location.lng'),
@@ -127,68 +129,46 @@ export default class MapContainer extends React.Component<
 
         const rating = getPlaceAvgRating(dbPlace, reviews);
 
-        const marker: marker = {
+        const marker: markerData = {
             latlng: loc,
             title: place.result.name,
-            rating: rating
+            rating: rating,
+            placeId: place_id
         }
 
         this.updateRegion(loc);
         this.setState({ markers: [marker], placeId: place_id });
     }
 
-    onHandleRegionChange(region: Region, marker: Marker ){
-        const hideCallout = !isInRadius(
-            this.state.region.latitude, 
-            this.state.region.longitude,
-            region.latitude,
-            region.longitude,
-            50);
+    onHandleRegionChange(region: Region, marker: Marker | null){
+        if(marker){
+            const hideCallout = !isInRadius(
+                this.state.region.latitude, 
+                this.state.region.longitude,
+                region.latitude,
+                region.longitude,
+                50);
 
-        if(hideCallout) marker?.hideCallout();
+            if(hideCallout) marker.hideCallout(); 
+        }
+
         this.updateRegion(region);
     }
 
-    async onMarkerSelect(mapClickEvent: any){
-        let placeId;
-        if(!mapClickEvent.placeId){
-            const query = mapClickEvent.name || mapClickEvent.id;
-            const result = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
-                return Promise.reject(error);
-            });
-            placeId = result.place_id;
-        } else {
-            placeId = mapClickEvent.placeId;
-        }
-
-        const apiPlace = await getGooglePlaceById(this.state.apiKey, placeId, ['geometry']);
+    async onMarkerSelect(marker: markerData){
+        Keyboard.dismiss();
         const region = { 
-            latitude: apiPlace.geometry?.location.lat, 
-            longitude: apiPlace.geometry?.location.lng,
+            latitude: marker.latlng.latitude, 
+            longitude: marker.latlng.longitude,
             latitudeDelta: this.state.region.latitudeDelta,
             longitudeDelta: this.state.region.longitudeDelta
         };
 
-        this.setState({ placeId: placeId, region: { ...region } });
-    }
-
-    async onPoiSelect(mapClickEvent: any){
-        let placeId: string;
-        if(!mapClickEvent.placeId){
-            const query = mapClickEvent.name || mapClickEvent.id;
-            const result = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
-                return Promise.reject(error);
-            });
-            placeId = result.place_id;
-        } else {
-            placeId = mapClickEvent.placeId;
-        }
-
-        this.loadSingleMarker(placeId);
+        this.setState({ placeId: marker.placeId, region: { ...region } });
     }
 
     async loadSingleMarker(placeId: string){
-        let marker: marker;
+        let marker: markerData;
         let geometry, name;
         const dbPlace = await FirebaseService.getPlace(placeId);
 
@@ -205,7 +185,8 @@ export default class MapContainer extends React.Component<
             marker = {
                 latlng: { latitude: geometry?.location.lat, longitude: geometry?.location.lng },
                 title: name,
-                rating: dbPlace ? dbPlace.rating : undefined
+                rating: dbPlace ? dbPlace.rating : undefined,
+                placeId: placeId
             }
 
             let region = {
@@ -228,18 +209,10 @@ export default class MapContainer extends React.Component<
 
     onPressMapArea(){
         Keyboard.dismiss();
-        this.setState({ showSummaryModal: false });
     }
 
-    async onShowDetails(event: any){
-        let placeId: string;
-        if(event.id){
-            const query = event.id;
-            const result = await getGooglePlaceIdBySearch(this.state.apiKey, query).catch(error => {
-                return Promise.reject(error);
-            });
-            placeId = result.place_id;
-
+    async onShowDetails(placeId: string){
+        if(placeId){
             this.setState({ placeId: placeId, showSummaryModal: true });
         }
     }
@@ -273,7 +246,7 @@ export default class MapContainer extends React.Component<
                                 markers={this.state.markers}
                                 onPress={this.onPressMapArea.bind(this)}
                                 onMarkerSelect={this.onMarkerSelect.bind(this)}
-                                onPoiSelect={this.onPoiSelect.bind(this)}
+                                onPoiSelect={this.loadSingleMarker.bind(this)}
                                 onRegionChange={this.onHandleRegionChange.bind(this)}
                                 onShowDetails={this.onShowDetails.bind(this)}
                             />

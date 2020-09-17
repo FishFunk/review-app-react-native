@@ -1,4 +1,4 @@
-import { dbReview } from "../models/reviews";
+import { dbReview, reviewSummary } from "../models/reviews";
 import { dbPlace } from "../models/place";
 
 export const generateRandomString = function(){
@@ -25,7 +25,9 @@ export const isInRadius = function(
     return distance <= desiredRadiusKm;
 }
 
-export const getPlaceAvgRating = function(dbPlace: dbPlace, reviews: dbReview[]): number {
+export const getPlaceAvgRating = function(
+    dbPlace: dbPlace | null, 
+    reviews: dbReview[] | reviewSummary[]): number {
     let total;
     // If there are relevant reviews, calculate average rating
     if(reviews && reviews.length > 0){
@@ -36,7 +38,7 @@ export const getPlaceAvgRating = function(dbPlace: dbPlace, reviews: dbReview[])
         total = sum/reviews.length;
     } else {
         // Else - use stored average rating
-        total = dbPlace.rating || 0;
+        total = dbPlace? dbPlace.rating : 0;
     }
 
     return total;
