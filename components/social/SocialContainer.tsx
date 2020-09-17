@@ -19,23 +19,33 @@ import _indexOf from 'lodash/indexOf';
 import _map from 'lodash/map';
 import UndrawFollowingSvg from '../../svgs/undraw_following';
 import UserListItem from './UserListItem';
+import { ScrollView } from 'react-native-gesture-handler';
 
-export default class SocialContainer extends React.Component<{},
+export default class SocialContainer extends React.Component<{
+        navigation: any
+    },
     { suggestedFriends: Array<appUser>, followingFriends: Array<appUser>, loading: boolean }> {
   
     state = {
         loading: true,
         suggestedFriends: new Array<appUser>(),
         followingFriends: new Array<appUser>()
-     };
+    };
+
+    _unsubscribe: any;
 
     onLogout(){
         FirebaseService.signOut();
     }
 
     componentDidMount(){
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {this.init()});
         this.init()
             .finally(()=>this.setState({ loading: false }));
+    }
+
+    componentWillUnmount(){
+        this._unsubscribe();
     }
 
     async init(){
@@ -44,22 +54,19 @@ export default class SocialContainer extends React.Component<{},
             const contacts = await getContacts();
             const allSuggestedFriends = await FirebaseService.findFriends(contacts);
             const followingIds = await FirebaseService.getUserFollowingIds();
-            let followingFriends = [];
+            const followingUsers = await FirebaseService.getMultipleUsers(followingIds);
             let suggestedFriends = [];
 
             for(let possibleFriend of allSuggestedFriends){
                 // Suggested Friends not yet following
                 if(_indexOf(followingIds, possibleFriend.id) === -1){
                     suggestedFriends.push(possibleFriend);
-                } else {
-                    // Following Friends
-                    followingFriends.push(possibleFriend);
                 }
             }
             
             this.setState({ 
                 suggestedFriends: suggestedFriends, 
-                followingFriends: followingFriends });
+                followingFriends: followingUsers });
         } else {
             await requestContactsPermission();
         }
@@ -104,7 +111,7 @@ export default class SocialContainer extends React.Component<{},
             return <Spinner/>
         }
         return (
-          <View style={styles.container}>
+          <ScrollView style={styles.container}>
             <View style={styles.svgContainer}>
                 <UndrawFollowingSvg width='75%' height='200px'/>
             </View>
@@ -144,19 +151,25 @@ export default class SocialContainer extends React.Component<{},
                         <Text style={styles.emptyListText}>
                             Looks like we can't find anybody you might know in our system. Spread the word!
                         </Text>
-                        <Button small style={styles.emptyListButton}><Text>Invite Friends</Text></Button>
+                        <Button small style={styles.emptyListButton}>
+                            <Text>Invite Friends</Text>
+                        </Button>
                         <Text style={styles.emptyListText}>
                             Make sure you give us permission to check your contacts!
                         </Text>
-                        <Button small style={styles.emptyListButton}><Text>Request Contacts</Text></Button>
-                        <Text style={styles.emptyListText}>
+                        <Button 
+                            small style={styles.emptyListButton}
+                            onPress={requestContactsPermission}>
+                            <Text>Request Contacts</Text>
+                        </Button>
+                        {/* <Text style={styles.emptyListText}>
                             You can also connect a social media account!
                         </Text>
                         <Button small style={styles.emptyListButton}><Text>Connect Facebook</Text></Button>
-                        <Button small style={styles.emptyListButton}><Text>Connect Google</Text></Button>
+                        <Button small style={styles.emptyListButton}><Text>Connect Google</Text></Button> */}
                     </View>
             }
-          </View>
+          </ScrollView>
         )};
 };
 

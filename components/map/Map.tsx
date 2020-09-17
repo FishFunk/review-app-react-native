@@ -14,7 +14,7 @@ export default class Map extends React.Component<
         onPress: (event: MapEvent) => void,
         onMarkerSelect: Function,
         onPoiSelect: Function,
-        onRegionChange: (region: Region) => void,
+        onRegionChange: (region: Region, markerRef: Marker) => void,
         onShowDetails: Function
     },
     {}>{
@@ -33,8 +33,7 @@ export default class Map extends React.Component<
     }
 
     onRegionChange(region: Region){
-        this.markerRef?.hideCallout();
-        this.props.onRegionChange(region);
+        this.props.onRegionChange(region, this.markerRef);
     }
 
     onMapPress(event: MapEvent<{}>){

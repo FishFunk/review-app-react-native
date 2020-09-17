@@ -13,7 +13,7 @@ import theme from '../../styles/theme';
 import { appUser } from '../../models/user';
 
 export default function UserListItem(
-    props: { user: appUser, onButtonPress: () => void, following: boolean }) {
+    props: { user: appUser, onButtonPress: (following: boolean) => void, following: boolean }) {
 
     const { user, onButtonPress, following } = props;
     return (
@@ -27,7 +27,7 @@ export default function UserListItem(
             <Right>
                 <Button 
                     transparent
-                    onPress={onButtonPress}>
+                    onPress={()=>onButtonPress(following)}>
                     {
                         following ? 
                             <Icon 

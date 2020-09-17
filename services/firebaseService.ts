@@ -10,7 +10,7 @@ import _filter from 'lodash/filter';
 import _indexOf from 'lodash/indexOf';
 import _intersection from 'lodash/intersection';
 import { registerForPushNotificationsAsync } from './notificationService';
-import { generateRandomString } from './utils';
+import { generateRandomString, isInRadius } from './utils';
 import { signInWithGoogle } from './auth/googleAuth';
 import { signInWithFacebook } from './auth/facebookAuth';
 import { authResult } from '../models/auth';
@@ -153,6 +153,21 @@ class FirebaseService {
 		} else {
 			throw new Error(`No user found matching id: ${userId}`);
 		}
+	}
+
+	async getMultipleUsers(userIds: string[]): Promise<appUser[]>{
+		this._verifyInitialized();
+
+		let result = new Array<appUser>();
+		const usersSnapshot = await this.db.ref(`users`).once('value');
+		usersSnapshot.forEach((snap)=>{
+			const user = snap.val();
+			if(user.id !== this.auth.currentUser?.uid && _indexOf(userIds, user.id) >= 0){
+				result.push(user);
+			}
+		});
+
+		return result;
 	}
 
 	async searchUsers(searchValue: string): Promise<appUser[]>{
@@ -301,14 +316,14 @@ class FirebaseService {
 		return this.db.ref(`places/${dbPlace.id}`).set(dbPlace);
 	}
 
-	async getNearbyPlaces(lat: number, lng: number, radiusInKm=15): Promise<any[]>{
+	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<any[]>{
 		this._verifyInitialized();
 	
 		let places: any[] = [];
 		const placesSnapshot = await this.db.ref(`places`).once('value');
 		placesSnapshot.forEach((snap)=>{
 			const place = snap.val();
-			if(this._isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
+			if(isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
 				places.push(place);
 			}
 		});
@@ -316,6 +331,7 @@ class FirebaseService {
 		// Filter places if they contain reviews by current user or followers
 		let filteredPlaces = [];
 		const targetFollowerIds = await this.getUserFollowingIds();
+		
 		for(let place of places){
 			const targetReviews = await this.getPlaceReviews(place.id);
 			const matches = _filter(
@@ -334,30 +350,6 @@ class FirebaseService {
 		if(!firebase.apps.length || !this.auth.currentUser){
 			throw new Error("Firebase not initialized correctly!");
 		}
-	}
-
-	_isInRadius(
-		centerLat: number, 
-		centerLng: number, 
-		targetLat: number, 
-		targetLng: number, 
-		desiredRadiusKm: number): boolean{
-		var R = 6371; // km
-		var dLat = this._toRad(targetLat-centerLat);
-		var dLon = this._toRad(targetLng-centerLng);
-		var lat1 = this._toRad(centerLat);
-		var lat2 = this._toRad(targetLat);
-
-		var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-			Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-		var distance = R * c;
-
-		return distance <= desiredRadiusKm;
-	}
-
-	_toRad(val: number): number {
-		return val * Math.PI / 180;
 	}
 
 	async getUserFollowingIds(): Promise<string[]> {

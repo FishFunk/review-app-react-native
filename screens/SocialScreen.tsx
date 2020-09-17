@@ -5,6 +5,7 @@ import {
   Content} from "native-base";
 import AppHeader from "../components/AppHeader";
 import SocialContainer from '../components/social/SocialContainer';
+import { useLinkProps } from "@react-navigation/native";
 
 export default function SocialScreen(props: any){
     return(
@@ -16,7 +17,7 @@ export default function SocialScreen(props: any){
                 rightButtonIconName={'search'}
                 onPressRightButton={()=> props.navigation.navigate('Search')}/>
             <Content contentContainerStyle={styles.container}>
-                <SocialContainer />
+                <SocialContainer navigation={props.navigation}/>
             </Content>
         </Container>
     )

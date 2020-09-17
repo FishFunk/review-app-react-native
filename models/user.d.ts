@@ -4,7 +4,7 @@ export interface appUser {
     lastActive?: string;
     firstName?: string;
     lastName?: string;
-    friends?: string[];
+    following?: string[];
     id?: string;
     placesReviewed?: array[];
     mobile?: string;

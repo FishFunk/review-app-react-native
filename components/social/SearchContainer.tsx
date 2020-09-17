@@ -6,12 +6,14 @@ import { appUser } from '../../models/user';
 import FirebaseService from '../../services/firebaseService';
 import UserListItem from './UserListItem';
 import _indexOf from 'lodash/indexOf';
+import _without from 'lodash/without';
 
 export default function SearchContainer(props: any){
 
     const [allUsers, setAllUsers] = useState(new Array<appUser>());
     const [filteredUsers, setFilteredUsers] = useState(new Array<appUser>());
     const [searchInput, setInput] = useState('');
+    const [followingIds, setFollowingIds] = useState(new Array<string>());
 
     useEffect(()=>{
         FirebaseService.searchUsers('')
@@ -19,10 +21,26 @@ export default function SearchContainer(props: any){
                 setAllUsers(results);
                 setFilteredUsers(results);
             });
-    }, [])
+    }, []);
 
-    function onButtonPress(user: appUser){
-        alert("not yet implemented");
+    useEffect(()=>{
+        FirebaseService.getUserFollowingIds()
+            .then(ids=>{
+                setFollowingIds(ids);
+            });
+    }, []);
+
+    function onButtonPress(user: appUser, following: boolean){
+        let newIds: string[] = JSON.parse(JSON.stringify(followingIds));
+        if(!following){
+            newIds.push(user.id);
+            setFollowingIds(newIds);
+            FirebaseService.updateUserData({ following: newIds });
+        } else {
+            const setIds = _without<string>(newIds, user.id);
+            setFollowingIds(setIds);
+            FirebaseService.updateUserData({ following: setIds });
+        }
     }
 
     function filterResults(text: string){
@@ -30,9 +48,9 @@ export default function SearchContainer(props: any){
         
         let newResults = [];
         for (let usr of allUsers){
-            if(usr.email?.search(text) > -1 ||
-                usr.firstName?.search(text) > -1 || 
-                usr.lastName?.search(text) > -1)
+            if(usr.email?.toLowerCase().search(text.toLowerCase()) > -1 ||
+                usr.firstName?.toLowerCase().search(text.toLowerCase()) > -1 || 
+                usr.lastName?.toLowerCase().search(text.toLowerCase()) > -1)
             {
                 newResults.push(usr);
             }
@@ -58,8 +76,8 @@ export default function SearchContainer(props: any){
                     filteredUsers.map((user: appUser)=> 
                         <UserListItem 
                             user={user} 
-                            onButtonPress={()=>onButtonPress(user)}
-                            following={false}/>)
+                            onButtonPress={(following: boolean)=>onButtonPress(user, following)}
+                            following={_indexOf(followingIds, user.id)>=0}/>)
                 }
                 </List>
             </ScrollView>

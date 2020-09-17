@@ -8,9 +8,10 @@ import { searchPlace, marker, dbPlace } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch, getGooglePlaceById } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
-import { Region } from 'react-native-maps';
+import { Region, Marker } from 'react-native-maps';
 import { Spinner } from 'native-base';
 import theme from '../../styles/theme';
+import { isInRadius } from '../../services/utils';
 
 export default class MapContainer extends React.Component<
     {}, 
@@ -55,7 +56,7 @@ export default class MapContainer extends React.Component<
     }
 
     async loadNearbyPlaceMarkers(lat: number, lng: number){
-        const places = await FirebaseService.getNearbyPlaces(lat, lng);        
+        const places = await FirebaseService.getNearbyPlaces(lat, lng);
         const markers = this.convertPlacesToMarkers(places);
         this.setState({ markers: markers });
     }
@@ -74,10 +75,8 @@ export default class MapContainer extends React.Component<
             newState.region.latitude = data.coords.latitude;
             newState.region.longitude = data.coords.longitude;
             newState.searchNearby = true;
-        } else {
-            this.loadNearbyPlaceMarkers(this.defaultRegion.latitude, this.defaultRegion.longitude);
         }
-
+        
         newState.apiKey = googleApiKey;
         return newState;
     }
@@ -123,17 +122,32 @@ export default class MapContainer extends React.Component<
             rating: dbPlace ? dbPlace.rating : undefined
         }
 
-        this.updateRegion(loc, false);
+        const reloadNearby = !isInRadius(
+            this.state.region.latitude, 
+            this.state.region.longitude,
+            loc.latitude,
+            loc.longitude,
+            50);
+
+        this.updateRegion(loc, reloadNearby);
         this.setState({ markers: [marker] });
     }
 
-    onHandleRegionChange(region: any){
+    onHandleRegionChange(region: Region, marker: Marker ){
         if(this.state.searchNearby){
-            this.setState({ region: region }, ()=>{
+            this.setState({ region: region, searchNearby: false }, ()=>{
                 this.loadNearbyPlaceMarkers(region.latitude, region.longitude);
             });
         } else {
-            this.setState({ searchNearby: true });
+            const hideCallout = !isInRadius(
+                this.state.region.latitude, 
+                this.state.region.longitude,
+                region.latitude,
+                region.longitude,
+                50);
+
+            if(hideCallout) marker?.hideCallout();
+            this.setState({ region });
         }
     }
 
