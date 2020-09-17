@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Keyboard } from 'react-native';
+import { View, Keyboard, StyleSheet } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
@@ -9,7 +9,7 @@ import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import { getGooglePlaceIdBySearch, getGooglePlaceById } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import { Region, Marker } from 'react-native-maps';
-import { Spinner } from 'native-base';
+import { Spinner, Button, Text, Icon, Label } from 'native-base';
 import theme from '../../styles/theme';
 import { isInRadius } from '../../services/utils';
 
@@ -21,7 +21,6 @@ export default class MapContainer extends React.Component<
         markers: marker[], 
         showSummaryModal: boolean,
         placeId: string,
-        searchNearby: boolean,
         apiKey: string
     }> {
 
@@ -41,21 +40,23 @@ export default class MapContainer extends React.Component<
         region: this.defaultRegion,
         markers: [],
         showSummaryModal: false,
-        searchNearby: true,
         apiKey: ''
     };
 
     componentDidMount(){
         this.load()
             .then((newState)=>{
-                this.setState({ ...newState, loading: false });
+                this.setState({ ...newState, loading: false }, ()=>{
+                    this.loadNearbyPlaceMarkers();
+                });
             })
             .catch(error=>{
                 FirebaseService.logError(error);
             });
     }
 
-    async loadNearbyPlaceMarkers(lat: number, lng: number){
+    async loadNearbyPlaceMarkers(){
+        const { latitude: lat, longitude: lng } = this.state.region;
         const places = await FirebaseService.getNearbyPlaces(lat, lng);
         const markers = this.convertPlacesToMarkers(places);
         this.setState({ markers: markers });
@@ -74,11 +75,24 @@ export default class MapContainer extends React.Component<
             };
             newState.region.latitude = data.coords.latitude;
             newState.region.longitude = data.coords.longitude;
-            newState.searchNearby = true;
         }
         
         newState.apiKey = googleApiKey;
         return newState;
+    }
+
+    async goToMyLocation(){
+        const data = await getLocation();
+        if(data){
+            let region = {
+                latitude: data.coords.latitude,
+                longitude: data.coords.longitude,
+                latitudeDelta: 0.09,
+                longitudeDelta: 0.09
+            };
+            
+            this.updateRegion(region);
+        }
     }
 
     convertPlacesToMarkers(places: dbPlace[]){
@@ -95,26 +109,20 @@ export default class MapContainer extends React.Component<
         });
     }
 
-    updateRegion(loc: any, searchNearby: boolean){
-        this.setState({
-            region: {
-                latitude: loc.latitude,
-                longitude: loc.longitude,
-                latitudeDelta: 0.09,
-                longitudeDelta: 0.09
-            },
-            searchNearby: searchNearby
-        });
+    updateRegion(data: any){
+        this.setState({ region:  { ...data }} );
     }
 
     async handleSelectPlace(place: searchPlace){
         const loc = {
             latitude: get(place, 'result.geometry.location.lat'),
-            longitude: get(place, 'result.geometry.location.lng')
+            longitude: get(place, 'result.geometry.location.lng'),
+            latitudeDelta: 0.09,
+            longitudeDelta: 0.09
         };
 
-        const placeId = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
-        const dbPlace = await FirebaseService.getPlace(placeId.place_id);
+        const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
+        const dbPlace = await FirebaseService.getPlace(place_id);
 
         const marker: marker = {
             latlng: loc,
@@ -122,33 +130,20 @@ export default class MapContainer extends React.Component<
             rating: dbPlace ? dbPlace.rating : undefined
         }
 
-        const reloadNearby = !isInRadius(
-            this.state.region.latitude, 
-            this.state.region.longitude,
-            loc.latitude,
-            loc.longitude,
-            50);
-
-        this.updateRegion(loc, reloadNearby);
-        this.setState({ markers: [marker] });
+        this.updateRegion(loc);
+        this.setState({ markers: [marker], placeId: place_id });
     }
 
     onHandleRegionChange(region: Region, marker: Marker ){
-        if(this.state.searchNearby){
-            this.setState({ region: region, searchNearby: false }, ()=>{
-                this.loadNearbyPlaceMarkers(region.latitude, region.longitude);
-            });
-        } else {
-            const hideCallout = !isInRadius(
-                this.state.region.latitude, 
-                this.state.region.longitude,
-                region.latitude,
-                region.longitude,
-                50);
+        const hideCallout = !isInRadius(
+            this.state.region.latitude, 
+            this.state.region.longitude,
+            region.latitude,
+            region.longitude,
+            50);
 
-            if(hideCallout) marker?.hideCallout();
-            this.setState({ region });
-        }
+        if(hideCallout) marker?.hideCallout();
+        this.updateRegion(region);
     }
 
     async onMarkerSelect(mapClickEvent: any){
@@ -163,7 +158,15 @@ export default class MapContainer extends React.Component<
             placeId = mapClickEvent.placeId;
         }
 
-        this.setState({ placeId: placeId });
+        const apiPlace = await getGooglePlaceById(this.state.apiKey, placeId, ['geometry']);
+        const region = { 
+            latitude: apiPlace.geometry?.location.lat, 
+            longitude: apiPlace.geometry?.location.lng,
+            latitudeDelta: this.state.region.latitudeDelta,
+            longitudeDelta: this.state.region.longitudeDelta
+        };
+
+        this.setState({ placeId: placeId, region: { ...region } });
     }
 
     async onPoiSelect(mapClickEvent: any){
@@ -177,20 +180,47 @@ export default class MapContainer extends React.Component<
         } else {
             placeId = mapClickEvent.placeId;
         }
-        
-        let marker: marker;
-        const { geometry, name } = await getGooglePlaceById(this.state.apiKey, placeId, ['geometry', 'name']);
 
+        this.loadSingleMarker(placeId);
+    }
+
+    async loadSingleMarker(placeId: string){
+        let marker: marker;
+        let geometry, name;
+        const dbPlace = await FirebaseService.getPlace(placeId);
+
+        if(!dbPlace){
+            const apiPlace = await getGooglePlaceById(this.state.apiKey, placeId, ['geometry', 'name']);
+            geometry = apiPlace.geometry;
+            name = apiPlace.name;
+        } else {
+            geometry = { location: { lat: dbPlace.lat, lng: dbPlace.lng }};
+            name = dbPlace.name;
+        }
+        
         if(geometry && name){
             marker = {
                 latlng: { latitude: geometry?.location.lat, longitude: geometry?.location.lng },
                 title: name,
-                rating: undefined
+                rating: dbPlace ? dbPlace.rating : undefined
+            }
+
+            let region = {
+                latitude: marker.latlng.latitude,
+                longitude: marker.latlng.longitude,
+                latitudeDelta: this.state.region.latitudeDelta,
+                longitudeDelta: this.state.region.longitudeDelta
             }
             
-            this.updateRegion(marker.latlng, false);
-            this.setState({ markers: [marker] });
+            this.updateRegion(region);
+            this.setState({ markers: [marker], placeId: placeId });
         }
+    }
+
+    reloadPlaceReviews(){
+        // Reload marker
+        const { placeId } = this.state;
+        this.loadSingleMarker(placeId);
     }
 
     onPressMapArea(){
@@ -212,6 +242,7 @@ export default class MapContainer extends React.Component<
     }
 
     onToggleSummaryModal(forceVal?: boolean){
+        this.reloadPlaceReviews();
         if(forceVal != null){
             this.setState({ showSummaryModal: forceVal });
         } else {
@@ -243,6 +274,28 @@ export default class MapContainer extends React.Component<
                                 onRegionChange={this.onHandleRegionChange.bind(this)}
                                 onShowDetails={this.onShowDetails.bind(this)}
                             />
+                            <View
+                                style={styles.buttonContainer}
+                            >
+                                <Button 
+                                    style={styles.mapButton} 
+                                    onPress={this.goToMyLocation.bind(this)}>
+                                    <Icon 
+                                        type={'FontAwesome5'} 
+                                        name={'location-arrow'}
+                                        style={styles.buttonIcon}></Icon>
+                                    <Label style={styles.buttonText}>Location</Label>
+                                </Button>
+                                <Button 
+                                    style={styles.mapButton} 
+                                    onPress={this.loadNearbyPlaceMarkers.bind(this)}>
+                                    <Icon 
+                                        type={'FontAwesome5'} 
+                                        name={'map-marked-alt'}
+                                        style={styles.buttonIcon}></Icon>
+                                    <Label style={styles.buttonText}>Nearby</Label>
+                                </Button>
+                            </View>
                         </View> : null
                 }
 
@@ -255,3 +308,29 @@ export default class MapContainer extends React.Component<
         )
     }
 }
+
+const styles = StyleSheet.create({
+    buttonContainer: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: 'rgba(169,169,169, 0.7)'  
+    },
+    mapButton: {
+        height: 60,
+        width: 60,
+        backgroundColor: theme.LIGHT_COLOR,
+        borderRadius: 60,
+        margin: 5,
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+    buttonIcon:{
+        color: theme.DARK_COLOR,
+        fontSize: 20
+    },
+    buttonText: {
+        color: theme.DARK_COLOR,
+        fontSize: 8
+    }
+})

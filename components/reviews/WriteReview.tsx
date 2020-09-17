@@ -7,8 +7,7 @@ import {
     Item, 
     Textarea, 
     Label, 
-    Title, 
-    Toast
+    Title
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -16,11 +15,13 @@ import EditableStars from './EditableStars';
 import { fullApiPlace } from '../../models/place';
 import FirebaseService from '../../services/firebaseService';
 import _indexOf from 'lodash/indexOf';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
         onDismissModal: Function,
-        place: fullApiPlace
+        place: fullApiPlace,
+        onReviewSubmit: Function
     },
     {
         rating1: number,
@@ -40,6 +41,7 @@ export default class WriteReview extends Component<{
     }
 
     onDismissModal(){
+        Keyboard.dismiss();
         this.props.onDismissModal();
     }
 
@@ -79,6 +81,7 @@ export default class WriteReview extends Component<{
     }
 
     async onSubmitForm(){
+        Keyboard.dismiss();
         const { place_id, name } = this.props.place;
         const reviewData = {
             place_id: place_id,
@@ -92,6 +95,7 @@ export default class WriteReview extends Component<{
 
         await FirebaseService.submitReview(this.props.place, reviewData);
         this.onDismissModal();
+        this.props.onReviewSubmit();
     }
 
     avgRating(){
@@ -111,117 +115,105 @@ export default class WriteReview extends Component<{
             animationType={'slide'}
             transparent={true}
         >
-            <View style={styles.container}>
-                <ScrollView contentContainerStyle={styles.modalView}>
-                    <View>
-                        <Title>
-                            <Text style={styles.title}>{this.props.place.name}</Text>
-                        </Title>
-                    </View>
-                    <View style={styles.formContainer}>
-                        {
-                            this.isFoodEsablishment() ? 
-                            // Food / Restaurant Review Form
-                            <Form style={styles.form}>
-                                <Item bordered={false} style={styles.starItem}>
-                                    <Label>Atmosphere</Label>
-                                    <EditableStars 
-                                        fontSize={30}
-                                        initalRating={this.state.rating1} 
-                                        onRatingChanged={this.onUpdateRating1.bind(this)}  />
-                                </Item>
-                                <Item bordered={false} style={styles.starItem}>
-                                    <Label>Food</Label>
-                                    <EditableStars 
-                                        fontSize={30}
-                                        initalRating={this.state.rating2} 
-                                        onRatingChanged={this.onUpdateRating2.bind(this)}  />
-                                </Item>
-                                <Item bordered={false} style={styles.starItem}>
-                                    <Label>Service</Label>
-                                    <EditableStars 
-                                        fontSize={30}
-                                        initalRating={this.state.rating3} 
-                                        onRatingChanged={this.onUpdateRating3.bind(this)}  />
-                                </Item>
-                                <Item stackedLabel style={styles.textAreaItem}>
-                                    <Label>Comments</Label>
-                                    <Label style={styles.sublabel}>up to 250 characters</Label>
-                                    <Textarea 
-                                        returnKeyType='done'
-                                        onKeyPress={this.onKeyPress.bind(this)}
-                                        value={this.state.comments}
-                                        maxLength={250}
-                                        multiline={true}
-                                        onChangeText={this.onEditComment.bind(this)}
-                                        style={styles.textArea} 
-                                        rowSpan={4} 
-                                        bordered={false} 
-                                        underline={false}/>
-                                </Item>
-                                <Item stackedLabel>
-                                    <Label>Average</Label>
-                                    <ReviewStars rating={this.avgRating()} fontSize={30} />
-                                </Item>
-                            </Form> : 
-                            // Generic Place Review Form
-                            <Form>
-                                <Item bordered={false} style={styles.starItem}>
-                                    <Label>Rating</Label>
-                                    <EditableStars 
-                                        fontSize={30}
-                                        initalRating={this.state.rating1} 
-                                        onRatingChanged={this.onUpdateRating1.bind(this)}  />
-                                </Item>
-                                <Item stackedLabel style={styles.textAreaItem}>
-                                    <Label>Comments</Label>
-                                    <Label style={styles.sublabel}>up to 250 characters</Label>
-                                    <Textarea 
-                                        returnKeyType='done'
-                                        onKeyPress={this.onKeyPress.bind(this)}
-                                        value={this.state.comments}
-                                        maxLength={250}
-                                        multiline={true}
-                                        onChangeText={this.onEditComment.bind(this)}
-                                        style={styles.textArea} 
-                                        rowSpan={4} 
-                                        bordered={false} 
-                                        underline={false}/>
-                                </Item>
-                            </Form>
-                        }
-                        
-                    </View>
-                    <View style={styles.buttonGroup}>
-                        <Button 
-                            style={styles.submitButton}
-                            full 
-                            onPress={this.onSubmitForm.bind(this)}>
-                            <Text style={{color: theme.DARK_COLOR}}>Submit</Text>
+            <ScrollView contentContainerStyle={styles.modalView}>
+                <View>
+                    <Title>
+                        <Text style={styles.title}>{this.props.place.name}</Text>
+                    </Title>
+                </View>
+                <View style={styles.formContainer}>
+                    {
+                        this.isFoodEsablishment() ? 
+                        // Food / Restaurant Review Form
+                        <Form style={styles.form}>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Atmosphere</Label>
+                                <EditableStars 
+                                    fontSize={30}
+                                    initalRating={this.state.rating1} 
+                                    onRatingChanged={this.onUpdateRating1.bind(this)}  />
+                            </Item>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Food</Label>
+                                <EditableStars 
+                                    fontSize={30}
+                                    initalRating={this.state.rating2} 
+                                    onRatingChanged={this.onUpdateRating2.bind(this)}  />
+                            </Item>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Service</Label>
+                                <EditableStars 
+                                    fontSize={30}
+                                    initalRating={this.state.rating3} 
+                                    onRatingChanged={this.onUpdateRating3.bind(this)}  />
+                            </Item>
+                            <Item stackedLabel style={styles.textAreaItem}>
+                                <Label>Comments</Label>
+                                <Label style={styles.sublabel}>up to 250 characters</Label>
+                                <Textarea 
+                                    returnKeyType='done'
+                                    onKeyPress={this.onKeyPress.bind(this)}
+                                    value={this.state.comments}
+                                    maxLength={250}
+                                    multiline={true}
+                                    onChangeText={this.onEditComment.bind(this)}
+                                    style={styles.textArea} 
+                                    rowSpan={4} 
+                                    bordered={false} 
+                                    underline={false}/>
+                            </Item>
+                            <Item stackedLabel>
+                                <Label>Average</Label>
+                                <ReviewStars rating={this.avgRating()} fontSize={30} />
+                            </Item>
+                        </Form> : 
+                        // Generic Place Review Form
+                        <Form>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Rating</Label>
+                                <EditableStars 
+                                    fontSize={30}
+                                    initalRating={this.state.rating1} 
+                                    onRatingChanged={this.onUpdateRating1.bind(this)}  />
+                            </Item>
+                            <Item stackedLabel style={styles.textAreaItem}>
+                                <Label>Comments</Label>
+                                <Label style={styles.sublabel}>up to 250 characters</Label>
+                                <Textarea 
+                                    returnKeyType='done'
+                                    onKeyPress={this.onKeyPress.bind(this)}
+                                    value={this.state.comments}
+                                    maxLength={250}
+                                    multiline={true}
+                                    onChangeText={this.onEditComment.bind(this)}
+                                    style={styles.textArea} 
+                                    rowSpan={4} 
+                                    bordered={false} 
+                                    underline={false}/>
+                            </Item>
+                        </Form>
+                    }  
+                </View>
+                <View style={styles.buttonGroup}>
+                    <TouchableOpacity onPress={this.onDismissModal.bind(this)}> 
+                        <Button style={styles.cancelButton}>
+                            <Text>Cancel</Text>
                         </Button>
-                        <Button 
-                            style={styles.cancelButton}
-                            full 
-                            transparent 
-                            onPress={this.onDismissModal.bind(this)}>
-                                <Text style={{color: theme.DANGER_COLOR}}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.onSubmitForm.bind(this)}> 
+                        <Button style={styles.submitButton}>
+                            <Text>Submit</Text>
                         </Button>
-                    </View>
-                </ScrollView>
-            </View>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         </Modal>
         )
     }
 }
 
 const styles=StyleSheet.create({
-    container: {
-        flex: 1,
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+
     modalView: {
         marginTop: 60,
         height: '100%',
@@ -256,14 +248,15 @@ const styles=StyleSheet.create({
         textAlign: "center"
     },
     buttonGroup: {
-        width: '50%',
-        justifyContent: 'center'
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
     },
     submitButton: {
-        backgroundColor: theme.SECONDARY_COLOR
+        backgroundColor: theme.PRIMARY_COLOR
     },
     cancelButton: {
-        marginTop: 20
+        backgroundColor: theme.DANGER_COLOR
     },
     textAreaItem: {
         borderBottomWidth: 0

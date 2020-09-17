@@ -25,9 +25,14 @@ import { fullApiPlace } from '../../models/place';
 import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default class PlaceDetails extends React.Component<
-    { apiKey: string, placeId: string, toggleSummaryModal: Function },
+    { 
+        apiKey: string, 
+        placeId: string, 
+        toggleSummaryModal: Function
+    },
     { 
         items: Array<reviewSummary>, 
         showReviewModal: boolean, 
@@ -57,9 +62,7 @@ export default class PlaceDetails extends React.Component<
     }
 
     async load(){
-        const reviews = await FirebaseService.getReviewSummaries(this.props.placeId)
         const place = await getGooglePlaceById(this.props.apiKey, this.props.placeId);
-        const userReviewIds = await FirebaseService.getUserReviewIdList();
         let photoUrls = []
 
         if(place && place.photos){
@@ -73,24 +76,35 @@ export default class PlaceDetails extends React.Component<
             }
         }
 
+        const reviewState = await this.getReviewState();
+
+        this.setState({
+            ...reviewState,
+            showReviewModal: false,
+            place: place,
+            photoUrls: photoUrls,
+            isLoading: false
+        });
+    }
+
+    async getReviewState(){
+        // TODO: Filter reviews by user followers
+        const userId = FirebaseService.getCurrentUserId();
+        const reviews = await FirebaseService.getReviewSummaries(this.props.placeId)
         let total = 0;
+        let disableEditing = false;
         if(reviews && reviews.length > 0){
             let sum = 0;
             for(let r of reviews){
                 sum += r.avg_rating;
+                if(r.reviewer_id === userId){
+                    disableEditing = true;
+                }
             }
             total = sum/reviews.length;
         }
 
-        this.setState({
-            showReviewModal: false,
-            items: reviews,
-            total: total,
-            place: place,
-            photoUrls: photoUrls,
-            isLoading: false,
-            disableEdit: _indexOf(userReviewIds, place.place_id) > -1
-        });
+        return { items: reviews, total: total, disableEdit: disableEditing };
     }
 
     onPressWriteReview(){
@@ -101,8 +115,10 @@ export default class PlaceDetails extends React.Component<
         this.props.toggleSummaryModal(false);
     }
 
-    onDismissModal(){
-        this.load();
+    async onDismissModal(){
+        this.setState({ isLoading: true, showReviewModal: false });
+        const newReviewState = await this.getReviewState();
+        this.setState({ ...newReviewState, isLoading: false });
     }
 
     onOpenMaps(){
@@ -124,9 +140,12 @@ export default class PlaceDetails extends React.Component<
                 <View style={{flex: 1}}>
                     <View style={styles.titleView}>
                         <Text style={styles.title}>{this.state.place.name}</Text>
-                        <View style={styles.starsView}>
+                        <TouchableOpacity 
+                            style={styles.starsView} 
+                            onPress={this.onPressWriteReview.bind(this)}
+                            disabled={this.state.disableEdit}>
                             <ReviewStars rating={this.state.total} fontSize={22}/>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     {
                         this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
@@ -231,6 +250,7 @@ export default class PlaceDetails extends React.Component<
             <WriteReview 
                 place={this.state.place}
                 showModal={this.state.showReviewModal} 
+                onReviewSubmit={this.props.onReviewSubmit}
                 onDismissModal={this.onDismissModal.bind(this)}/>
         </View>)
     }

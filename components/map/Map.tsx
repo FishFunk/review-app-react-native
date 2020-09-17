@@ -2,10 +2,11 @@ import React from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region } from 'react-native-maps';
 import theme from '../../styles/theme';
 import mapJson from '../../constants/MapJson';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Title, Text, Button } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import { marker } from '../../models/place';
+import _isEqual from 'lodash/isEqual';
 
 export default class Map extends React.Component<
     {
@@ -21,6 +22,17 @@ export default class Map extends React.Component<
 
     mapViewRef: MapView | null = null;
     markerRef: Marker | null  = null;
+
+    componentDidUpdate(prevProps: any){
+        if(!_isEqual(prevProps.markers, this.props.markers)){
+            if(Platform.OS === 'ios'){
+                this.markerRef?.redrawCallout();
+            } else {
+                this.markerRef?.hideCallout();
+                this.markerRef?.showCallout();
+            }
+        }
+    }
 
     onPressMarker(event: MapEvent<{ action: "marker-press"; id: string }>){
         event.preventDefault();
@@ -54,8 +66,8 @@ export default class Map extends React.Component<
                 style={{flex: 1}}
                 region={this.props.region}
                 onRegionChangeComplete={this.onRegionChange.bind(this)} 
-                showsMyLocationButton={true}
-                zoomControlEnabled={true}
+                showsMyLocationButton={false}
+                showsUserLocation
                 zoomTapEnabled={true}
                 onPoiClick={this.onPoiClick.bind(this)}
                 onPress={this.onMapPress.bind(this)}
@@ -76,7 +88,7 @@ export default class Map extends React.Component<
                                     <Title>{marker.title}</Title>
                                     {
                                         marker.rating ?
-                                        <View style={styles.stars}><ReviewStars rating={5} fontSize={12}/></View> :
+                                        <View style={styles.stars}><ReviewStars rating={marker.rating} fontSize={12}/></View> :
                                         <Text style={styles.subtext}>No Reviews</Text>
                                     }
                                     {

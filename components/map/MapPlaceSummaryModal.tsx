@@ -6,7 +6,12 @@ import theme from "../../styles/theme";
 import { Content } from "native-base";
 
 export default class MapPlaceSummaryModal extends React.Component<
-    { apiKey: string, isOpen: boolean, placeId: string, toggleSummaryModal: Function }>{
+    { 
+        apiKey: string, 
+        isOpen: boolean, 
+        placeId: string, 
+        toggleSummaryModal: Function
+    }>{
 
     render(){
         return (

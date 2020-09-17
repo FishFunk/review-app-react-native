@@ -9,6 +9,7 @@ import _get from 'lodash/get';
 import _filter from 'lodash/filter';
 import _indexOf from 'lodash/indexOf';
 import _intersection from 'lodash/intersection';
+import _uniq from 'lodash/uniq'
 import { registerForPushNotificationsAsync } from './notificationService';
 import { generateRandomString, isInRadius } from './utils';
 import { signInWithGoogle } from './auth/googleAuth';
@@ -28,6 +29,10 @@ class FirebaseService {
 		this.db = firebase.database();
 		this.auth = firebase.auth();
 		console.log(`Firebase initialized successfully`);
+	}
+
+	getCurrentUserId(){
+		return this.auth.currentUser?.uid;
 	}
 
 	async registerPushNotificationToken(){
@@ -284,12 +289,13 @@ class FirebaseService {
 			date: new Date().toDateString()
 		}
 
-		const userReviewIds = await this.getUserReviewIdList();
+		let userReviewIds = await this.getUserReviewIdList();
 		const existingReviewSnapshots = await this.db.ref(`reviews/${newReview.place_id}`).once('value');
 
 		// Update user review list
 		let placeRating = 0;
 		userReviewIds.push(newReview.place_id);
+		userReviewIds = _uniq(userReviewIds);
 		await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
 
 		// Update place review list
