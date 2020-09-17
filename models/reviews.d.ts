@@ -7,7 +7,7 @@ export interface reviewSummary {
     reviewer_id: string;
   }
 
-  export interface postReview {
+  export interface dbReview {
       place_id: string;
       place_name: string;
       reviewer_id: string;

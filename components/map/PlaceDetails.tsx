@@ -26,6 +26,8 @@ import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { getPlaceAvgRating } from '../../services/utils';
+import _find from 'lodash/find';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -40,7 +42,7 @@ export default class PlaceDetails extends React.Component<
         place: fullApiPlace,
         disableEdit: boolean,
         photoUrls: Array<string>,
-        total: number
+        rating: number
     }> {
 
     initialPlace: fullApiPlace = {}
@@ -52,7 +54,7 @@ export default class PlaceDetails extends React.Component<
         place: this.initialPlace,
         photoUrls: new Array<string>(),
         disableEdit: true,
-        total: 0
+        rating: 0
     }
 
 
@@ -88,23 +90,14 @@ export default class PlaceDetails extends React.Component<
     }
 
     async getReviewState(){
-        // TODO: Filter reviews by user followers
         const userId = FirebaseService.getCurrentUserId();
+        const dbPlace = await FirebaseService.getPlace(this.props.placeId);
         const reviews = await FirebaseService.getReviewSummaries(this.props.placeId)
-        let total = 0;
-        let disableEditing = false;
-        if(reviews && reviews.length > 0){
-            let sum = 0;
-            for(let r of reviews){
-                sum += r.avg_rating;
-                if(r.reviewer_id === userId){
-                    disableEditing = true;
-                }
-            }
-            total = sum/reviews.length;
-        }
 
-        return { items: reviews, total: total, disableEdit: disableEditing };
+        let total = getPlaceAvgRating(dbPlace, reviews);
+        let disableEditing = _find(reviews, (r) => r.reviewer_id === userId) != null;
+
+        return { items: reviews, rating: total, disableEdit: disableEditing };
     }
 
     onPressWriteReview(){
@@ -144,7 +137,7 @@ export default class PlaceDetails extends React.Component<
                             style={styles.starsView} 
                             onPress={this.onPressWriteReview.bind(this)}
                             disabled={this.state.disableEdit}>
-                            <ReviewStars rating={this.state.total} fontSize={22}/>
+                            <ReviewStars rating={this.state.rating} fontSize={22}/>
                         </TouchableOpacity>
                     </View>
                     {

@@ -11,7 +11,7 @@ import FirebaseService from '../../services/firebaseService';
 import { Region, Marker } from 'react-native-maps';
 import { Spinner, Button, Text, Icon, Label } from 'native-base';
 import theme from '../../styles/theme';
-import { isInRadius } from '../../services/utils';
+import { isInRadius, getPlaceAvgRating } from '../../services/utils';
 
 export default class MapContainer extends React.Component<
     {}, 
@@ -123,11 +123,14 @@ export default class MapContainer extends React.Component<
 
         const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
         const dbPlace = await FirebaseService.getPlace(place_id);
+        const reviews = await FirebaseService.getFilteredPlaceReviews(place_id);
+
+        const rating = getPlaceAvgRating(dbPlace, reviews);
 
         const marker: marker = {
             latlng: loc,
             title: place.result.name,
-            rating: dbPlace ? dbPlace.rating : undefined
+            rating: rating
         }
 
         this.updateRegion(loc);

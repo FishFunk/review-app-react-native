@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import config from './firebaseServiceConfig';
-import { reviewSummary, postReview } from '../models/reviews';
+import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';
 import _ from 'lodash';
 import { Email, Contact } from 'expo-contacts';
@@ -97,7 +97,7 @@ class FirebaseService {
 				email: loggedInUserData.email|| '',
 				dateJoined: today,
 				lastActive: today,
-				friends: [],
+				following: [],
 				placesReviewed: [],
 				mobile: loggedInUserData.phoneNumber || '',
 				photoUrl: loggedInUserData.photoURL || ''
@@ -203,7 +203,7 @@ class FirebaseService {
 		}
 	}
 
-	async getPlaceReviews(placeId: string): Promise<Array<postReview>> {
+	async getFilteredPlaceReviews(placeId: string): Promise<Array<dbReview>> {
 		this._verifyInitialized();
 
 		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
@@ -211,7 +211,20 @@ class FirebaseService {
 			return [];
 		}
 
-		return reviewSnapshots.val();
+		const reviews: dbReview[] = reviewSnapshots.val();
+
+		// Filter reviews if they were written by current user or followers
+		let filteredReviews = [];
+		const targetFollowerIds = await this.getUserFollowingIds();
+		
+		for(let review of reviews){
+			if(review.reviewer_id === this.getCurrentUserId() ||
+				_indexOf(targetFollowerIds, review.reviewer_id) >= 0){
+					filteredReviews.push(review);
+			}
+		}
+		
+		return filteredReviews;
 	}
 
 	async getReviewSummaries(placeId: string): Promise<Array<reviewSummary>>{
@@ -221,25 +234,27 @@ class FirebaseService {
 			return Promise.resolve([]);
 		}
 
-		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
-		if(!reviewSnapshots.exists()){
-			return [];
-		}
-
-		const reviews: reviewSummary[] = reviewSnapshots.val();
-		let result = [];
-
-		for(let i = 0; i < reviews.length; i++){
-			const usrSnap = await this.db.ref(`users/${reviews[i].reviewer_id}`).once('value');
+		const dbReviews = await this.getFilteredPlaceReviews(placeId);
+		const reviewSummaries: reviewSummary[] = [];
+		
+		for(let review of dbReviews){
+			const usrSnap = await this.db.ref(`users/${review.reviewer_id}`).once('value');
 			let usr: appUser = usrSnap.val();
 			if(usr){
-				reviews[i].name = `${usr.firstName} ${usr.lastName}`;
-				reviews[i].img = usr.photoUrl || '';
-				result.push(reviews[i]);
+				let reviewSummary: reviewSummary = {
+					img: usr.photoUrl || '',
+					name: `${usr.firstName} ${usr.lastName}`,
+					comments: review.comments,
+					avg_rating: review.avg_rating,
+					date: review.date,
+					reviewer_id: review.reviewer_id
+				}
+				
+				reviewSummaries.push(reviewSummary);
 			}
 		}
 		
-		return result;
+		return reviewSummaries;
 	};
 
 	async findFriends(contactList: Contact[]): Promise<appUser[]>{
@@ -277,7 +292,7 @@ class FirebaseService {
 	async submitReview(place: fullApiPlace, review: any): Promise<any>{
 		this._verifyInitialized();
 
-		const newReview: postReview = {
+		const newReview: dbReview = {
 			place_id: review.place_id,
 			place_name: review.place_name,
 			reviewer_id: this.auth.currentUser.uid,
@@ -305,7 +320,7 @@ class FirebaseService {
 		} else {
 			const reviews = existingReviewSnapshots.val();
 			reviews.push(newReview);
-			reviews.forEach((r: postReview)=> placeRating += r.avg_rating);
+			reviews.forEach((r: dbReview)=> placeRating += r.avg_rating);
 			placeRating = placeRating / reviews.length;
 			await this.db.ref(`reviews/${newReview.place_id}`).set(reviews);
 		}
@@ -336,15 +351,10 @@ class FirebaseService {
 
 		// Filter places if they contain reviews by current user or followers
 		let filteredPlaces = [];
-		const targetFollowerIds = await this.getUserFollowingIds();
-		
 		for(let place of places){
-			const targetReviews = await this.getPlaceReviews(place.id);
-			const matches = _filter(
-				targetReviews, (r)=> r.reviewer_id === this.auth.currentUser?.uid || 
-					_indexOf(targetFollowerIds, r.reviewer_id) >= 0);
+			const targetReviews = await this.getFilteredPlaceReviews(place.id);
 
-			if(matches.length > 0){
+			if(targetReviews.length > 0){
 				filteredPlaces.push(place);
 			}
 		}

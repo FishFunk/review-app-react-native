@@ -1,3 +1,6 @@
+import { dbReview } from "../models/reviews";
+import { dbPlace } from "../models/place";
+
 export const generateRandomString = function(){
     return Math.random().toString(20).substr(2, 8);
 }
@@ -20,6 +23,23 @@ export const isInRadius = function(
     var distance = R * c;
 
     return distance <= desiredRadiusKm;
+}
+
+export const getPlaceAvgRating = function(dbPlace: dbPlace, reviews: dbReview[]): number {
+    let total;
+    // If there are relevant reviews, calculate average rating
+    if(reviews && reviews.length > 0){
+        let sum = 0;
+        for(let r of reviews){
+            sum += r.avg_rating;
+        }
+        total = sum/reviews.length;
+    } else {
+        // Else - use stored average rating
+        total = dbPlace.rating || 0;
+    }
+
+    return total;
 }
 
 const _toRad = function(val: number): number {
