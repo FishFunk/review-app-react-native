@@ -161,7 +161,7 @@ export default class WriteReview extends Component<{
                                     underline={false}/>
                             </Item>
                             <Item stackedLabel>
-                                <Label>Average</Label>
+                                <Label>Overall Rating</Label>
                                 <ReviewStars rating={this.avgRating()} fontSize={30} />
                             </Item>
                         </Form> : 

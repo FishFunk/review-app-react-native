@@ -3,7 +3,7 @@ import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region } from 'rea
 import theme from '../../styles/theme';
 import mapJson from '../../constants/MapJson';
 import { View, StyleSheet, Platform } from 'react-native';
-import { Title, Text, Button } from 'native-base';
+import { Title, Text } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import { markerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';

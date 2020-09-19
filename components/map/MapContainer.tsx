@@ -16,7 +16,9 @@ import { isInRadius, getPlaceAvgRating } from '../../services/utils';
 export default class MapContainer extends React.Component<
     {}, 
     {
-        loading: boolean, 
+        loadingMap: boolean,
+        loadingLocation: boolean,
+        loadingNearby: boolean,
         region: Region, 
         markers: markerData[], 
         showSummaryModal: boolean,
@@ -38,7 +40,9 @@ export default class MapContainer extends React.Component<
     // initial state
     state = {
         placeId: '',
-        loading: true,
+        loadingMap: true,
+        loadingLocation: false,
+        loadingNearby: false,
         region: this.defaultRegion,
         markers: [],
         showSummaryModal: false,
@@ -48,7 +52,7 @@ export default class MapContainer extends React.Component<
     componentDidMount(){
         this.load()
             .then((newState)=>{
-                this.setState({ ...newState, loading: false }, ()=>{
+                this.setState({ ...newState, loadingMap: false }, ()=>{
                     this.loadNearbyPlaceMarkers();
                 });
             })
@@ -61,7 +65,11 @@ export default class MapContainer extends React.Component<
         this.mapViewRef = ref;
     }
 
-    async loadNearbyPlaceMarkers(){
+    async loadNearbyPlaceMarkers(showSpinner: boolean = false){
+        if(showSpinner){
+            this.setState({ loadingNearby: true });
+        }
+
         const { latitude: lat, longitude: lng } = this.state.region;
         const places = await FirebaseService.getNearbyPlaces(lat, lng);
         const markers = this.convertPlacesToMarkers(places);
@@ -79,7 +87,7 @@ export default class MapContainer extends React.Component<
                     edgePadding: {top: 80, right: 80, bottom: 80, left: 80 }});
         }
 
-        this.setState({ markers: markers });
+        this.setState({ markers: markers, loadingNearby: false });
     }
 
     async load(){
@@ -102,6 +110,7 @@ export default class MapContainer extends React.Component<
     }
 
     async goToMyLocation(){
+        this.setState({ loadingLocation: true });
         const data = await getLocation();
         if(data){
             let region = {
@@ -113,6 +122,7 @@ export default class MapContainer extends React.Component<
             
             this.mapViewRef?.animateToRegion(region);
         }
+        this.setState({ loadingLocation: false });
     }
 
     convertPlacesToMarkers(places: dbPlace[]){
@@ -249,7 +259,7 @@ export default class MapContainer extends React.Component<
     }
 
     render() {
-        if(this.state.loading){
+        if(this.state.loadingMap){
             return <Spinner color={theme.PRIMARY_COLOR}/>
         }
 
@@ -279,20 +289,34 @@ export default class MapContainer extends React.Component<
                                 <Button 
                                     style={styles.mapButton} 
                                     onPress={this.goToMyLocation.bind(this)}>
-                                    <Icon 
-                                        type={'FontAwesome5'} 
-                                        name={'location-arrow'}
-                                        style={styles.buttonIcon}></Icon>
-                                    <Label style={styles.buttonText}>Location</Label>
+                                    {
+                                        this.state.loadingLocation ?
+                                        <Spinner color={theme.DARK_COLOR}/> : 
+                                        <View>
+                                            <Icon 
+                                                type={'FontAwesome5'} 
+                                                name={'location-arrow'}
+                                                style={styles.buttonIcon}>
+                                            </Icon>
+                                            <Label style={styles.buttonText}>Location</Label>
+                                        </View>
+                                    }
                                 </Button>
                                 <Button 
                                     style={styles.mapButton} 
-                                    onPress={this.loadNearbyPlaceMarkers.bind(this)}>
-                                    <Icon 
-                                        type={'FontAwesome5'} 
-                                        name={'map-marked-alt'}
-                                        style={styles.buttonIcon}></Icon>
-                                    <Label style={styles.buttonText}>Nearby</Label>
+                                    onPress={this.loadNearbyPlaceMarkers.bind(this, true)}>
+                                    {
+                                        this.state.loadingNearby ?
+                                        <Spinner color={theme.DARK_COLOR}/> : 
+                                        <View>
+                                            <Icon 
+                                                type={'FontAwesome5'} 
+                                                name={'map-marked-alt'}
+                                                style={styles.buttonIcon}>
+                                            </Icon>
+                                            <Label style={styles.buttonText}>Nearby</Label>
+                                        </View>
+                                    }
                                 </Button>
                             </View>
                         </View> : null
@@ -325,10 +349,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     buttonIcon:{
+        padding: 2,
         color: theme.DARK_COLOR,
         fontSize: 20
     },
     buttonText: {
+        alignSelf: 'center',
         color: theme.DARK_COLOR,
         fontSize: 8
     }

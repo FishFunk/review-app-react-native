@@ -331,7 +331,7 @@ class FirebaseService {
 			name: _get(place, 'name', ''),
 			lat: _get(place, 'geometry.location.lat', ''),
 			lng: _get(place, 'geometry.location.lng', ''),
-			rating: placeRating
+			rating: +placeRating.toFixed(1)
 		}
 
 		return this.db.ref(`places/${dbPlace.id}`).set(dbPlace);
