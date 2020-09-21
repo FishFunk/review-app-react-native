@@ -10,7 +10,7 @@ export default class MapPlaceSummaryModal extends React.Component<
         apiKey: string, 
         isOpen: boolean, 
         placeId: string, 
-        toggleSummaryModal: Function
+        toggleSummaryModal: () => void
     }>{
 
     render(){

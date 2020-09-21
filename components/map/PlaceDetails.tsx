@@ -134,6 +134,7 @@ export default class PlaceDetails extends React.Component<
                     <View style={styles.titleView}>
                         <Text style={styles.title}>{this.state.place.name}</Text>
                         <TouchableOpacity 
+                            containerStyle = {styles.starTouchable}
                             style={styles.starsView} 
                             onPress={this.onPressWriteReview.bind(this)}
                             disabled={this.state.disableEdit}>
@@ -262,10 +263,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center'
     },
+    starTouchable: {
+        width: 120, 
+        alignSelf: 'center'
+    },
     starsView: {
         marginTop: 5,
-        alignSelf: 'center',
-        marginBottom: 5
+        marginBottom: 10,
+        alignSelf: 'center'
     },
     buttonContainer: {
         margin: 5

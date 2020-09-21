@@ -53,7 +53,7 @@ export default class MapContainer extends React.Component<
         this.load()
             .then((newState)=>{
                 this.setState({ ...newState, loadingMap: false }, ()=>{
-                    this.loadNearbyPlaceMarkers();
+                    this.loadNearbyPlaceMarkers(true);
                 });
             })
             .catch(error=>{
