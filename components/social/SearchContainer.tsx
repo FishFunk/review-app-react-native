@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { List, View, Item, Input } from 'native-base';
+import { List, View, Item, Input, Spinner } from 'native-base';
 import { StyleSheet } from 'react-native';
 import { appUser } from '../../models/user';
 import FirebaseService from '../../services/firebaseService';
 import UserListItem from './UserListItem';
 import _indexOf from 'lodash/indexOf';
 import _without from 'lodash/without';
+import _sortBy from 'lodash/sortBy';
 
 export default function SearchContainer(props: any){
 
+    const [loading, setLoading] = useState(true);
     const [allUsers, setAllUsers] = useState(new Array<appUser>());
     const [filteredUsers, setFilteredUsers] = useState(new Array<appUser>());
     const [searchInput, setInput] = useState('');
@@ -18,9 +20,11 @@ export default function SearchContainer(props: any){
     useEffect(()=>{
         FirebaseService.searchUsers('')
             .then(results=>{
-                setAllUsers(results);
-                setFilteredUsers(results);
-            });
+                const orderedUsers = _sortBy(results, (usr)=>usr.lastName);
+                setAllUsers(orderedUsers);
+                setFilteredUsers(orderedUsers);
+            })
+            .finally(()=>setLoading(false));
     }, []);
 
     useEffect(()=>{
@@ -60,11 +64,15 @@ export default function SearchContainer(props: any){
         setFilteredUsers(newResults);
     }
 
+    if(loading){
+        return <Spinner/>
+    }
     return (
         <View style={styles.container}>
             <View>
                 <Item style={styles.inputItem}>
                   <Input 
+                    clearButtonMode='while-editing'
                     placeholder='Search for someone...'
                     onChangeText={text => filterResults(text)}
                     value={searchInput} />

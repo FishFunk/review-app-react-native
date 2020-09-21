@@ -129,9 +129,9 @@ class FirebaseService {
 		return this.auth.currentUser?.sendEmailVerification();
 	}
 
-	async getKey(keyName: string): Promise<string>{
+	async getMetadata(keyName: string): Promise<string>{
 		this._verifyInitialized();
-		const snap = await this.db.ref(`keys/${keyName}`).once('value');
+		const snap = await this.db.ref(`metadata/${keyName}`).once('value');
 		return snap.val();
 	}
 

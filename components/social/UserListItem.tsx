@@ -17,7 +17,7 @@ export default function UserListItem(
 
     const { user, onButtonPress, following } = props;
     return (
-        <ListItem key={user.id}>
+        <ListItem>
             <Left>
                 <Thumbnail 
                     source={{ uri: user.photoUrl }} 

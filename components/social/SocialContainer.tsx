@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { 
   List, 
   ListItem, 
   Text, 
   Button, 
-  Spinner
+  Spinner,
+  Icon
 } from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import { 
@@ -20,11 +21,18 @@ import _map from 'lodash/map';
 import UndrawFollowingSvg from '../../svgs/undraw_following';
 import UserListItem from './UserListItem';
 import { ScrollView } from 'react-native-gesture-handler';
+import { openShareSheet } from '../../services/shareService';
+import { iosAppStoreUrl, androidPlayStoreUrl } from '../../constants/Urls';
+import { socialShareMessage } from '../../constants/Messages';
 
 export default class SocialContainer extends React.Component<{
         navigation: any
     },
-    { suggestedFriends: Array<appUser>, followingFriends: Array<appUser>, loading: boolean }> {
+    { 
+        suggestedFriends: Array<appUser>, 
+        followingFriends: Array<appUser>, 
+        loading: boolean
+    }> {
   
     state = {
         loading: true,
@@ -66,7 +74,8 @@ export default class SocialContainer extends React.Component<{
             
             this.setState({ 
                 suggestedFriends: suggestedFriends, 
-                followingFriends: followingUsers });
+                followingFriends: followingUsers 
+            });
         } else {
             await requestContactsPermission();
         }
@@ -106,68 +115,73 @@ export default class SocialContainer extends React.Component<{
             .catch((error: any)=> FirebaseService.logError(error));
     }
 
+    async onPressInvite() {
+        const url = Platform.OS == 'ios' ? iosAppStoreUrl : androidPlayStoreUrl;
+        openShareSheet(url, socialShareMessage)
+            .catch(error =>{
+                FirebaseService.logError(error.message);
+            });
+    }
+
     render(){
-        if(this.state.loading){
-            return <Spinner/>
-        }
         return (
           <ScrollView style={styles.container}>
             <View style={styles.svgContainer}>
                 <UndrawFollowingSvg width='75%' height='200px'/>
             </View>
             {
-                this.state.followingFriends.length > 0 || this.state.suggestedFriends.length > 0?
-                    <List>
-                        {                      
-                            this.state.suggestedFriends.length > 0 ?  
-                                <ListItem itemDivider style={styles.itemDivider}>
-                                    <Text style={styles.dividerText}>People You May Know</Text>
-                                    <Text style={styles.dividerText}>Follow</Text>
-                                </ListItem> : null
-                        }
-                        {
-                            this.state.suggestedFriends.map((user: appUser)=>
-                                <UserListItem 
-                                    user={user} 
-                                    following={false} 
-                                    onButtonPress={this.onAddContact.bind(this, user)}/>)
-                        }
-                        {                      
-                            this.state.followingFriends.length > 0 ?  
-                                <ListItem itemDivider style={styles.itemDivider}>
-                                    <Text style={styles.dividerText}>People You Follow</Text>
-                                    <Text style={styles.dividerText}>Unfollow</Text>
-                                </ListItem>  : null
-                        }
-                        {
-                            this.state.followingFriends.map((user: appUser, idx)=>
-                                <UserListItem 
-                                    user={user} 
-                                    following={true} 
-                                    onButtonPress={this.onRemoveContact.bind(this, user)}/>)
-                        }
-                    </List> : 
-                    <View style={styles.emptyListView}>
-                        <Text style={styles.emptyListText}>
-                            Looks like we can't find anybody you might know in our system. Spread the word!
-                        </Text>
-                        <Button small style={styles.emptyListButton}>
-                            <Text>Invite Friends</Text>
-                        </Button>
-                        <Text style={styles.emptyListText}>
-                            Make sure you give us permission to check your contacts!
-                        </Text>
-                        <Button 
-                            small style={styles.emptyListButton}
-                            onPress={requestContactsPermission}>
-                            <Text>Request Contacts</Text>
-                        </Button>
-                        {/* <Text style={styles.emptyListText}>
-                            You can also connect a social media account!
-                        </Text>
-                        <Button small style={styles.emptyListButton}><Text>Connect Facebook</Text></Button>
-                        <Button small style={styles.emptyListButton}><Text>Connect Google</Text></Button> */}
-                    </View>
+                this.state.loading ? 
+                <Spinner/> : 
+                <View>
+                {
+                    this.state.followingFriends.length > 0 || this.state.suggestedFriends.length > 0?
+                        <List>
+                            {                      
+                                this.state.suggestedFriends.length > 0 ?  
+                                    <ListItem itemDivider style={styles.itemDivider}>
+                                        <Text style={styles.dividerText}>People You May Know</Text>
+                                        <Text style={styles.dividerText}>Follow</Text>
+                                    </ListItem> : null
+                            }
+                            {
+                                this.state.suggestedFriends.map((user: appUser)=>
+                                    <UserListItem 
+                                        key={user.id}
+                                        user={user} 
+                                        following={false} 
+                                        onButtonPress={this.onAddContact.bind(this, user)}/>)
+                            }
+                            {                      
+                                this.state.followingFriends.length > 0 ?  
+                                    <ListItem itemDivider style={styles.itemDivider}>
+                                        <Text style={styles.dividerText}>People You Follow</Text>
+                                        <Text style={styles.dividerText}>Unfollow</Text>
+                                    </ListItem>  : null
+                            }
+                            {
+                                this.state.followingFriends.map((user: appUser, idx)=>
+                                    <UserListItem 
+                                        key={user.id}
+                                        user={user} 
+                                        following={true} 
+                                        onButtonPress={this.onRemoveContact.bind(this, user)} />)
+                            }
+                        </List> : 
+                        <View style={styles.emptyListView}>
+                            <Text style={styles.emptyListText}>
+                                Looks like we can't find anybody you might know in our system. 
+                                Let's change that!
+                            </Text>
+                            <Button  
+                                style={styles.inviteButton}
+                                onPress={this.onPressInvite.bind(this)}
+                                >
+                                <Icon type={'FontAwesome5'} name={'paper-plane'}/>
+                                <Text style={styles.inviteText}>Invite Friends</Text>
+                            </Button>
+                        </View>
+                }
+                </View>
             }
           </ScrollView>
         )};
@@ -192,22 +206,26 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     emptyListView: {
-        flex: 1,
+        flexDirection: 'column',
         width: '100%',
+        height: '100%',
         padding: 10,
-        justifyContent: 'space-evenly',
-        alignItems: 'center'
-
+        justifyContent: 'space-evenly'
     },
     emptyListText: {
         color: theme.DARK_COLOR,
         fontWeight: '300',
         fontSize: 18,
-        margin: 5,
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        padding: 5
     },
-    emptyListButton: {
+    inviteButton: {
+        marginTop: 15,
+        backgroundColor: theme.PRIMARY_COLOR,
         alignSelf: 'center'
+    },
+    inviteText: {
+        fontWeight: 'bold'
     }
 });

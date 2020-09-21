@@ -1,0 +1,1 @@
+export const socialShareMessage = "This app is the new and sexier Yelp. Check it out!";
