@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import config from './firebaseServiceConfig';
 import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';
@@ -28,6 +28,7 @@ class FirebaseService {
 		firebase.initializeApp(config);
 		this.db = firebase.database();
 		this.auth = firebase.auth();
+		
 		console.log(`Firebase initialized successfully`);
 	}
 
@@ -38,7 +39,15 @@ class FirebaseService {
 	async registerPushNotificationToken(){
 		const result = await registerForPushNotificationsAsync();
 		if(result?.status === 'success'){
-			return this.db.ref(`users/${this.auth.currentUser?.uid}/push_token`).set(result.token);
+			const snapshot = await this.db.ref(`users/${this.auth.currentUser?.uid}/push_tokens`).once('value');
+			if(snapshot.exists()){
+				const tokens = snapshot.val();
+				tokens.push(result.token?.data);
+				const uniqTokens = _uniq(tokens);
+				return this.db.ref(`users/${this.auth.currentUser?.uid}/push_tokens`).set(uniqTokens);
+			} else {
+				return this.db.ref(`users/${this.auth.currentUser?.uid}/push_tokens`).set([result.token?.data]);
+			}
 		}
 	}
 
@@ -100,7 +109,8 @@ class FirebaseService {
 				following: [],
 				placesReviewed: [],
 				mobile: loggedInUserData.phoneNumber || '',
-				photoUrl: loggedInUserData.photoURL || ''
+				photoUrl: loggedInUserData.photoURL || '',
+				push_tokens: []
 			}
 
 			await this.db.ref(`users/${newUser.id}`).set(newUser).catch(error => {

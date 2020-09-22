@@ -6,8 +6,9 @@ export interface appUser {
     lastName?: string;
     following?: string[];
     id?: string;
-    placesReviewed?: array[];
+    placesReviewed?: object[];
     mobile?: string;
     photoUrl?: string;
     email_verified?: boolean;
+    push_tokens?: string[];
 }
