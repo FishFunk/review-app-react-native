@@ -57,8 +57,12 @@ export default class SocialContainer extends React.Component<{
     }
 
     async init(){
-        const isGranted = await checkContactsPermission();
-        if(isGranted){
+        let finalPermission = await checkContactsPermission();
+        if(!finalPermission){
+            finalPermission = await requestContactsPermission();
+        }
+
+        if(finalPermission){
             const contacts = await getContacts();
             const allSuggestedFriends = await FirebaseService.findFriends(contacts);
             const followingIds = await FirebaseService.getUserFollowingIds();
@@ -76,8 +80,6 @@ export default class SocialContainer extends React.Component<{
                 suggestedFriends: suggestedFriends, 
                 followingFriends: followingUsers 
             });
-        } else {
-            await requestContactsPermission();
         }
     }
 
