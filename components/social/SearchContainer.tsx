@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { List, View, Item, Input, Spinner } from 'native-base';
+import { List, View, Item, Input } from 'native-base';
 import { StyleSheet } from 'react-native';
 import { appUser } from '../../models/user';
 import FirebaseService from '../../services/firebaseService';
@@ -8,6 +8,7 @@ import UserListItem from './UserListItem';
 import _indexOf from 'lodash/indexOf';
 import _without from 'lodash/without';
 import _sortBy from 'lodash/sortBy';
+import SpinnerContainer from '../SpinnerContainer';
 
 export default function SearchContainer(props: any){
 
@@ -65,7 +66,7 @@ export default function SearchContainer(props: any){
     }
 
     if(loading){
-        return <Spinner/>
+        return <SpinnerContainer />
     }
     return (
         <View style={styles.container}>
@@ -83,6 +84,7 @@ export default function SearchContainer(props: any){
                 {
                     filteredUsers.map((user: appUser)=> 
                         <UserListItem 
+                            key={user.id}
                             user={user} 
                             onButtonPress={(following: boolean)=>onButtonPress(user, following)}
                             following={_indexOf(followingIds, user.id)>=0}/>)

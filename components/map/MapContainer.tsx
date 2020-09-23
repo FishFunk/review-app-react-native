@@ -12,6 +12,7 @@ import MapView, { Region, Marker } from 'react-native-maps';
 import { Spinner, Button, Icon, Label } from 'native-base';
 import theme from '../../styles/theme';
 import { isInRadius, getPlaceAvgRating } from '../../services/utils';
+import SpinnerContainer from '../SpinnerContainer';
 
 export default class MapContainer extends React.Component<
     {}, 
@@ -260,7 +261,7 @@ export default class MapContainer extends React.Component<
 
     render() {
         if(this.state.loadingMap){
-            return <Spinner color={theme.PRIMARY_COLOR}/>
+            return <SpinnerContainer />
         }
 
         return (
@@ -291,7 +292,9 @@ export default class MapContainer extends React.Component<
                                     onPress={this.goToMyLocation.bind(this)}>
                                     {
                                         this.state.loadingLocation ?
-                                        <Spinner color={theme.DARK_COLOR}/> : 
+                                        <Spinner 
+                                            style={{marginTop: 2, marginLeft: 2}} 
+                                            color={theme.DARK_COLOR}/> : 
                                         <View>
                                             <Icon 
                                                 type={'FontAwesome5'} 
@@ -307,7 +310,9 @@ export default class MapContainer extends React.Component<
                                     onPress={this.loadNearbyPlaceMarkers.bind(this, true)}>
                                     {
                                         this.state.loadingNearby ?
-                                        <Spinner color={theme.DARK_COLOR}/> : 
+                                        <Spinner 
+                                            style={{marginTop: 2, marginLeft: 2}} 
+                                            color={theme.DARK_COLOR}/> : 
                                         <View>
                                             <Icon 
                                                 type={'FontAwesome5'} 
