@@ -7,7 +7,8 @@ import {
     Item, 
     Textarea, 
     Label, 
-    Title
+    Title, 
+    Toast, Root
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -82,13 +83,25 @@ export default class WriteReview extends Component<{
     async onSubmitForm(){
         Keyboard.dismiss();
         const { place_id, name } = this.props.place;
+        const { rating1, rating2, rating3, comments } = this.state;
+        const avg = this.avgRating();
+
+        if( avg === 0){
+            Toast.show({
+                position: 'bottom',
+                text: 'That bad huh? Total star rating must be between 1 and 5.',
+                duration: 3000
+            });
+            return;
+        }
+
         const reviewData = {
             place_id: place_id,
             place_name: name,
-            atmosphere: this.state.rating1,
-            menu: this.state.rating2,
-            service: this.state.rating3,
-            comments: this.state.comments,
+            atmosphere: rating1,
+            menu: rating2,
+            service: rating3,
+            comments: comments,
             avg_rating: this.avgRating()
         }
 
@@ -113,6 +126,7 @@ export default class WriteReview extends Component<{
             animationType={'slide'}
             transparent={true}
         >
+            <Root>
             <ScrollView contentContainerStyle={styles.modalView}>
                 <View>
                     <Title>
@@ -205,6 +219,7 @@ export default class WriteReview extends Component<{
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            </Root>
         </Modal>
         )
     }
