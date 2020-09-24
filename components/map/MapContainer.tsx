@@ -58,7 +58,7 @@ export default class MapContainer extends React.Component<
                 });
             })
             .catch(error=>{
-                FirebaseService.logError(error);
+                FirebaseService.logError(JSON.stringify(error));
             });
     }
 

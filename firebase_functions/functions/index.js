@@ -7,6 +7,18 @@ const fetch = require('node-fetch');
 
 admin.initializeApp();
 
+const _sendExpoTokenRequest = async (payload) =>{
+  return fetch('https://exp.host/--/api/v2/push/send', {
+    method: "POST",
+    headers: {
+      host: 'exp.host',
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+}
+
 /**
  * Triggers when a user  writes a review
  * */
@@ -35,43 +47,46 @@ exports.sendReviewNotification = functions.database.ref('/reviews/{place_id}')
       const reviewer = await admin.auth().getUser(newReview.reviewer_id);
 
       // Get the list of users to notify
-      let tokens = [];
+      let payloads = [];
       const usersSnapshot = await admin.database().ref(`/users`).once('value');
       usersSnapshot.forEach((snap)=>{
         const user = snap.val();
         if(_.indexOf(user.following, newReview.reviewer_id) >= 0){
           if(user.push_tokens){
-            tokens.concat(user.push_tokens);
+            payloads.push({
+              // Notification details payload
+              to: user.push_tokens,
+              title: 'New review alert!',
+              body: `${reviewer.displayName} posted a new review for ${newReview.place_name} giving it ${newReview.avg_rating} stars.`
+            });
           }
         }
       });
 
       // Check if there are any device tokens.
-      if (!tokens || tokens.length === 0) {
-        return console.log('There are no notification tokens to send to.');
+      if (!payloads || payloads.length === 0) {
+        console.log('There are no notifications to be sent.');
+        return;
       }
+
       console.log(`There are ${tokens.length} tokens to send notifications to.`);
 
-      // Notification details.
-      const payload = {
-        notification: {
-          title: `New review alert!`,
-          body: `${reviewer.displayName} posted a new review for ${newReview.place_name} giving it ${newReview.avg_rating} stars.`
-        }
-      };
-
       // Send notifications to all tokens.
-      const response = await admin.messaging().sendToDevice(["6a6141c842f60735cd3d3c35ece4ddabaa8097fbb310da5280beb0843b4cc9aa"], payload);
-      // For each message check if there was an error.
-      response.results.forEach((result, index) => {
-        const error = result.error;
-        if (error) {
-          console.error('Failure sending notification to', tokens[index], error);
-          // Cleanup the tokens who are not registered anymore.
-          if (error.code === 'messaging/invalid-registration-token' ||
-              error.code === 'messaging/registration-token-not-registered') {
-            // TODO:
-          }
+      try{
+        const response = await _sendExpoTokenRequest(payloads);
+
+        if(response.errors){
+          console.error(response.errors);
         }
-      });
-    });
+
+        if(response.data){
+          response.data.forEach(item =>{
+            if(item.status === 'error'){
+              console.error('error: ' + item.message);
+            }
+          })
+        }
+      } catch (ex){
+        console.error(ex);
+      }
+});
