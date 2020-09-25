@@ -28,6 +28,7 @@ import openMap from 'react-native-open-maps';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getPlaceAvgRating } from '../../services/utils';
 import _find from 'lodash/find';
+import SpinnerContainer from '../SpinnerContainer';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -129,7 +130,7 @@ export default class PlaceDetails extends React.Component<
         <View style={styles.container}>
             {
                 this.state.isLoading ?
-                <Spinner color={theme.PRIMARY_COLOR} /> :
+                <SpinnerContainer /> :
                 <View style={{flex: 1}}>
                     <View style={styles.titleView}>
                         <Text style={styles.title}>{this.state.place.name}</Text>

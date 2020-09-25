@@ -5,7 +5,6 @@ import {
   ListItem, 
   Text, 
   Button, 
-  Spinner,
   Icon
 } from 'native-base';
 import FirebaseService from '../../services/firebaseService';
@@ -24,6 +23,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { openShareSheet } from '../../services/shareService';
 import { iosAppStoreUrl, androidPlayStoreUrl } from '../../constants/Urls';
 import { socialShareMessage } from '../../constants/Messages';
+import SpinnerContainer from '../SpinnerContainer';
 
 export default class SocialContainer extends React.Component<{
         navigation: any
@@ -133,7 +133,7 @@ export default class SocialContainer extends React.Component<{
             </View>
             {
                 this.state.loading ? 
-                <Spinner/> : 
+                <SpinnerContainer/> : 
                 <View>
                 {
                     this.state.followingFriends.length > 0 || this.state.suggestedFriends.length > 0?

@@ -5,13 +5,13 @@ import {
   Button, 
   Grid,
   Row,
-  Spinner,
   Title,
   Icon} from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
 import { ScrollView } from 'react-native-gesture-handler';
 import { appUser } from '../../models/user';
+import SpinnerContainer from '../SpinnerContainer';
 
 export default class ProfileContainer extends React.Component<{},{
     user: appUser, emailSent: boolean
@@ -57,7 +57,7 @@ export default class ProfileContainer extends React.Component<{},{
 
     render(){
         if(!this.state.user){
-            return <Spinner color={theme.PRIMARY_COLOR} />
+            return <SpinnerContainer/>
         }
         return (
             <ScrollView style={styles.container}>

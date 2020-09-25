@@ -19,6 +19,26 @@ const _sendExpoTokenRequest = async (payload) =>{
   })
 }
 
+// (minute hour dayOfMonth month dayOfWeek)
+exports.scheduledFunctionCrontab = functions.pubsub.schedule('0 19 * * 0').onRun(async (context) => {
+    // Send Weekly Reminder
+    let payloads = [];
+    const usersSnapshot = await admin.database().ref(`/users`).once('value');
+    usersSnapshot.forEach((snap)=>{
+      const user = snap.val();
+      if(user.push_tokens && user.push_tokens.length > 0){
+        payloads.push({
+          // Notification details payload
+          to: user.push_tokens,
+          title: `Epic weekend ${user.firstName}?`,
+          body: `Drop a review if you went to any place new!`
+        });
+      }
+    });
+
+    return _sendExpoTokenRequest(payloads);
+});
+
 /**
  * Triggers when a user  writes a review
  * */
@@ -56,8 +76,8 @@ exports.sendReviewNotification = functions.database.ref('/reviews/{place_id}')
             payloads.push({
               // Notification details payload
               to: user.push_tokens,
-              title: 'New review alert!',
-              body: `${reviewer.displayName} posted a new review for ${newReview.place_name} giving it ${newReview.avg_rating} stars.`
+              title: 'Someone you follow wrote a review!',
+              body: `${reviewer.displayName} went to ${newReview.place_name} and gave it ${newReview.avg_rating} stars.`
             });
           }
         }
