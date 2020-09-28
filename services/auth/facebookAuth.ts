@@ -3,7 +3,8 @@ import appConfig from '../../app.json';
 import * as Facebook from 'expo-facebook';
 import { signInWithGoogle } from './googleAuth';
 import { authResult } from '../../models/auth';
-
+import { AsyncStorage } from 'react-native';
+import { FACEBOOK_TOKEN_KEY } from '../../constants/AsyncStorage';
 
 export const signInWithFacebook = 
     async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
@@ -16,7 +17,9 @@ export const signInWithFacebook =
     switch (result.type) {
         case 'success': {
             await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);  // Set persistent auth state
-            const credential = firebase.auth.FacebookAuthProvider.credential(result.token); //TODO: store token for API usage?
+            const credential = firebase.auth.FacebookAuthProvider.credential(result.token);
+
+            await AsyncStorage.setItem(FACEBOOK_TOKEN_KEY, result.token); //Store token for API usage
 
             let firebaseUser;
             try{

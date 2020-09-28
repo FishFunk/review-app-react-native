@@ -39,7 +39,7 @@ export const getGooglePlaceById = (
             }
         })
         .catch(error => reject(error));
-});
+    });
 }
 
 export const getGooglePlaceIdBySearch = (apiKey: string, searchQuery: string)=> {

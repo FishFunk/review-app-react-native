@@ -54,7 +54,7 @@ export default class MapContainer extends React.Component<
         this.load()
             .then((newState)=>{
                 this.setState({ ...newState, loadingMap: false }, ()=>{
-                    this.loadNearbyPlaceMarkers(true);
+                    this.loadNearbyPlaceMarkers(10);
                 });
             })
             .catch(error=>{
@@ -66,13 +66,11 @@ export default class MapContainer extends React.Component<
         this.mapViewRef = ref;
     }
 
-    async loadNearbyPlaceMarkers(showSpinner: boolean = false){
-        if(showSpinner){
-            this.setState({ loadingNearby: true });
-        }
+    async loadNearbyPlaceMarkers(radius?: number){
+        this.setState({ loadingNearby: true });
 
         const { latitude: lat, longitude: lng } = this.state.region;
-        const places = await FirebaseService.getNearbyPlaces(lat, lng);
+        const places = await FirebaseService.getNearbyPlaces(lat, lng, radius);
         const markers = this.convertPlacesToMarkers(places);
 
         if(this.mapViewRef){
@@ -301,13 +299,13 @@ export default class MapContainer extends React.Component<
                                                 name={'location-arrow'}
                                                 style={styles.buttonIcon}>
                                             </Icon>
-                                            <Label style={styles.buttonText}>Location</Label>
+                                            <Label style={styles.buttonText}>Current Location</Label>
                                         </View>
                                     }
                                 </Button>
                                 <Button 
                                     style={styles.mapButton} 
-                                    onPress={this.loadNearbyPlaceMarkers.bind(this, true)}>
+                                    onPress={this.loadNearbyPlaceMarkers.bind(this, 15)}>
                                     {
                                         this.state.loadingNearby ?
                                         <Spinner 
@@ -319,7 +317,7 @@ export default class MapContainer extends React.Component<
                                                 name={'map-marked-alt'}
                                                 style={styles.buttonIcon}>
                                             </Icon>
-                                            <Label style={styles.buttonText}>Nearby</Label>
+                                            <Label style={styles.buttonText}>Nearby Reviews</Label>
                                         </View>
                                     }
                                 </Button>
@@ -359,6 +357,7 @@ const styles = StyleSheet.create({
         fontSize: 20
     },
     buttonText: {
+        textAlign: 'center',
         alignSelf: 'center',
         color: theme.DARK_COLOR,
         fontSize: 8

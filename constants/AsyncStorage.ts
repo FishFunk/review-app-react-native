@@ -1,0 +1,1 @@
+export const FACEBOOK_TOKEN_KEY = 'FACEBOOK_TOKEN_KEY';
