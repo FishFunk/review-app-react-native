@@ -13,6 +13,7 @@ import { Spinner, Button, Icon, Label } from 'native-base';
 import theme from '../../styles/theme';
 import { isInRadius, getPlaceAvgRating } from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default class MapContainer extends React.Component<
     {}, 
@@ -24,7 +25,8 @@ export default class MapContainer extends React.Component<
         markers: markerData[], 
         showSummaryModal: boolean,
         placeId: string,
-        apiKey: string
+        apiKey: string,
+        refreshCallout: boolean
     }> {
 
 
@@ -47,7 +49,8 @@ export default class MapContainer extends React.Component<
         region: this.defaultRegion,
         markers: [],
         showSummaryModal: false,
-        apiKey: ''
+        apiKey: '',
+        refreshCallout: false
     };
 
     componentDidMount(){
@@ -173,12 +176,12 @@ export default class MapContainer extends React.Component<
                 this.state.region.longitude,
                 region.latitude,
                 region.longitude,
-                50);
+                10);
 
-            if(hideCallout) marker.hideCallout(); 
+            if(hideCallout) marker.hideCallout();
         }
 
-        this.setState({ region:  { ...region }} );
+        this.setState({ region:  { ...region } });
     }
 
     async onMarkerSelect(marker: markerData){
@@ -233,6 +236,9 @@ export default class MapContainer extends React.Component<
     reloadPlaceReviews(){
         // Reload single marker
         const { placeId, markers } = this.state;
+
+        this.setState({refreshCallout: true});
+
         if(markers.length === 1){
             this.loadSingleMarker(placeId);      
         }
@@ -251,9 +257,9 @@ export default class MapContainer extends React.Component<
     onToggleSummaryModal(forceVal?: boolean){
         this.reloadPlaceReviews();
         if(forceVal != null){
-            this.setState({ showSummaryModal: forceVal });
+            this.setState({ showSummaryModal: forceVal, refreshCallout: false });
         } else {
-            this.setState({ showSummaryModal: !this.state.showSummaryModal });
+            this.setState({ showSummaryModal: !this.state.showSummaryModal, refreshCallout: false });
         }
     }
 
@@ -269,11 +275,46 @@ export default class MapContainer extends React.Component<
                         handleSelectPlace={this.handleSelectPlace.bind(this)}
                         apiKey={this.state.apiKey} />
                 </View>
+                <View style={styles.exploreButtonContainer}>
+                    <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false}
+                        style={{backgroundColor: 'transparent'}}
+                        contentContainerStyle={{backgroundColor: 'transparent'}}>                           
+                        <Button small rounded style={styles.exploreButton}
+                            onPress={()=>{}}
+                            iconLeft>
+                            <Icon type={'FontAwesome5'} name={'star'} style={styles.exploreIcon}></Icon>
+                            <Label style={styles.exploreLabel}>Top Rated</Label>
+                        </Button>
+                        <Button small rounded style={styles.exploreButton} iconLeft
+                            onPress={()=>{}}>
+                            <Icon type={'FontAwesome5'} name={'cocktail'} style={styles.exploreIcon}></Icon>
+                            <Label style={styles.exploreLabel}>Drinks</Label>
+                        </Button>
+                        <Button small rounded style={styles.exploreButton} iconLeft
+                            onPress={()=>{}}>
+                            <Icon type={'FontAwesome5'} name={'utensils'} style={styles.exploreIcon}></Icon>
+                            <Label style={styles.exploreLabel}>Eats</Label>
+                        </Button>
+                        <Button small rounded style={styles.exploreButton} iconLeft
+                            onPress={()=>{}}>
+                            <Icon type={'FontAwesome5'} name={'mug-hot'} style={styles.exploreIcon}></Icon>
+                            <Label style={styles.exploreLabel}>Cafes</Label>
+                        </Button>
+                        <Button small rounded style={styles.exploreButton} iconLeft
+                            onPress={()=>{}}>
+                            <Icon type={'FontAwesome5'} name={'shopping-bag'} style={styles.exploreIcon}></Icon>
+                            <Label style={styles.exploreLabel}>Shopping</Label>
+                        </Button>
+                    </ScrollView>
+                </View>
                 {
                     this.state.region.latitude ?
                         <View style={{width: '100%', height: '100%'}}>
                             <Map 
                                 setMapRef={this.setMapRef.bind(this)}
+                                refreshCallout={this.state.refreshCallout}
                                 region={this.state.region}
                                 markers={this.state.markers}
                                 onPress={this.onPressMapArea.bind(this)}
@@ -283,7 +324,7 @@ export default class MapContainer extends React.Component<
                                 onShowDetails={this.onShowDetails.bind(this)}
                             />
                             <View
-                                style={styles.buttonContainer}
+                                style={styles.mapToolButtonContainer}
                             >
                                 <Button 
                                     style={styles.mapButton} 
@@ -336,7 +377,7 @@ export default class MapContainer extends React.Component<
 }
 
 const styles = StyleSheet.create({
-    buttonContainer: {
+    mapToolButtonContainer: {
         position: 'absolute',
         bottom: 0,
         right: 0,
@@ -361,5 +402,28 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         color: theme.DARK_COLOR,
         fontSize: 8
+    },
+    exploreButtonContainer: {
+        alignItems: 'center',
+        position: 'absolute',
+        top: 60,
+        width: '100%',
+        zIndex: 999
+    },
+    exploreButton: {
+        fontSize: 10,
+        height: 30,
+        margin: 5,
+        backgroundColor: theme.PRIMARY_COLOR
+    },
+    exploreIcon: {
+        fontSize: 10,
+        color: theme.LIGHT_COLOR
+    },
+    exploreLabel: {
+        fontSize: 10,
+        paddingLeft: 5,
+        paddingRight: 10,
+        color: theme.LIGHT_COLOR
     }
 })

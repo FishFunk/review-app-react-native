@@ -12,6 +12,7 @@ export default class Map extends React.Component<
     {
         region: Region,
         markers: Array<markerData>,
+        refreshCallout: boolean,
         setMapRef: (ref: MapView | null) => void,
         onPress: () => void,
         onMarkerSelect: (marker: markerData) => void,
@@ -26,7 +27,8 @@ export default class Map extends React.Component<
 
     componentDidUpdate(prevProps: any){
         if(!_isEqual(prevProps.markers, this.props.markers)){
-            if(Platform.OS === 'ios'){
+            // refresh callout when a new review was written
+            if(this.props.refreshCallout && Platform.OS === 'ios'){
                 this.markerRef?.redrawCallout();
             } else {
                 this.markerRef?.hideCallout();
@@ -89,7 +91,9 @@ export default class Map extends React.Component<
                         pinColor={theme.SECONDARY_COLOR}
                         onPress={(event)=>this.onPressMarker(event, marker)}
                     >
-                        <Callout tooltip onPress={(event)=>this.onPressCallout(event, marker)}>
+                        <Callout 
+                            tooltip 
+                            onPress={(event)=>this.onPressCallout(event, marker)}>
                             <View style={styles.bubble}>
                                 <Title style={styles.title}>{marker.title}</Title>
                                 {
