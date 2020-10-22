@@ -11,4 +11,5 @@ export interface appUser {
     photoUrl?: string;
     email_verified?: boolean;
     push_tokens?: string[];
+    phone_verified?: boolean;
 }

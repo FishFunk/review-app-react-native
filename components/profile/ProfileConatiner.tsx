@@ -6,12 +6,13 @@ import {
   Grid,
   Row,
   Title,
-  Icon} from 'native-base';
+  Icon, Toast} from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
 import { ScrollView } from 'react-native-gesture-handler';
 import { appUser } from '../../models/user';
 import SpinnerContainer from '../SpinnerContainer';
+import PhoneVerifyRecaptcha from '../PhoneVerifyRecaptcha';
 
 export default class ProfileContainer extends React.Component<{},{
     user: appUser, emailSent: boolean
@@ -97,12 +98,23 @@ export default class ProfileContainer extends React.Component<{},{
                                 }
                             </Row> : null
                     }
-                    <Row style={styles.row}></Row>
                     <Row style={styles.row}>
-                        <Button transparent onPress={this.onLogout} style={{alignSelf: 'center'}}>
-                            <Text style={styles.buttonText}>Logout</Text>
-                        </Button>
+                        <Text style={styles.label}>Phone Verified</Text>
+                        {           
+                            this.state.user.phone_verified ?             
+                                <Icon type={'FontAwesome5'} name={'check'} 
+                                    fontSize={16} style={styles.verifiedIcon}></Icon> :
+                                <Icon type={'FontAwesome5'} name={'times'} 
+                                    style={styles.notVerifiedIcon}></Icon>
+                        }
                     </Row>
+                    {
+                        !this.state.user.phone_verified ? 
+                            <PhoneVerifyRecaptcha /> : null
+                    }
+                    <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
+                        <Text style={styles.buttonText}>Logout</Text>
+                    </Button>
                 </Grid>
             </ScrollView>
         )};
@@ -146,5 +158,9 @@ const styles = StyleSheet.create({
     notVerifiedIcon: {
         color: theme.DANGER_COLOR,
         fontSize: 20
+    },
+    logoutBtn: {
+        alignSelf: 'center',
+        marginTop: '10%'
     }
 });

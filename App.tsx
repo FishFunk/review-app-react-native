@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Container } from 'native-base';
+import { Container, Root } from 'native-base';
 import useCachedResources from './hooks/useCachedResources';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
@@ -76,19 +76,21 @@ export default function App(props: any) {
     )
   } else {
     return (
-      <Container>
-        <StatusBar />
-        <NavigationContainer>
-          <mainStackNavigator.Navigator initialRouteName="Home" screenOptions={{
-            headerShown: false,
-          }}>
-            <mainStackNavigator.Screen name="Home" component={HomeScreen} />
-            <mainStackNavigator.Screen name="Account" options={{gestureDirection: 'horizontal-inverted'}} component={ProfileScreen} />
-            <mainStackNavigator.Screen name="Social" component={SocialScreen} />
-            <mainStackNavigator.Screen name="Search" component={SearchScreen} />
-          </mainStackNavigator.Navigator>
-        </NavigationContainer>  
-      </Container>
+      <Root>
+        <Container>
+          <StatusBar />
+          <NavigationContainer>
+            <mainStackNavigator.Navigator initialRouteName="Home" screenOptions={{
+              headerShown: false,
+            }}>
+              <mainStackNavigator.Screen name="Home" component={HomeScreen} />
+              <mainStackNavigator.Screen name="Account" options={{gestureDirection: 'horizontal-inverted'}} component={ProfileScreen} />
+              <mainStackNavigator.Screen name="Social" component={SocialScreen} />
+              <mainStackNavigator.Screen name="Search" component={SearchScreen} />
+            </mainStackNavigator.Navigator>
+          </NavigationContainer>  
+        </Container>
+      </Root>
     );
   }
 }

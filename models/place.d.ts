@@ -100,5 +100,6 @@ export interface dbPlace {
   name: string,
   lat: number,
   lng: number,
-  rating: number
+  rating: number,
+  types?: string[]
 }

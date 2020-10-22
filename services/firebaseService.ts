@@ -136,7 +136,40 @@ class FirebaseService {
 
 	sendUserEmailVerification(){
 		this._verifyInitialized();
-		return this.auth.currentUser?.sendEmailVerification();
+		return this.auth.currentUser.sendEmailVerification();
+	}
+
+	async sendPhoneVerificationCode(phoneNumber: string, recaptchaRef: any){
+		// The FirebaseRecaptchaVerifierModal ref implements the
+		// FirebaseAuthApplicationVerifier interface and can be
+		// passed directly to `verifyPhoneNumber`.
+		try {
+			const phoneProvider = new firebase.auth.PhoneAuthProvider();
+			const verificationId = await phoneProvider.verifyPhoneNumber(
+				phoneNumber,
+				recaptchaRef);
+
+			return verificationId;
+		} catch (err) {
+			return Promise.reject(err.message);
+		}
+	}
+
+	async confirmPhoneVerification(
+		verificationId: string, 
+		verificationCode: string){
+		try {
+			const credential = firebase.auth.PhoneAuthProvider.credential(
+				verificationId,
+				verificationCode);
+			await this.auth.currentUser?.linkWithCredential(credential);
+
+			await this.updateUserData({ phone_verified: true });
+
+			return "Phone authentication successful 👍";
+		} catch (err) {
+			return Promise.reject(err.message);
+		}
 	}
 
 	async getMetadata(keyName: string): Promise<string>{
@@ -341,16 +374,17 @@ class FirebaseService {
 			name: _get(place, 'name', ''),
 			lat: _get(place, 'geometry.location.lat', ''),
 			lng: _get(place, 'geometry.location.lng', ''),
-			rating: +placeRating.toFixed(1)
+			rating: +placeRating.toFixed(1),
+			types: place.types
 		}
 
 		return this.db.ref(`places/${dbPlace.id}`).set(dbPlace);
 	}
 
-	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<any[]>{
+	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<dbPlace[]>{
 		this._verifyInitialized();
 	
-		let places: any[] = [];
+		let places: dbPlace[] = [];
 		const placesSnapshot = await this.db.ref(`places`).once('value');
 		placesSnapshot.forEach((snap)=>{
 			const place = snap.val();
@@ -359,6 +393,30 @@ class FirebaseService {
 			}
 		});
 
+		const result = await this._filterPlacesByReviewFollowers(places);
+		return result;
+	}
+
+	async getPlacesById(placeIds: string[], filterByFollowers = true): Promise<dbPlace[]>{
+		this._verifyInitialized();
+	
+		let places: dbPlace[] = [];
+		const placesSnapshot = await this.db.ref(`places`).once('value');
+		placesSnapshot.forEach((snap)=>{
+			const place = snap.val();
+			if(_indexOf(placeIds, place.id) >= 0){
+				places.push(place);
+			}
+		});
+
+		if(filterByFollowers){
+			return this._filterPlacesByReviewFollowers(places);
+		} else {
+			return places;
+		}
+	}
+
+	async _filterPlacesByReviewFollowers(places: dbPlace[]){
 		// Filter places if they contain reviews by current user or followers
 		let filteredPlaces = [];
 		for(let place of places){

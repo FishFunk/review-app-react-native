@@ -14,6 +14,43 @@ const _findPlaceUrl = (apiKey: string, searchQuery: string)=>{
     return `${baseUrl}${urlExt}input=${searchQuery}&inputtype=textquery&key=${apiKey}`;
 }
 
+const _findNearbyUrl = (
+        apiKey: string, 
+        lat: number, 
+        lng: number, 
+        type: string)=>{
+
+    const urlExt = '/nearbysearch/json?';
+    const location = `&location=${lat},${lng}`;
+    const radius = `&radius=10000`;
+    return `${baseUrl}${urlExt}${location}${radius}&type=${type}&key=${apiKey}`;
+}
+
+const _findPlacesByTextUrl = (
+        apiKey: string, 
+        lat: number, 
+        lng: number, 
+        query: string)=> {
+    
+    const urlExt = `/textsearch/json?`;
+    const location = `&location=${lat},${lng}`;
+    const radius = `&radius=15000`;
+
+    return  `${baseUrl}${urlExt}${location}${radius}&query=${query}&key=${apiKey}`;
+}
+
+const _fetchNextPage = async (pageToken: string, apiKey: string) => {
+    const url = `${baseUrl}/nearbysearch/json?pagetoken=${pageToken}&key=${apiKey}`;
+    const response = await fetch(url);
+    const json = await response.json();
+
+    if(json.status === "OK" && json.results && json.results.length > 0){
+        return json.results;
+    } else {
+        return Promise.reject("No matching places found");
+    }
+}
+
 export const getPhotoUrl = (apiKey: string,photoRef: string)=>{
     const url = 
         `${baseUrl}/photo?&maxwidth=300&photoreference=${photoRef}&key=${apiKey}`;
@@ -57,4 +94,51 @@ export const getGooglePlaceIdBySearch = (apiKey: string, searchQuery: string)=> 
         })
         .catch(error => reject(error));
     });
+}
+
+export const getGooglePlaceIdListByType = async (
+        apiKey: string,
+        lat: number,
+        lng: number,
+        type: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
+            'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
+            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy'): Promise<fullApiPlace[]> => {
+
+    try{
+        let url = _findNearbyUrl(apiKey, lat, lng, type);
+
+        const response = await fetch(url);
+        const json = await response.json();
+
+        if(json.status === "OK" && json.results && json.results.length > 0){
+            return json.results;
+        } else {
+            return Promise.reject("No matching places found");
+        }
+    } catch (ex){
+        return Promise.reject(ex);
+    }
+}
+
+
+export const getGooglePlaceIdListByQuery = async (
+    apiKey: string,
+    lat: number,
+    lng: number,
+    query: string): Promise<fullApiPlace[]> => {
+
+    try{
+        let url = _findPlacesByTextUrl(apiKey, lat, lng, query);
+
+        const response = await fetch(url);
+        const json = await response.json();
+    
+        if(json.status === "OK" && json.results && json.results.length > 0){
+            return json.results;
+        } else {
+            return Promise.reject("No matching places found");
+        }
+    } catch (ex){
+        return Promise.reject(ex);
+    }
 }

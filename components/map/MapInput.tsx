@@ -7,7 +7,7 @@ class MapInput extends React.Component<
     { 
         handleSelectPlace: (place: searchPlace)=>void, 
         apiKey: string,
-        handleGenericSearch?: ()=> void
+        handleGenericSearch: (query: string)=> void
     },
     {
         value: string
@@ -20,7 +20,10 @@ class MapInput extends React.Component<
     placesInputRef = null;
 
     onSubmitEditing(){
-        // TODO: Search map with plain query
+        if(this.state.value.length > 0){
+            this.props.handleGenericSearch(this.state.value);
+        }
+    
     }
 
     onChangeText(val: string){
