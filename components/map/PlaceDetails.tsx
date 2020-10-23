@@ -10,7 +10,6 @@ import {
     Thumbnail,
     Button,
     Icon,
-    Spinner,
     Title,
     Badge,
     Label
@@ -29,6 +28,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getPlaceAvgRating } from '../../services/utils';
 import _find from 'lodash/find';
 import SpinnerContainer from '../SpinnerContainer';
+import ReviewComplete from '../reviews/ReviewComplete';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -39,6 +39,7 @@ export default class PlaceDetails extends React.Component<
     { 
         items: Array<reviewSummary>, 
         showReviewModal: boolean, 
+        showReviewCompleteModal: boolean,
         isLoading: boolean,
         place: fullApiPlace,
         disableEdit: boolean,
@@ -51,6 +52,7 @@ export default class PlaceDetails extends React.Component<
     state = {
         isLoading: true,
         showReviewModal: false,
+        showReviewCompleteModal: false,
         items: new Array<reviewSummary>(),
         place: this.initialPlace,
         photoUrls: new Array<string>(),
@@ -110,9 +112,13 @@ export default class PlaceDetails extends React.Component<
     }
 
     async onDismissModal(){
-        this.setState({ isLoading: true, showReviewModal: false });
+        this.setState({ isLoading: true, showReviewModal: false, showReviewCompleteModal: true });
         const newReviewState = await this.getReviewState();
         this.setState({ ...newReviewState, isLoading: false });
+    }
+
+    onDismissReviewCompleteModal(){
+        this.setState({ showReviewCompleteModal: false });
     }
 
     onOpenMaps(){
@@ -161,20 +167,19 @@ export default class PlaceDetails extends React.Component<
                         <ScrollView 
                             horizontal 
                             showsHorizontalScrollIndicator={false}>
-                            {
-                                <Button small rounded transparent style={styles.roundButton}
-                                    onPress={this.onOpenMaps.bind(this)}>
-                                    <Icon type={'FontAwesome5'} name={'directions'} style={styles.buttonIcon}></Icon>
-                                    <Label style={{fontSize: 12}}>Directions</Label>
-                                </Button>
-                            }
-                            {
-                                <Button small rounded transparent style={styles.roundButton}
-                                    onPress={()=>{alert("not implemented")}}>
-                                    <Icon type={'FontAwesome5'} name={'star'} style={styles.buttonIcon}></Icon>
-                                    <Label style={{fontSize: 12}}>Favorite</Label>
-                                </Button>
-                            }
+                            <Button small rounded transparent 
+                                style={this.state.disableEdit ? styles.disabledButton : styles.roundButton} 
+                                onPress={this.onPressWriteReview.bind(this)}
+                                disabled={this.state.disableEdit}>
+                                <Icon type={'FontAwesome5'} name={'edit'} 
+                                    style={this.state.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
+                                <Label style={{fontSize: 12}}>Review</Label>
+                            </Button>
+                            <Button small rounded transparent style={styles.roundButton}
+                                onPress={this.onOpenMaps.bind(this)}>
+                                <Icon type={'FontAwesome5'} name={'directions'} style={styles.buttonIcon}></Icon>
+                                <Label style={{fontSize: 12}}>Directions</Label>
+                            </Button>
                             {
                                 this.state.place.formatted_phone_number != null ? 
                                     <Button small rounded transparent style={styles.roundButton}
@@ -198,15 +203,11 @@ export default class PlaceDetails extends React.Component<
                                     <Label style={{fontSize: 12}}>Share</Label>
                                 </Button>
                             }
-
-                            <Button small rounded transparent 
-                                style={this.state.disableEdit ? styles.disabledButton : styles.roundButton} 
-                                onPress={this.onPressWriteReview.bind(this)}
-                                disabled={this.state.disableEdit}>
-                                <Icon type={'FontAwesome5'} name={'edit'} 
-                                    style={this.state.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
-                                <Label style={{fontSize: 12}}>Review</Label>
-                            </Button>
+                            {/* <Button small rounded transparent style={styles.roundButton}
+                                onPress={()=>{alert("not implemented")}}>
+                                <Icon type={'FontAwesome5'} name={'star'} style={styles.buttonIcon}></Icon>
+                                <Label style={{fontSize: 12}}>Favorite</Label>
+                            </Button> */}
                         </ScrollView>
                     </View>
                     {       
@@ -236,7 +237,7 @@ export default class PlaceDetails extends React.Component<
                             </ScrollView>
                         :
                         <View style={styles.noReviewConatiner}>
-                            <Title>Hmm... No Reviews From Your Network</Title>
+                            <Title>Hmm... No reviews from your network yet.</Title>
                             <Text>Be the first to write one!</Text>
                         </View>
                     }
@@ -246,6 +247,9 @@ export default class PlaceDetails extends React.Component<
                 place={this.state.place}
                 showModal={this.state.showReviewModal} 
                 onDismissModal={this.onDismissModal.bind(this)}/>
+            <ReviewComplete 
+                showModal={this.state.showReviewCompleteModal} 
+                onDismissModal={this.onDismissReviewCompleteModal.bind(this)}/>
         </View>)
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region } from 'react-native-maps';
 import theme from '../../styles/theme';
-import mapJson from '../../constants/MapJson';
+// import mapJson from '../../constants/MapJson';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Title, Text } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
@@ -80,7 +80,7 @@ export default class Map extends React.Component<
                 zoomTapEnabled={true}
                 onPoiClick={this.onPoiClick.bind(this)}
                 onPress={this.onMapPress.bind(this)}
-                customMapStyle={mapJson}
+                // customMapStyle={mapJson}
             >
                 {this.props.markers.map((marker: markerData, idx: number) => (
                     <Marker

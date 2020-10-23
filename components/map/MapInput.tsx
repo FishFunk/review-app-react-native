@@ -6,8 +6,7 @@ import theme from '../../styles/theme';
 class MapInput extends React.Component<
     { 
         handleSelectPlace: (place: searchPlace)=>void, 
-        apiKey: string,
-        handleGenericSearch: (query: string)=> void
+        apiKey: string
     },
     {
         value: string
@@ -20,15 +19,14 @@ class MapInput extends React.Component<
     placesInputRef = null;
 
     onSubmitEditing(){
-        if(this.state.value.length > 0){
-            this.props.handleGenericSearch(this.state.value);
-        }
-    
+        // if(this.state.value.length > 0){
+        //     this.props.handleGenericSearch(this.state.value);
+        // }
     }
 
     onChangeText(val: string){
         this.setState({value: val});
-        if(val.length === 0){
+        if(this.placesInputRef && val.length === 0){
             this.placesInputRef.setState({places: []});
         }
     }

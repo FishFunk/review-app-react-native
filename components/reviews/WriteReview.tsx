@@ -8,7 +8,7 @@ import {
     Textarea, 
     Label, 
     Title, 
-    Toast, Root
+    Toast
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -126,7 +126,6 @@ export default class WriteReview extends Component<{
             animationType={'slide'}
             transparent={true}
         >
-            <Root>
             <ScrollView contentContainerStyle={styles.modalView}>
                 <View>
                     <Title>
@@ -219,14 +218,12 @@ export default class WriteReview extends Component<{
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            </Root>
         </Modal>
         )
     }
 }
 
 const styles=StyleSheet.create({
-
     modalView: {
         marginTop: 60,
         height: '100%',
