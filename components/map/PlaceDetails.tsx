@@ -111,10 +111,19 @@ export default class PlaceDetails extends React.Component<
         this.props.toggleSummaryModal(false);
     }
 
-    async onDismissModal(){
-        this.setState({ isLoading: true, showReviewModal: false, showReviewCompleteModal: true });
-        const newReviewState = await this.getReviewState();
-        this.setState({ ...newReviewState, isLoading: false });
+    async onDismissModal(showReviewComplete: boolean){
+        if(showReviewComplete){
+            // Review submitted - reload detail view and show review confirmation modal
+            this.setState({ 
+                isLoading: true, 
+                showReviewModal: false, 
+                showReviewCompleteModal: true });
+            const newReviewState = await this.getReviewState();
+            this.setState({ ...newReviewState, isLoading: false });
+
+        } else {
+            this.setState({ showReviewModal: false });
+        }
     }
 
     onDismissReviewCompleteModal(){
@@ -266,7 +275,8 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: 'bold',
         fontSize: 20,
-        textAlign: 'center'
+        textAlign: 'center',
+        flexWrap: 'wrap'
     },
     starTouchable: {
         width: 120, 

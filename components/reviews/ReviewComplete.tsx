@@ -22,7 +22,7 @@ export default class ReviewComplete extends Component<{
             transparent={true}
         >
             <View style={styles.modalView}>
-                <ConfettiCannon count={200} origin={{x: 100, y: 0}}/>
+                <ConfettiCannon count={200} origin={{x: 100, y: 0}} autoStartDelay={300}/>
                 <Text style={styles.bigText}>You're awesome!</Text>
                 <Text style={styles.regularText}>
                     Thank you for improving our community one review at a time!
@@ -43,11 +43,13 @@ export default class ReviewComplete extends Component<{
 
 const styles=StyleSheet.create({
     modalView: {
-        height: '100%',
+        marginTop: 60,
+        height: Dimensions.get('screen').height - 60,
         width: Dimensions.get('screen').width,
         backgroundColor: "white",
-        padding: 20,
-        alignItems: "center",
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 20,
         shadowColor: "#000",
         shadowOffset: {
@@ -56,8 +58,7 @@ const styles=StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 5,
-        justifyContent: 'center',
+        elevation: 5
     },
     bigText: {
         textAlign: 'center',

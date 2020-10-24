@@ -7,8 +7,8 @@ import {
     Item, 
     Textarea, 
     Label, 
-    Title, 
-    Toast
+    Toast,
+    Root
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -40,9 +40,9 @@ export default class WriteReview extends Component<{
         }
     }
 
-    onDismissModal(){
+    onDismissModal(showReviewComplete: boolean){
         Keyboard.dismiss();
-        this.props.onDismissModal();
+        this.props.onDismissModal(showReviewComplete);
     }
 
     onEditComment(text: string){
@@ -86,11 +86,22 @@ export default class WriteReview extends Component<{
         const { rating1, rating2, rating3, comments } = this.state;
         const avg = this.avgRating();
 
-        if( avg === 0){
+        if(avg === 0){
             Toast.show({
-                position: 'bottom',
+                position: 'top',
                 text: 'That bad huh? Total star rating must be between 1 and 5.',
-                duration: 3000
+                duration: 3000,
+                buttonText: 'Ok'
+            });
+            return;
+        }
+
+        if(comments.trim().length === 0){
+            Toast.show({
+                position: 'top',
+                text: 'Please enter a sentence or two about your experience.',
+                duration: 3000,
+                buttonText: 'Ok'
             });
             return;
         }
@@ -106,7 +117,7 @@ export default class WriteReview extends Component<{
         }
 
         await FirebaseService.submitReview(this.props.place, reviewData);
-        this.onDismissModal();
+        this.onDismissModal(true);
     }
 
     avgRating(){
@@ -126,11 +137,10 @@ export default class WriteReview extends Component<{
             animationType={'slide'}
             transparent={true}
         >
+            <Root>
             <ScrollView contentContainerStyle={styles.modalView}>
                 <View>
-                    <Title>
-                        <Text style={styles.title}>{this.props.place.name}</Text>
-                    </Title>
+                    <Text style={styles.title}>{this.props.place.name}</Text>
                 </View>
                 <View style={styles.formContainer}>
                     {
@@ -206,7 +216,7 @@ export default class WriteReview extends Component<{
                     }  
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity onPress={this.onDismissModal.bind(this)}> 
+                    <TouchableOpacity onPress={this.onDismissModal.bind(this, false)}> 
                         <Button style={styles.cancelButton}>
                             <Text>Cancel</Text>
                         </Button>
@@ -218,6 +228,7 @@ export default class WriteReview extends Component<{
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            </Root>
         </Modal>
         )
     }
@@ -226,7 +237,7 @@ export default class WriteReview extends Component<{
 const styles=StyleSheet.create({
     modalView: {
         marginTop: 60,
-        height: '100%',
+        height: Dimensions.get('screen').height - 60,
         width: Dimensions.get('screen').width,
         backgroundColor: "white",
         padding: 10,
@@ -283,8 +294,10 @@ const styles=StyleSheet.create({
         marginBottom: 10
     },
     title: {
+        fontWeight: 'bold',
         fontSize: 20,
-        color: theme.DARK_COLOR
+        textAlign: 'center',
+        flexWrap: 'wrap'
     },
     sublabel: {
         fontSize: 12,
