@@ -343,6 +343,7 @@ class FirebaseService {
 			menu: review.menu,
 			service: review.service,
 			avg_rating: review.avg_rating,
+			pricing: review.pricing,
 			comments: review.comments,
 			date: new Date().toDateString()
 		}
@@ -352,6 +353,7 @@ class FirebaseService {
 
 		// Update user review list
 		let placeRating = 0;
+		let priceRating = 0;
 		userReviewIds.push(newReview.place_id);
 		userReviewIds = _uniq(userReviewIds);
 		await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
@@ -359,12 +361,19 @@ class FirebaseService {
 		// Update place review list
 		if(!existingReviewSnapshots.exists()){
 			placeRating = newReview.avg_rating;
+			priceRating = newReview.pricing;
 			await this.db.ref(`reviews/${newReview.place_id}`).set([newReview]);
 		} else {
 			const reviews = existingReviewSnapshots.val();
 			reviews.push(newReview);
-			reviews.forEach((r: dbReview)=> placeRating += r.avg_rating);
+			reviews.forEach((r: dbReview)=> {
+				placeRating += r.avg_rating;
+				priceRating += r.pricing;
+			});
+
 			placeRating = placeRating / reviews.length;
+			priceRating = priceRating / reviews.length;
+
 			await this.db.ref(`reviews/${newReview.place_id}`).set(reviews);
 		}
 
@@ -375,6 +384,9 @@ class FirebaseService {
 			lat: _get(place, 'geometry.location.lat', ''),
 			lng: _get(place, 'geometry.location.lng', ''),
 			rating: +placeRating.toFixed(1),
+			pricing: Math.round(placeRating),
+			icon: _get(place, 'icon', ''),
+			formatted_address: _get(place, 'formatted_address', ''),
 			types: place.types
 		}
 

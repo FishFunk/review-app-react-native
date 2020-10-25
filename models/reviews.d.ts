@@ -15,6 +15,7 @@ export interface reviewSummary {
       menu: number;
       service: number;
       avg_rating: number;
+      pricing: number;
       comments: string;
       date: string;
   }

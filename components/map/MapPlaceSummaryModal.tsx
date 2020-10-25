@@ -21,7 +21,7 @@ export default class MapPlaceSummaryModal extends React.Component<
                 isVisible={this.props.isOpen}
                 animationIn={'slideInUp'}
                 onBackdropPress={() => this.props.toggleSummaryModal()}
-                onSwipeComplete={() => this.props.toggleSummaryModal()}
+                onSwipeComplete={()=>this.props.toggleSummaryModal()}
                 swipeDirection="down"
             >
                 <Content scrollEnabled={false}>

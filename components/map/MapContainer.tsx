@@ -6,6 +6,7 @@ import { getLocation } from '../../services/locationService';
 import { get } from 'lodash';
 import { searchPlace, markerData, dbPlace } from '../../models/place';
 import MapPlaceSummaryModal from './MapPlaceSummaryModal';
+import PlaceListModal from './PlaceListModal';
 import { 
     getGooglePlaceIdBySearch, 
     getGooglePlaceById
@@ -25,7 +26,9 @@ export default class MapContainer extends React.Component<
         loadingNearby: boolean,
         region: Region, 
         markers: markerData[], 
+        places: dbPlace[],
         showSummaryModal: boolean,
+        showListModal: boolean,
         placeId: string,
         apiKey: string,
         refreshCallout: boolean
@@ -50,7 +53,9 @@ export default class MapContainer extends React.Component<
         loadingNearby: false,
         region: this.defaultRegion,
         markers: [],
+        places: [],
         showSummaryModal: false,
+        showListModal: false,
         apiKey: '',
         refreshCallout: false
     };
@@ -91,7 +96,7 @@ export default class MapContainer extends React.Component<
                     edgePadding: {top: 80, right: 80, bottom: 80, left: 80 }});
         }
 
-        this.setState({ markers: markers, loadingNearby: false });
+        this.setState({ markers: markers, loadingNearby: false, places: places  });
     }
 
     async load(){
@@ -251,9 +256,22 @@ export default class MapContainer extends React.Component<
     }
 
     async onShowDetails(placeId: string){
-        if(placeId){
+        if(this.state.showListModal){
+            // Pause for modal switch
+            this.setState({ showListModal: false });
+            setTimeout(()=>{
+                if(placeId){
+                    this.setState({ placeId: placeId, showSummaryModal: true });
+                }
+            }, 500);
+        } else {
             this.setState({ placeId: placeId, showSummaryModal: true });
         }
+
+    }
+
+    showListModal(){
+        this.setState({ showListModal: true });
     }
 
     onToggleSummaryModal(forceVal?: boolean){
@@ -263,6 +281,10 @@ export default class MapContainer extends React.Component<
         } else {
             this.setState({ showSummaryModal: !this.state.showSummaryModal, refreshCallout: false });
         }
+    }
+
+    onDismissListModal(){
+        this.setState({ showListModal: false });
     }
 
     render() {
@@ -330,6 +352,18 @@ export default class MapContainer extends React.Component<
                                         </View>
                                     }
                                 </Button>
+                                <Button 
+                                    style={styles.mapButton} 
+                                    onPress={this.showListModal.bind(this)}>
+                                    <View>
+                                        <Icon 
+                                            type={'FontAwesome5'} 
+                                            name={'list'}
+                                            style={styles.buttonIcon}>
+                                        </Icon>
+                                        <Label style={styles.buttonText}>List View</Label>
+                                    </View>
+                                </Button>
                             </View>
                         </View> : null
                 }
@@ -338,6 +372,12 @@ export default class MapContainer extends React.Component<
                     isOpen={this.state.showSummaryModal} 
                     placeId={this.state.placeId} 
                     toggleSummaryModal={this.onToggleSummaryModal.bind(this)}/>
+
+                <PlaceListModal 
+                    isOpen={this.state.showListModal}
+                    places={this.state.places}
+                    onDismissModal={this.onDismissListModal.bind(this)}
+                    onShowPlaceDetails={this.onShowDetails.bind(this)}/>
             </View>
         )
     }

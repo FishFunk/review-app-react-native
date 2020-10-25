@@ -101,5 +101,8 @@ export interface dbPlace {
   lat: number,
   lng: number,
   rating: number,
+  pricing: number,
+  formatted_address?: string,
+  icon?: string,
   types?: string[]
 }

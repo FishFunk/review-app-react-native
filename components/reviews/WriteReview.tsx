@@ -17,6 +17,7 @@ import { fullApiPlace } from '../../models/place';
 import FirebaseService from '../../services/firebaseService';
 import _indexOf from 'lodash/indexOf';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import EditableDollars from './EditableDollars';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
@@ -27,6 +28,7 @@ export default class WriteReview extends Component<{
         rating1: number,
         rating2: number
         rating3: number,
+        pricing: number,
         comments: string
     }> {
 
@@ -36,6 +38,7 @@ export default class WriteReview extends Component<{
             rating1: 0,
             rating2: 0,
             rating3: 0,
+            pricing: 0,
             comments: ''
         }
     }
@@ -61,6 +64,10 @@ export default class WriteReview extends Component<{
         this.setState({ rating3: newRating });
     }
 
+    onUpdatePricing(newRating: number){
+        this.setState({ pricing: newRating });
+    }
+
     onKeyPress(e: NativeSyntheticEvent<TextInputKeyPressEventData>){
         if(e.nativeEvent.key === 'Enter'){
             e.preventDefault();
@@ -83,13 +90,23 @@ export default class WriteReview extends Component<{
     async onSubmitForm(){
         Keyboard.dismiss();
         const { place_id, name } = this.props.place;
-        const { rating1, rating2, rating3, comments } = this.state;
+        const { rating1, rating2, rating3, pricing, comments } = this.state;
         const avg = this.avgRating();
 
         if(avg === 0){
             Toast.show({
                 position: 'top',
                 text: 'That bad huh? Total star rating must be between 1 and 5.',
+                duration: 3000,
+                buttonText: 'Ok'
+            });
+            return;
+        }
+
+        if(pricing === 0){
+            Toast.show({
+                position: 'top',
+                text: 'Free 99!? Enter a price rating between 1 and 5.',
                 duration: 3000,
                 buttonText: 'Ok'
             });
@@ -113,6 +130,7 @@ export default class WriteReview extends Component<{
             menu: rating2,
             service: rating3,
             comments: comments,
+            pricing: pricing,
             avg_rating: this.avgRating()
         }
 
@@ -168,6 +186,13 @@ export default class WriteReview extends Component<{
                                     initalRating={this.state.rating3} 
                                     onRatingChanged={this.onUpdateRating3.bind(this)}  />
                             </Item>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>Pricing</Label>
+                                <EditableDollars 
+                                    fontSize={30}
+                                    initalRating={this.state.pricing} 
+                                    onRatingChanged={this.onUpdatePricing.bind(this)}  />
+                            </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
                                 <Label>Comments</Label>
                                 <Label style={styles.sublabel}>up to 250 characters</Label>
@@ -183,8 +208,8 @@ export default class WriteReview extends Component<{
                                     bordered={false} 
                                     underline={false}/>
                             </Item>
-                            <Item stackedLabel>
-                                <Label>Overall Rating</Label>
+                            <Item stackedLabel style={styles.starItem}>
+                                <Label>Average Total</Label>
                                 <ReviewStars rating={this.avgRating()} fontSize={30} />
                             </Item>
                         </Form> : 
