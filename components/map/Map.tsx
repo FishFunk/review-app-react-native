@@ -2,7 +2,7 @@ import React from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region } from 'react-native-maps';
 import theme from '../../styles/theme';
 // import mapJson from '../../constants/MapJson';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform, Image } from 'react-native';
 import { Title, Text } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import { markerData } from '../../models/place';
@@ -88,9 +88,25 @@ export default class Map extends React.Component<
                         key={idx}
                         identifier={marker.title}
                         coordinate={marker.latlng}
-                        pinColor={theme.SECONDARY_COLOR}
                         onPress={(event)=>this.onPressMarker(event, marker)}
                     >
+                        {marker.icon?
+                            <View>
+                                <View style={styles.pinBubble}>
+                                    <Image 
+                                        source={{uri: marker.icon}} 
+                                        style={styles.pinImage} />
+                                </View>
+                                <View style={styles.pinArrow}/>
+                            </View>
+                            :                             
+                            <View>
+                                <View style={styles.pinBubble}>
+                                    <View style={styles.pinDot}/>
+                                </View>
+                                <View style={styles.pinArrow}/>
+                            </View>
+                        }
                         <Callout 
                             tooltip 
                             onPress={(event)=>this.onPressCallout(event, marker)}>
@@ -149,6 +165,38 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     subtext: {
+        alignSelf: 'center'
+    },
+    pinBubble: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        height: 30, width: 30,
+        backgroundColor: theme.LIGHT_COLOR,
+        borderColor: theme.DARK_COLOR,
+        borderWidth: 0.5,
+        borderRadius: 15 
+    },
+    pinImage: {
+        alignSelf: 'center',
+        height: 18, 
+        width: 18
+    },
+    pinDot: {
+        alignSelf: 'center',
+        width: 10, 
+        height: 10,
+        backgroundColor: theme.PRIMARY_COLOR,
+        borderRadius: 9
+    },
+    pinArrow: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: theme.PRIMARY_COLOR,
+        borderTopWidth: 10,
+        borderLeftWidth: 1,
+        borderLeftColor: theme.DARK_COLOR,
+        borderRightWidth: 1,
+        borderRightColor: theme.DARK_COLOR,
         alignSelf: 'center'
     }
 });

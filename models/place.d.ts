@@ -63,7 +63,8 @@ export interface fullApiPlace {
   icon? : string,
   name? : string,
   opening_hours? : {
-    open_now : boolean
+    open_now : boolean,
+    periods: Array<any>
   },
   photos? : Array<placePhoto>,
   place_id? : string,
@@ -85,6 +86,7 @@ export interface markerData {
   title: string,
   description?: string,
   rating?: number,
+  icon?: string,
   placeId: string
 }
 

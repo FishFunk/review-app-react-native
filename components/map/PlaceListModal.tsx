@@ -1,19 +1,75 @@
 import React from "react";
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet, Image } from 'react-native';
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";
-import { Body, Button, Content, Icon, Label, List, ListItem, Right, Text, Title, View } from "native-base";
+import { Body, Button, Content, Icon, Label, Left, List, ListItem, Right, Text, Thumbnail, Title, View } from "native-base";
 import { dbPlace } from "../../models/place";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import ReviewStars from "../reviews/ReviewStars";
+import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
+import ReviewDollars from "../reviews/ReviewDollars";
+import SpinnerContainer from "../SpinnerContainer";
 
 export default class PlaceListModal extends React.Component<
     { 
+        apiKey: string,
         isOpen: boolean, 
         places: dbPlace[], 
         onDismissModal: () => any,
         onShowPlaceDetails: (placeId: string) => any
+    }, 
+    {
+        loading: boolean,
+        detailedPlaces: Array<any>
     }>{
+
+    state = {
+        loading: true,
+        detailedPlaces: []
+    }
+
+    componentDidMount(){
+        this.load()
+            .then(()=> {
+                this.setState({ loading: false });
+            })
+            .catch(error =>{
+                console.error(error);
+                this.setState({ loading: false });
+            })
+    }
+
+    async load(){
+        const { apiKey, places } = this.props;
+
+        let detailedPlaces = []
+        for(let p of places){
+            const apiPlace = await getGooglePlaceById(apiKey, p.id, [
+                'business_status', 'name', 'opening_hours', 'photos', 'formatted_address']);
+
+            let photoUrl;
+            if(apiPlace.photos){
+                // prefetch first photo
+                if(apiPlace.photos[0]){
+                    photoUrl = getPhotoUrl(apiKey, apiPlace.photos[0].photo_reference);
+                    await Image.prefetch(photoUrl);
+                }
+            }
+
+            detailedPlaces.push({
+                id: p.id,
+                name: p.name,
+                rating: p.rating,
+                pricing: p.pricing,
+                address: apiPlace.formatted_address,
+                status: apiPlace.business_status,
+                open: apiPlace.opening_hours?.open_now,
+                photoUrl: photoUrl
+            });
+        }
+
+        this.setState({ detailedPlaces: detailedPlaces });
+    }
 
     render(){
         return (
@@ -26,34 +82,43 @@ export default class PlaceListModal extends React.Component<
                 onSwipeComplete={() => this.props.onDismissModal()}
                 swipeDirection="down">
                 <Content scrollEnabled={false}>
-                    <View style={styles.container}>
-                        <Title>Nearby Places</Title>
-                        <ScrollView>
-                            <List style={styles.list}>
-                            {
-                                this.props.places.map((place: dbPlace, idx: number)=> 
-                                    <ListItem avatar key={idx}>
-                                        <Body>
-                                            <Text>{place.name}</Text>
-                                            <ReviewStars rating={place.rating} fontSize={18} />
-                                        </Body>
-                                        <Right>
-                                            <Button 
-                                                small
-                                                transparent
-                                                onPress={this.props.onShowPlaceDetails.bind(this, place.id)}>
-                                                <Icon 
-                                                    style={{fontSize: 18, color: theme.PRIMARY_COLOR}}
-                                                    type={'FontAwesome5'} 
-                                                    name={'info-circle'}></Icon>
-                                            </Button>
-                                        </Right>
-                                    </ListItem>
-                                )
-                            }
-                            </List>
-                        </ScrollView>
-                    </View>
+                    
+                    {
+                        this.state.loading ? 
+                        <SpinnerContainer /> :
+                        <View style={styles.container}>
+                            <View style={styles.header}>
+                                <Title style={styles.title}>Nearby Places</Title>
+                            </View>
+                            <ScrollView>
+                                <List style={styles.list}>
+                                {
+                                    this.state.detailedPlaces.map((place: any, idx: number)=> 
+                                        <ListItem 
+                                            key={idx}
+                                            style={styles.listItem}
+                                            avatar
+                                            onPress={this.props.onShowPlaceDetails.bind(this, place.id)}>
+                                            <Left>
+                                                <Thumbnail 
+                                                    square
+                                                    source={{ uri: place.photoUrl }} 
+                                                    // TODO: Add default image
+                                                    />
+                                            </Left>
+                                            <Body>
+                                                <Text style={styles.name}>{place.name}</Text>
+                                                <ReviewStars rating={place.rating} fontSize={18} />
+                                                <ReviewDollars rating={place.pricing} fontSize={14} />
+                                                <Text>{place.address}</Text>
+                                            </Body>
+                                        </ListItem>
+                                    )
+                                }
+                                </List>
+                            </ScrollView>
+                        </View>
+                    }
                 </Content>
             </Modal>
         )
@@ -70,7 +135,20 @@ const styles = StyleSheet.create({
     container: {
         height: Dimensions.get('screen').height - 100
     },
+    header: {
+        height: 50,
+        width: '100%'
+    },
+    title: {
+        paddingTop: 10
+    },
     list: {
         paddingRight: 5
+    },
+    listItem: {
+        height: 100
+    },
+    name: {
+        fontWeight: 'bold'
     }
 });

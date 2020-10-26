@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Keyboard, StyleSheet } from 'react-native';
+import { View, Keyboard, StyleSheet, Dimensions } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
@@ -25,6 +25,7 @@ export default class MapContainer extends React.Component<
         loadingLocation: boolean,
         loadingNearby: boolean,
         region: Region, 
+        zoomLevel: number,
         markers: markerData[], 
         places: dbPlace[],
         showSummaryModal: boolean,
@@ -52,6 +53,7 @@ export default class MapContainer extends React.Component<
         loadingLocation: false,
         loadingNearby: false,
         region: this.defaultRegion,
+        zoomLevel: 14,
         markers: [],
         places: [],
         showSummaryModal: false,
@@ -64,7 +66,7 @@ export default class MapContainer extends React.Component<
         this.load()
             .then((newState)=>{
                 this.setState({ ...newState, loadingMap: false }, ()=>{
-                    this.loadNearbyPlaceMarkers(10);
+                    this.loadNearbyPlaceMarkers(5);
                 });
             })
             .catch(error=>{
@@ -80,8 +82,21 @@ export default class MapContainer extends React.Component<
         this.setState({ loadingNearby: true });
 
         const { latitude: lat, longitude: lng } = this.state.region;
+
+        if(!radius){
+            const { zoomLevel } = this.state;
+            if(zoomLevel >= 15){
+                radius = 5;
+            } else if (zoomLevel >= 13){
+                radius = 10;
+            } else {
+                radius = 20
+            }
+        }
+
         const places = await FirebaseService.getNearbyPlaces(lat, lng, radius);
         const markers = this.convertPlacesToMarkers(places);
+
 
         if(this.mapViewRef){
             const latLngs = markers.map(m=>m.latlng);
@@ -143,7 +158,8 @@ export default class MapContainer extends React.Component<
                 },
                 title: place.name,
                 rating: place.rating,
-                placeId: place.id
+                placeId: place.id,
+                icon: place.icon
             }
             return m;
         });
@@ -188,7 +204,10 @@ export default class MapContainer extends React.Component<
             if(hideCallout) marker.hideCallout();
         }
 
-        this.setState({ region:  { ...region } });
+        // Calculate map zoom level
+        const zoom = Math.log2(360 * ((Dimensions.get('screen').width /256) / region.longitudeDelta)) + 1;
+
+        this.setState({ region:  { ...region }, zoomLevel: zoom  });
     }
 
     async onMarkerSelect(marker: markerData){
@@ -336,7 +355,7 @@ export default class MapContainer extends React.Component<
                                 </Button>
                                 <Button 
                                     style={styles.mapButton} 
-                                    onPress={this.loadNearbyPlaceMarkers.bind(this, 15)}>
+                                    onPress={()=>this.loadNearbyPlaceMarkers()}>
                                     {
                                         this.state.loadingNearby ?
                                         <Spinner 
@@ -374,6 +393,7 @@ export default class MapContainer extends React.Component<
                     toggleSummaryModal={this.onToggleSummaryModal.bind(this)}/>
 
                 <PlaceListModal 
+                    apiKey={this.state.apiKey}
                     isOpen={this.state.showListModal}
                     places={this.state.places}
                     onDismissModal={this.onDismissListModal.bind(this)}
