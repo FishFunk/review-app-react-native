@@ -60,7 +60,7 @@ export const getPhotoUrl = (apiKey: string,photoRef: string)=>{
 export const getGooglePlaceById = (
     apiKey: string,
     place_id: string, 
-    fields: Array<string> = ['business_status', 'geometry', 'name', 
+    fields: Array<string> = ['business_status', 'geometry', 'name', 'icon',
         'opening_hours', 'photos', 'place_id', 'website', 'formatted_phone_number', 
         'formatted_address', 'types'])=> {
     const url = _getPlaceUrl(apiKey, place_id, fields);

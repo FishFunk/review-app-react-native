@@ -111,7 +111,7 @@ export default class Map extends React.Component<
                             tooltip 
                             onPress={(event)=>this.onPressCallout(event, marker)}>
                             <View style={styles.bubble}>
-                                <Title style={styles.title}>{marker.title}</Title>
+                                <Text style={styles.title}>{marker.title}</Text>
                                 {
                                     marker.rating ?
                                     <View style={styles.stars}><ReviewStars rating={marker.rating} fontSize={12}/></View> :
@@ -144,6 +144,8 @@ const styles = StyleSheet.create({
         maxWidth: 250,
     },
     title: {
+        textAlign: 'center',
+        fontWeight: 'bold',
         fontSize: 16,
         color: theme.DARK_COLOR
     },
