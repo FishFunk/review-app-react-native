@@ -261,8 +261,8 @@ export default class WriteReview extends Component<{
 
 const styles=StyleSheet.create({
     modalView: {
-        marginTop: 60,
-        height: Dimensions.get('screen').height - 60,
+        paddingTop: 40,
+        height: Dimensions.get('screen').height,
         width: Dimensions.get('screen').width,
         backgroundColor: "white",
         padding: 10,
@@ -279,9 +279,7 @@ const styles=StyleSheet.create({
     },
     formContainer: {
         width: '100%',
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 40
+        padding: 20
     },
     form: {
         width: '100%'

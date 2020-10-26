@@ -43,8 +43,7 @@ export default class ReviewComplete extends Component<{
 
 const styles=StyleSheet.create({
     modalView: {
-        marginTop: 60,
-        height: Dimensions.get('screen').height - 60,
+        height: Dimensions.get('screen').height,
         width: Dimensions.get('screen').width,
         backgroundColor: "white",
         padding: 10,

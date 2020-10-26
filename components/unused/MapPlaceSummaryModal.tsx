@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from 'react-native';
-import PlaceDetails from "./PlaceDetails";
+import PlaceDetails from "../map/PlaceDetails";
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";
 import { Content } from "native-base";
@@ -25,10 +25,10 @@ export default class MapPlaceSummaryModal extends React.Component<
                 swipeDirection="down"
             >
                 <Content scrollEnabled={false}>
-                    <PlaceDetails 
+                    {/* <PlaceDetails 
                         apiKey={this.props.apiKey}
                         placeId={this.props.placeId} 
-                        toggleSummaryModal={this.props.toggleSummaryModal}/>
+                        toggleSummaryModal={this.props.toggleSummaryModal}/> */}
                 </Content>
             </Modal>
         )

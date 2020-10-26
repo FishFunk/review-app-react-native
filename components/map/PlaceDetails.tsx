@@ -32,6 +32,7 @@ import ReviewComplete from '../reviews/ReviewComplete';
 
 export default class PlaceDetails extends React.Component<
     { 
+        navigation: any,
         apiKey: string, 
         placeId: string, 
         toggleSummaryModal: Function
@@ -146,16 +147,30 @@ export default class PlaceDetails extends React.Component<
             {
                 this.state.isLoading ?
                 <SpinnerContainer /> :
-                <View style={{flex: 1}}>
+                <View>
                     <View style={styles.titleView}>
-                        <Text style={styles.title}>{this.state.place.name}</Text>
-                        <TouchableOpacity 
-                            containerStyle = {styles.starTouchable}
-                            style={styles.starsView} 
-                            onPress={this.onPressWriteReview.bind(this)}
-                            disabled={this.state.disableEdit}>
-                            <ReviewStars rating={this.state.rating} fontSize={22}/>
-                        </TouchableOpacity>
+                        <View>
+                            <Button 
+                                transparent
+                                style={{ width: 50, height: 50}}
+                                onPress={this.props.navigation.goBack}>
+                                <Icon 
+                                    style={styles.buttonIcon}
+                                    name={'arrow-left'} 
+                                    type={'FontAwesome5'}/>
+                            </Button>
+                        </View>
+                        <View>
+                            <Text style={styles.title}>{this.state.place.name}</Text>
+                            <TouchableOpacity 
+                                containerStyle = {styles.starTouchable}
+                                style={styles.starsView} 
+                                onPress={this.onPressWriteReview.bind(this)}
+                                disabled={this.state.disableEdit}>
+                                <ReviewStars rating={this.state.rating} fontSize={22}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ width: 50, height: 50}}/>
                     </View>
                     {
                         this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
@@ -265,14 +280,15 @@ export default class PlaceDetails extends React.Component<
 
 const styles = StyleSheet.create({
     container: {
-        height: Dimensions.get('screen').height - 100
+        height: Dimensions.get('screen').height
     },
     titleView: {
-        flexDirection: 'column', 
-        justifyContent: 'center',
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
         marginTop: 10
     },
     title: {
+        maxWidth: 250,
         fontWeight: 'bold',
         fontSize: 20,
         textAlign: 'center',

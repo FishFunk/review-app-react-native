@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         padding: 10,
         minWidth: 150,
-        maxWidth: 250,
+        maxWidth: 280
     },
     title: {
         textAlign: 'center',

@@ -5,7 +5,6 @@ import Map from './Map';
 import { getLocation } from '../../services/locationService';
 import { get } from 'lodash';
 import { searchPlace, markerData, dbPlace } from '../../models/place';
-import MapPlaceSummaryModal from './MapPlaceSummaryModal';
 import PlaceListModal from './PlaceListModal';
 import { 
     getGooglePlaceIdBySearch, 
@@ -19,7 +18,9 @@ import { isInRadius, getPlaceAvgRating } from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
 
 export default class MapContainer extends React.Component<
-    {}, 
+    {
+        navigation: any
+    }, 
     {
         loadingMap: boolean,
         loadingLocation: boolean,
@@ -28,8 +29,8 @@ export default class MapContainer extends React.Component<
         zoomLevel: number,
         markers: markerData[], 
         places: dbPlace[],
-        showSummaryModal: boolean,
         showListModal: boolean,
+        reshowListModal: boolean,
         placeId: string,
         apiKey: string,
         refreshCallout: boolean
@@ -45,6 +46,8 @@ export default class MapContainer extends React.Component<
     };
 
     mapViewRef: MapView | null = null;
+    unsubscribe1: any;
+    unsubscribe2: any;
 
     // initial state
     state = {
@@ -56,13 +59,21 @@ export default class MapContainer extends React.Component<
         zoomLevel: 14,
         markers: [],
         places: [],
-        showSummaryModal: false,
         showListModal: false,
+        reshowListModal: false,
         apiKey: '',
         refreshCallout: false
     };
-
+    
     componentDidMount(){
+        this.unsubscribe1 = this.props.navigation.addListener('blur', () => {
+            this.setState({ showListModal: false, reshowListModal: this.state.showListModal });
+        });
+
+        this.unsubscribe2 = this.props.navigation.addListener('focus', () => {
+            this.onFocus();
+        });
+
         this.load()
             .then((newState)=>{
                 this.setState({ ...newState, loadingMap: false }, ()=>{
@@ -72,6 +83,11 @@ export default class MapContainer extends React.Component<
             .catch(error=>{
                 FirebaseService.logError(JSON.stringify(error));
             });
+    }
+
+    componentWillUnmount(){
+        this.unsubscribe1();
+        this.unsubscribe2();
     }
 
     setMapRef(ref: MapView | null){
@@ -275,31 +291,17 @@ export default class MapContainer extends React.Component<
     }
 
     async onShowDetails(placeId: string){
-        if(this.state.showListModal){
-            // Pause for modal switch
-            this.setState({ showListModal: false });
-            setTimeout(()=>{
-                if(placeId){
-                    this.setState({ placeId: placeId, showSummaryModal: true });
-                }
-            }, 500);
-        } else {
-            this.setState({ placeId: placeId, showSummaryModal: true });
-        }
-
+        this.props.navigation.navigate(
+            'PlaceDetails', { apiKey: this.state.apiKey, placeId: placeId });
     }
 
     showListModal(){
         this.setState({ showListModal: true });
     }
 
-    onToggleSummaryModal(forceVal?: boolean){
+    onFocus(){
         this.reloadPlaceReviews();
-        if(forceVal != null){
-            this.setState({ showSummaryModal: forceVal, refreshCallout: false });
-        } else {
-            this.setState({ showSummaryModal: !this.state.showSummaryModal, refreshCallout: false });
-        }
+        this.setState({ refreshCallout: false, showListModal: this.state.reshowListModal });
     }
 
     onDismissListModal(){
@@ -386,11 +388,6 @@ export default class MapContainer extends React.Component<
                             </View>
                         </View> : null
                 }
-                <MapPlaceSummaryModal 
-                    apiKey={this.state.apiKey}
-                    isOpen={this.state.showSummaryModal} 
-                    placeId={this.state.placeId} 
-                    toggleSummaryModal={this.onToggleSummaryModal.bind(this)}/>
 
                 <PlaceListModal 
                     apiKey={this.state.apiKey}
