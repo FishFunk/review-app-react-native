@@ -26,19 +26,30 @@ export const isInRadius = function(
 }
 
 export const getPlaceAvgRating = function(
-    dbPlace: dbPlace | null, 
-    reviews: dbReview[] | reviewSummary[]): number {
-    let total;
+    dbPlace: dbPlace | null): number {
+    let total = 0;
     // If there are relevant reviews, calculate average rating
-    if(reviews && reviews.length > 0){
+    if(dbPlace?.reviews && dbPlace?.reviews.length > 0){
         let sum = 0;
-        for(let r of reviews){
+        for(let r of dbPlace?.reviews){
             sum += r.avg_rating;
         }
-        total = sum/reviews.length;
-    } else {
-        // Else - use stored average rating
-        total = dbPlace? dbPlace.rating : 0;
+        total = sum/dbPlace?.reviews.length;
+    }
+
+    return total;
+}
+
+export const getPlaceAvgPricing = function(
+    dbPlace: dbPlace | null): number {
+    let total = 0;
+    // If there are relevant reviews, calculate average rating
+    if(dbPlace?.reviews && dbPlace?.reviews.length > 0){
+        let sum = 0;
+        for(let r of dbPlace?.reviews){
+            sum += r.pricing;
+        }
+        total = sum/dbPlace?.reviews.length;
     }
 
     return total;

@@ -25,10 +25,11 @@ import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { getPlaceAvgRating } from '../../services/utils';
+import { getPlaceAvgPricing, getPlaceAvgRating } from '../../services/utils';
 import _find from 'lodash/find';
 import SpinnerContainer from '../SpinnerContainer';
 import ReviewComplete from '../reviews/ReviewComplete';
+import ReviewDollars from '../reviews/ReviewDollars';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -45,7 +46,8 @@ export default class PlaceDetails extends React.Component<
         place: fullApiPlace,
         disableEdit: boolean,
         photoUrls: Array<string>,
-        rating: number
+        rating: number,
+        pricing: number
     }> {
 
     initialPlace: fullApiPlace = {}
@@ -58,7 +60,8 @@ export default class PlaceDetails extends React.Component<
         place: this.initialPlace,
         photoUrls: new Array<string>(),
         disableEdit: true,
-        rating: 0
+        rating: 0,
+        pricing: 0
     }
 
 
@@ -69,8 +72,10 @@ export default class PlaceDetails extends React.Component<
 
     async load(){
         const place = await getGooglePlaceById(this.props.apiKey, this.props.placeId);
-        let photoUrls = []
 
+        this.setState({ place: place });
+
+        let photoUrls = []
         if(place && place.photos){
             // prefetch up to 3 photos
             for(let i=0; i<3; i++){
@@ -78,6 +83,7 @@ export default class PlaceDetails extends React.Component<
                     const url = getPhotoUrl(this.props.apiKey, place.photos[i].photo_reference);
                     await Image.prefetch(url);
                     photoUrls.push(url);
+                    this.setState({ photoUrls: photoUrls });
                 }
             }
         }
@@ -86,9 +92,6 @@ export default class PlaceDetails extends React.Component<
 
         this.setState({
             ...reviewState,
-            showReviewModal: false,
-            place: place,
-            photoUrls: photoUrls,
             isLoading: false
         });
     }
@@ -98,10 +101,11 @@ export default class PlaceDetails extends React.Component<
         const dbPlace = await FirebaseService.getPlace(this.props.placeId);
         const reviews = await FirebaseService.getReviewSummaries(this.props.placeId)
 
-        let total = getPlaceAvgRating(dbPlace, reviews);
-        let disableEditing = _find(reviews, (r) => r.reviewer_id === userId) != null;
+        let total = getPlaceAvgRating(dbPlace);
+        let pricing = getPlaceAvgPricing(dbPlace);
+        let disableEditing = _find(dbPlace?.reviews, (r) => r.reviewer_id === userId) != null;
 
-        return { items: reviews, rating: total, disableEdit: disableEditing };
+        return { items: reviews, rating: total, pricing: pricing, disableEdit: disableEditing };
     }
 
     onPressWriteReview(){
@@ -145,8 +149,8 @@ export default class PlaceDetails extends React.Component<
         return (
         <View style={styles.container}>
             {
-                this.state.isLoading ?
-                <SpinnerContainer /> :
+                // this.state.isLoading ?
+                // <SpinnerContainer /> :
                 <View>
                     <View style={styles.titleView}>
                         <View>
@@ -169,8 +173,11 @@ export default class PlaceDetails extends React.Component<
                                 disabled={this.state.disableEdit}>
                                 <ReviewStars rating={this.state.rating} fontSize={22}/>
                             </TouchableOpacity>
+                            <ReviewDollars style={{alignSelf: 'center', marginBottom: 10}} rating={this.state.pricing} fontSize={14}/>
                         </View>
-                        <View style={{ width: 50, height: 50}}/>
+                        <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>
+                            {this.state.isLoading ? <SpinnerContainer /> : null }
+                        </View>
                     </View>
                     {
                         this.state.place.business_status === 'CLOSED_TEMPORARILY' ?

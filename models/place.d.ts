@@ -1,3 +1,5 @@
+import { dbReview } from "./reviews";
+
 export interface placeId {
   place_id: string
 }
@@ -102,8 +104,7 @@ export interface dbPlace {
   name: string,
   lat: number,
   lng: number,
-  rating: number,
-  pricing: number,
+  reviews: dbReview[],
   formatted_address?: string,
   icon?: string,
   types?: string[]

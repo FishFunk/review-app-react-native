@@ -2,7 +2,7 @@ import * as firebase from 'firebase/app';
 import config from './firebaseServiceConfig';
 import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';
-import _ from 'lodash';
+import _, { filter } from 'lodash';
 import { Email, Contact } from 'expo-contacts';
 import { fullApiPlace, dbPlace } from '../models/place';
 import _get from 'lodash/get';
@@ -178,11 +178,18 @@ class FirebaseService {
 		return snap.val();
 	}
 
-	async getPlace(placeId: string): Promise<dbPlace | null>{
+	async getPlace(placeId: string, filterReviewList: boolean = true): Promise<dbPlace | null>{
 		this._verifyInitialized();
 		const placeSnap = await this.db.ref(`places/${placeId}`).once('value');
 		if(placeSnap.exists()){
-			return placeSnap.val();
+			const place = placeSnap.val();
+			if(filterReviewList){
+				const targetIds = await this.getUserFollowingIds();
+				place.reviews = await this._getFilteredPlaceReviews(place, targetIds);
+				return place;
+			} else {
+				return place;
+			}
 		} else {
 			return null;
 		}
@@ -246,23 +253,14 @@ class FirebaseService {
 		}
 	}
 
-	async getFilteredPlaceReviews(placeId: string): Promise<Array<dbReview>> {
+	async _getFilteredPlaceReviews(place: dbPlace, targetIds: string[]): Promise<Array<dbReview>> {
 		this._verifyInitialized();
 
-		const reviewSnapshots = await this.db.ref(`reviews/${placeId}`).once('value');
-		if(!reviewSnapshots.exists()){
-			return [];
-		}
-
-		const reviews: dbReview[] = reviewSnapshots.val();
-
-		// Filter reviews if they were written by current user or followers
+		// Filter reviews if they were written by target user IDs
 		let filteredReviews = [];
-		const targetFollowerIds = await this.getUserFollowingIds();
-		
-		for(let review of reviews){
+		for(let review of place.reviews){
 			if(review.reviewer_id === this.getCurrentUserId() ||
-				_indexOf(targetFollowerIds, review.reviewer_id) >= 0){
+				_indexOf(targetIds, review.reviewer_id) >= 0){
 					filteredReviews.push(review);
 			}
 		}
@@ -277,9 +275,14 @@ class FirebaseService {
 			return Promise.resolve([]);
 		}
 
-		const dbReviews = await this.getFilteredPlaceReviews(placeId);
+		const dbReviewSnapshot = await this.db.ref(`places/${placeId}/reviews`).once('value');
+		if(!dbReviewSnapshot.exists()){
+			return Promise.resolve([]);
+		}
+
+		const dbReviews = dbReviewSnapshot.val();
+
 		const reviewSummaries: reviewSummary[] = [];
-		
 		for(let review of dbReviews){
 			const usrSnap = await this.db.ref(`users/${review.reviewer_id}`).once('value');
 			let usr: appUser = usrSnap.val();
@@ -348,49 +351,32 @@ class FirebaseService {
 			date: new Date().toDateString()
 		}
 
-		let userReviewIds = await this.getUserReviewIdList();
-		const existingReviewSnapshots = await this.db.ref(`reviews/${newReview.place_id}`).once('value');
+		const dbPlaceSnapshot = await this.db.ref(`places/${place.place_id}`).once('value');
+		if(!dbPlaceSnapshot.exists()){
+			// Create new place in DB
+			const dbPlace: dbPlace = {
+				id: _get(place, 'place_id', ''),
+				name: _get(place, 'name', ''),
+				lat: _get(place, 'geometry.location.lat', ''),
+				lng: _get(place, 'geometry.location.lng', ''),
+				icon: _get(place, 'icon', ''),
+				formatted_address: _get(place, 'formatted_address', ''),
+				types: place.types,
+				reviews: [newReview]
+			}
+			await this.db.ref(`places/${place.place_id}`).set(dbPlace);
+		} else {
+			// Update existing place review list
+			const dbPlace = dbPlaceSnapshot.val();
+			dbPlace.reviews.push(newReview);
+			await this.db.ref(`places/${newReview.place_id}/reviews`).set(dbPlace.reviews);
+		}
 
 		// Update user review list
-		let placeRating = 0;
-		let priceRating = 0;
+		let userReviewIds = await this.getUserReviewIdList();
 		userReviewIds.push(newReview.place_id);
 		userReviewIds = _uniq(userReviewIds);
-		await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
-
-		// Update place review list
-		if(!existingReviewSnapshots.exists()){
-			placeRating = newReview.avg_rating;
-			priceRating = newReview.pricing;
-			await this.db.ref(`reviews/${newReview.place_id}`).set([newReview]);
-		} else {
-			const reviews = existingReviewSnapshots.val();
-			reviews.push(newReview);
-			reviews.forEach((r: dbReview)=> {
-				placeRating += r.avg_rating;
-				priceRating += r.pricing;
-			});
-
-			placeRating = placeRating / reviews.length;
-			priceRating = priceRating / reviews.length;
-
-			await this.db.ref(`reviews/${newReview.place_id}`).set(reviews);
-		}
-
-		// Add or update place
-		const dbPlace: dbPlace = {
-			id: _get(place, 'place_id', ''),
-			name: _get(place, 'name', ''),
-			lat: _get(place, 'geometry.location.lat', ''),
-			lng: _get(place, 'geometry.location.lng', ''),
-			rating: +placeRating.toFixed(1),
-			pricing: Math.round(placeRating),
-			icon: _get(place, 'icon', ''),
-			formatted_address: _get(place, 'formatted_address', ''),
-			types: place.types
-		}
-
-		return this.db.ref(`places/${dbPlace.id}`).set(dbPlace);
+		return await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
 	}
 
 	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<dbPlace[]>{
@@ -432,7 +418,8 @@ class FirebaseService {
 		// Filter places if they contain reviews by current user or followers
 		let filteredPlaces = [];
 		for(let place of places){
-			const targetReviews = await this.getFilteredPlaceReviews(place.id);
+			const targetIds = await this.getUserFollowingIds();
+			const targetReviews = await this._getFilteredPlaceReviews(place, targetIds);
 
 			if(targetReviews.length > 0){
 				filteredPlaces.push(place);

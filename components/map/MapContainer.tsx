@@ -103,16 +103,17 @@ export default class MapContainer extends React.Component<
             const { zoomLevel } = this.state;
             if(zoomLevel >= 15){
                 radius = 5;
-            } else if (zoomLevel >= 13){
+            } else if (zoomLevel >= 14){
                 radius = 10;
+            } else if (zoomLevel >= 13){
+                radius = 15
             } else {
-                radius = 20
+                radius = 25
             }
         }
 
         const places = await FirebaseService.getNearbyPlaces(lat, lng, radius);
         const markers = this.convertPlacesToMarkers(places);
-
 
         if(this.mapViewRef){
             const latLngs = markers.map(m=>m.latlng);
@@ -136,6 +137,7 @@ export default class MapContainer extends React.Component<
         await FirebaseService.registerPushNotificationToken();
         
         const data = await getLocation();
+
         if(data){
             newState.region = {
                 latitude: data.coords.latitude,
@@ -152,12 +154,13 @@ export default class MapContainer extends React.Component<
     async goToMyLocation(){
         this.setState({ loadingLocation: true });
         const data = await getLocation();
+        
         if(data){
             let region = {
                 latitude: data.coords.latitude,
                 longitude: data.coords.longitude,
-                latitudeDelta: 0.09,
-                longitudeDelta: 0.09
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01
             };
             
             this.mapViewRef?.animateToRegion(region);
@@ -173,7 +176,7 @@ export default class MapContainer extends React.Component<
                     longitude: place.lng
                 },
                 title: place.name,
-                rating: place.rating,
+                rating: getPlaceAvgRating(place),
                 placeId: place.id,
                 icon: place.icon
             }
@@ -192,9 +195,8 @@ export default class MapContainer extends React.Component<
 
         const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
         const dbPlace = await FirebaseService.getPlace(place_id);
-        const reviews = await FirebaseService.getFilteredPlaceReviews(place_id);
 
-        const rating = getPlaceAvgRating(dbPlace, reviews);
+        const rating = getPlaceAvgRating(dbPlace);
 
         const marker: markerData = {
             latlng: region,
@@ -203,7 +205,7 @@ export default class MapContainer extends React.Component<
             placeId: place_id
         }
 
-        this.setState({ markers: [marker], placeId: place_id });
+        this.setState({ markers: [marker], placeId: place_id, places: [] });
 
         this.mapViewRef?.animateToRegion(region);
     }
@@ -235,7 +237,7 @@ export default class MapContainer extends React.Component<
             longitudeDelta: this.state.region.longitudeDelta
         };
 
-        this.setState({placeId: marker.placeId});
+        this.setState({ placeId: marker.placeId, places: [] });
 
         this.mapViewRef?.animateToRegion(region);
     }
@@ -258,7 +260,7 @@ export default class MapContainer extends React.Component<
             marker = {
                 latlng: { latitude: geometry?.location.lat, longitude: geometry?.location.lng },
                 title: name,
-                rating: dbPlace ? dbPlace.rating : undefined,
+                rating: getPlaceAvgRating(dbPlace),
                 placeId: placeId
             }
 
@@ -269,7 +271,7 @@ export default class MapContainer extends React.Component<
                 longitudeDelta: this.state.region.longitudeDelta
             }
             
-            this.setState({ markers: [marker], placeId: placeId });
+            this.setState({ markers: [marker], placeId: placeId, places: [] });
 
             this.mapViewRef?.animateToRegion(region);
         }
@@ -309,10 +311,9 @@ export default class MapContainer extends React.Component<
     }
 
     render() {
-        if(this.state.loadingMap){
-            return <SpinnerContainer />
-        }
-
+        // if(this.state.loadingMap){
+        //     return <SpinnerContainer />
+        // }
         return (
             <View style={{ width: '100%', height: '100%' }}>
                 <View style={{zIndex: 9999, marginLeft: 10, marginRight: 10}}>
@@ -373,18 +374,21 @@ export default class MapContainer extends React.Component<
                                         </View>
                                     }
                                 </Button>
-                                <Button 
-                                    style={styles.mapButton} 
-                                    onPress={this.showListModal.bind(this)}>
-                                    <View>
-                                        <Icon 
-                                            type={'FontAwesome5'} 
-                                            name={'list'}
-                                            style={styles.buttonIcon}>
-                                        </Icon>
-                                        <Label style={styles.buttonText}>List View</Label>
-                                    </View>
-                                </Button>
+                                {
+                                    this.state.places.length > 1 ?
+                                    <Button 
+                                        style={styles.mapButton} 
+                                        onPress={this.showListModal.bind(this)}>
+                                        <View>
+                                            <Icon 
+                                                type={'FontAwesome5'} 
+                                                name={'list'}
+                                                style={styles.buttonIcon}>
+                                            </Icon>
+                                            <Label style={styles.buttonText}>List View</Label>
+                                        </View>
+                                    </Button> : null
+                                }
                             </View>
                         </View> : null
                 }

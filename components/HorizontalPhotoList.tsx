@@ -27,7 +27,7 @@ export default function HorizontalPhotoList(
 }
 
 const photoWidth = 250;
-const photoHeight = 150;
+const photoHeight = 160;
 const styles = StyleSheet.create({
     scrollView: {
         height: photoHeight

@@ -1,14 +1,9 @@
 import React from "react";
-import { Dimensions, StyleSheet, Image } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";
-import { Body, Button, Content, Icon, Label, Left, List, ListItem, Right, Text, Thumbnail, Title, View } from "native-base";
+import { Content } from "native-base";
 import { dbPlace } from "../../models/place";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import ReviewStars from "../reviews/ReviewStars";
-import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
-import ReviewDollars from "../reviews/ReviewDollars";
-import SpinnerContainer from "../SpinnerContainer";
 import PlaceList from "./PlaceList";
 
 export default class PlaceListModal extends React.Component<

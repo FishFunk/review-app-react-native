@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, StyleSheet  } from "react-native";
+import { View, StyleSheet, StyleProp, ViewStyle  } from "react-native";
 import { Icon } from 'native-base';
 import theme from "../../styles/theme";
+import { Object } from "lodash";
 
-class ReviewDollars extends Component<{ rating: number, fontSize: number }> {
+class ReviewDollars extends Component<{ rating: number, fontSize: number, style?: any }> {
 
   styles = StyleSheet.create({
     fullDollar: {
@@ -47,7 +48,7 @@ class ReviewDollars extends Component<{ rating: number, fontSize: number }> {
       dollarSigns.push(icon);
     }
 
-    return <View style={{ flexDirection: "row" }}>{dollarSigns}</View>;
+    return <View style={{ flexDirection: "row", ...this.props.style }}>{dollarSigns}</View>;
   }
 }
 
