@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, StyleSheet, Image } from 'react-native';
-import { Body, Left, List, ListItem, Text, Thumbnail, Title, View } from "native-base";
+import { Body, Icon, Left, List, ListItem, Text, Thumbnail, Title, View } from "native-base";
 import { dbPlace } from "../../models/place";
 import { ScrollView } from "react-native-gesture-handler";
 import ReviewStars from "../reviews/ReviewStars";
@@ -9,12 +9,17 @@ import ReviewDollars from "../reviews/ReviewDollars";
 import SpinnerContainer from "../SpinnerContainer";
 import { getPlaceAvgPricing, getPlaceAvgRating } from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
+import DropDownPicker from 'react-native-dropdown-picker';
+import theme from "../../styles/theme";
+import _orderBy from 'lodash/orderBy';
 
 export default class PlaceList extends React.Component<
     { 
         apiKey: string,
         places: dbPlace[], 
-        onShowPlaceDetails: (placeId: string) => any
+        onShowPlaceDetails: (placeId: string) => any,
+        onUpdateSortOrder: (orderBy: string) => any,
+        orderBy: string
     }, 
     {
         loading: boolean,
@@ -64,15 +69,56 @@ export default class PlaceList extends React.Component<
                 open: apiPlace.opening_hours?.open_now,
                 photoUrl: photoUrl
             });
-
-            this.setState({ detailedPlaces: detailedPlaces });
         }
+
+        this.sortPlaces(detailedPlaces, this.props.orderBy);
+    }
+
+    onChangeDropdownItem(orderBy: string){
+        const { detailedPlaces } = this.state;
+        this.sortPlaces(detailedPlaces, orderBy)
+        this.props.onUpdateSortOrder(orderBy);
+    }
+
+    sortPlaces(places: Array<any>, orderType: string){
+        let orderedList;
+
+        switch(orderType){
+            case('rating'):
+                orderedList = _orderBy(places, (p) => p.rating, 'desc');
+                break;
+            case('pricing'):
+                orderedList = _orderBy(places, (p) => p.pricing, 'asc');
+                break;
+            default:
+                orderedList = places;
+        }
+
+        this.setState({ detailedPlaces: orderedList });
     }
 
     render(){
         return (
             <View style={styles.container}>
                 <View>
+                    <DropDownPicker 
+                        searchable={false}
+                        items={[
+                            {label: 'Rating', value: 'rating', 
+                                icon: () => <Icon name="star" type={'FontAwesome5'} style={{fontSize: 14, color: theme.STAR_COLOR}} />},
+                            {label: 'Price', value: 'pricing', 
+                                icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR}} /> }
+                        ]}
+                        defaultValue={this.props.orderBy}
+                        style={{backgroundColor: theme.LIGHT_COLOR}}
+                        placeholder="Order by"
+                        containerStyle={{
+                            height: 40, 
+                            width: 100, 
+                            right: 5,
+                            top: 5,
+                            position: 'absolute' }}
+                        onChangeItem={item => this.onChangeDropdownItem(item.value)}/>
                     <View style={styles.header}>
                         <Title style={styles.title}>Nearby Places</Title>
                     </View>
@@ -116,10 +162,13 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').height - 150 // offset plus header height
     },
     header: {
+        flexDirection: 'column',
+        justifyContent: 'space-evenly',
         height: 50,
         width: '100%'
     },
     title: {
+        alignSelf: 'center',
         paddingTop: 10
     },
     list: {

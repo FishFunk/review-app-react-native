@@ -33,7 +33,8 @@ export default class MapContainer extends React.Component<
         reshowListModal: boolean,
         placeId: string,
         apiKey: string,
-        refreshCallout: boolean
+        refreshCallout: boolean,
+        listOrderedBy: string
     }> {
 
 
@@ -62,7 +63,8 @@ export default class MapContainer extends React.Component<
         showListModal: false,
         reshowListModal: false,
         apiKey: '',
-        refreshCallout: false
+        refreshCallout: false,
+        listOrderedBy: ''
     };
     
     componentDidMount(){
@@ -310,6 +312,10 @@ export default class MapContainer extends React.Component<
         this.setState({ showListModal: false });
     }
 
+    onUpdateListOrder(orderBy: string){
+        this.setState({ listOrderedBy: orderBy });
+    }
+
     render() {
         // if(this.state.loadingMap){
         //     return <SpinnerContainer />
@@ -398,7 +404,9 @@ export default class MapContainer extends React.Component<
                     isOpen={this.state.showListModal}
                     places={this.state.places}
                     onDismissModal={this.onDismissListModal.bind(this)}
-                    onShowPlaceDetails={this.onShowDetails.bind(this)}/>
+                    onShowPlaceDetails={this.onShowDetails.bind(this)}
+                    onUpdateSortOrder={this.onUpdateListOrder.bind(this)}
+                    orderBy={this.state.listOrderedBy}/>
             </View>
         )
     }

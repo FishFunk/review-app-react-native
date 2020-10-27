@@ -12,7 +12,9 @@ export default class PlaceListModal extends React.Component<
         isOpen: boolean, 
         places: dbPlace[], 
         onDismissModal: () => any,
-        onShowPlaceDetails: (placeId: string) => any
+        onUpdateSortOrder: (orderBy: string) => any,
+        onShowPlaceDetails: (placeId: string) => any,
+        orderBy: string
     }>{
 
     render(){
@@ -29,7 +31,9 @@ export default class PlaceListModal extends React.Component<
                     <PlaceList 
                         apiKey={this.props.apiKey}
                         places={this.props.places}
-                        onShowPlaceDetails={this.props.onShowPlaceDetails.bind(this)}/>
+                        onShowPlaceDetails={this.props.onShowPlaceDetails.bind(this)}
+                        onUpdateSortOrder={this.props.onUpdateSortOrder.bind(this)} 
+                        orderBy={this.props.orderBy}/>
                 </Content>
             </Modal>
         )
