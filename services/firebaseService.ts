@@ -249,7 +249,14 @@ class FirebaseService {
 		if(!userReviewsSnapshot.exists()){
 			return [];
 		} else {
-			return userReviewsSnapshot.val();
+			let result = [];
+			let ids = userReviewsSnapshot.val();
+			for(let i of ids){
+				if(i != null)
+					result.push(i);
+			}
+			
+			return result;
 		}
 	}
 
@@ -374,8 +381,11 @@ class FirebaseService {
 
 		// Update user review list
 		let userReviewIds = await this.getUserReviewIdList();
+		console.log(userReviewIds);
 		userReviewIds.push(newReview.place_id);
+		console.log(newReview.place_id);
 		userReviewIds = _uniq(userReviewIds);
+		console.log(userReviewIds);
 		return await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
 	}
 

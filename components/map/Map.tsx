@@ -1,5 +1,5 @@
 import React from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region, MarkerAnimated, AnimatedRegion } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, MapEvent, Callout, Region } from 'react-native-maps';
 import theme from '../../styles/theme';
 // import mapJson from '../../constants/MapJson';
 import { View, StyleSheet, Platform, Image } from 'react-native';
@@ -7,7 +7,6 @@ import { Text } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import { markerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';
-import DropDown from '../animations/DropDown';
 
 export default class Map extends React.Component<
     {
@@ -24,7 +23,7 @@ export default class Map extends React.Component<
     {}>{
 
     mapViewRef: MapView | null = null;
-    markerRef: MarkerAnimated | null  = null;
+    markerRef: Marker | null  = null;
 
     componentDidUpdate(prevProps: any){
         if(!_isEqual(prevProps.markers, this.props.markers)){
@@ -84,7 +83,7 @@ export default class Map extends React.Component<
                 // customMapStyle={mapJson}
             >
                 {this.props.markers.map((marker: markerData, idx: number) => (
-                    <MarkerAnimated
+                    <Marker
                         ref={ (ref) => this.markerRef = ref }
                         key={idx}
                         identifier={marker.title}
@@ -126,7 +125,7 @@ export default class Map extends React.Component<
                             </View>
                             <View style={styles.arrow}/>
                         </Callout>
-                    </MarkerAnimated>
+                    </Marker>
                 ))}
             </MapView>
         )

@@ -239,7 +239,7 @@ export default class MapContainer extends React.Component<
             longitudeDelta: this.state.region.longitudeDelta
         };
 
-        this.setState({ placeId: marker.placeId, places: [] });
+        this.setState({ placeId: marker.placeId });
 
         this.mapViewRef?.animateToRegion(region);
     }
@@ -317,9 +317,9 @@ export default class MapContainer extends React.Component<
     }
 
     render() {
-        // if(this.state.loadingMap){
-        //     return <SpinnerContainer />
-        // }
+        if(this.state.loadingMap){
+            return <SpinnerContainer />
+        }
         return (
             <View style={{ width: '100%', height: '100%' }}>
                 <View style={{zIndex: 9999, marginLeft: 10, marginRight: 10}}>

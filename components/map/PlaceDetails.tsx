@@ -196,6 +196,7 @@ export default class PlaceDetails extends React.Component<
                     </View>
                     <View style={styles.buttonContainer}>
                         <ScrollView 
+                            style={{alignSelf: 'center'}}
                             horizontal 
                             showsHorizontalScrollIndicator={false}>
                             <Button small rounded transparent 

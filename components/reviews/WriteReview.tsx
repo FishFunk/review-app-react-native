@@ -8,7 +8,8 @@ import {
     Textarea, 
     Label, 
     Toast,
-    Root
+    Root,
+    Spinner
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -18,6 +19,7 @@ import FirebaseService from '../../services/firebaseService';
 import _indexOf from 'lodash/indexOf';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import EditableDollars from './EditableDollars';
+import SpinnerContainer from '../SpinnerContainer';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
@@ -29,7 +31,8 @@ export default class WriteReview extends Component<{
         rating2: number
         rating3: number,
         pricing: number,
-        comments: string
+        comments: string,
+        submittingReview: boolean
     }> {
 
     constructor(props: any){
@@ -39,7 +42,8 @@ export default class WriteReview extends Component<{
             rating2: 0,
             rating3: 0,
             pricing: 0,
-            comments: ''
+            comments: '',
+            submittingReview: false
         }
     }
 
@@ -103,7 +107,7 @@ export default class WriteReview extends Component<{
             return;
         }
 
-        if(pricing === 0){
+        if(this.isFoodEsablishment() && pricing === 0){
             Toast.show({
                 position: 'top',
                 text: 'Free 99!? Enter a price rating between 1 and 5.',
@@ -134,7 +138,9 @@ export default class WriteReview extends Component<{
             avg_rating: this.avgRating()
         }
 
+        this.setState({ submittingReview: true });
         await FirebaseService.submitReview(this.props.place, reviewData);
+        
         this.onDismissModal(true);
     }
 
@@ -156,7 +162,7 @@ export default class WriteReview extends Component<{
             transparent={true}
         >
             <Root>
-            <ScrollView contentContainerStyle={styles.modalView}>
+            <ScrollView contentContainerStyle={styles.modalView} bounces={false}>
                 <View>
                     <Text style={styles.title}>{this.props.place.name}</Text>
                 </View>
@@ -241,14 +247,18 @@ export default class WriteReview extends Component<{
                     }  
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity onPress={this.onDismissModal.bind(this, false)}> 
+                    <TouchableOpacity onPress={this.onDismissModal.bind(this, false)} disabled={this.state.submittingReview}> 
                         <Button style={styles.cancelButton}>
                             <Text>Cancel</Text>
                         </Button>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.onSubmitForm.bind(this)}> 
+                    <TouchableOpacity onPress={this.onSubmitForm.bind(this)} disabled={this.state.submittingReview}> 
                         <Button style={styles.submitButton}>
-                            <Text>Submit</Text>
+                            {
+                                this.state.submittingReview ? 
+                                    <Spinner color={theme.LIGHT_COLOR} size={12} style={{width: 80}}/> : 
+                                    <Text>Submit</Text>
+                            }
                         </Button>
                     </TouchableOpacity>
                 </View>
