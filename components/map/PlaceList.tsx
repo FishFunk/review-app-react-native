@@ -110,10 +110,10 @@ export default class PlaceList extends React.Component<
                                 icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR}} /> }
                         ]}
                         defaultValue={this.props.orderBy}
-                        style={{backgroundColor: theme.LIGHT_COLOR}}
+                        style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0}}
                         placeholder="Order by"
                         containerStyle={{
-                            height: 40, 
+                            height: 40,
                             width: 100, 
                             right: 5,
                             top: 5,
@@ -142,7 +142,7 @@ export default class PlaceList extends React.Component<
                                         <Text style={styles.name}>{place.name}</Text>
                                         <ReviewStars rating={place.rating} fontSize={18} />
                                         <ReviewDollars rating={place.pricing} fontSize={14} />
-                                        <Text>{place.address}</Text>
+                                        <Text style={styles.info}>{place.address.split(',')[0]}</Text>
                                     </Body>
                                 </ListItem>
                             )
@@ -165,19 +165,23 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-evenly',
         height: 50,
-        width: '100%'
+        width: '100%',
+        borderBottomWidth: 0.5,
+        borderBottomColor: theme.GRAY_COLOR
     },
     title: {
-        alignSelf: 'center',
-        paddingTop: 10
+        alignSelf: 'center'
     },
     list: {
         paddingRight: 5
     },
     listItem: {
-        height: 100
+        maxHeight: 100
     },
     name: {
         fontWeight: 'bold'
+    },
+    info: {
+        fontSize: 12
     }
 });
