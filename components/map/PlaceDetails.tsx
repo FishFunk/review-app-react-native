@@ -248,7 +248,7 @@ export default class PlaceDetails extends React.Component<
                                 <List style={styles.list}>
                                     {
                                         this.state.items.map((item: reviewSummary, idx: number)=> 
-                                            <ListItem avatar key={idx}>
+                                            <ListItem avatar key={idx} style={styles.listItem}>
                                                 <Left>
                                                     <Thumbnail 
                                                         source={{ uri: item.img }} 
@@ -260,7 +260,17 @@ export default class PlaceDetails extends React.Component<
                                                     <Text note>{item.comments}</Text>
                                                 </Body>
                                                 <Right>
-                                                    <Text note>{ item.date }</Text>
+                                                    <Text style={{position: 'absolute', right: '20%', top: 10 }} note>{ item.date }</Text>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+                                                        <Button style={styles.reviewActionBtn} transparent onPress={()=>{}}>
+                                                            <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'thumbs-up'}/>
+                                                            <Label style={{fontSize: 10}}>Thank</Label>
+                                                        </Button>
+                                                        <Button style={styles.reviewActionBtn} transparent onPress={()=>{}}>
+                                                            <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
+                                                            <Label style={{fontSize: 10}}>Report</Label>
+                                                        </Button>
+                                                    </View>
                                                 </Right>
                                             </ListItem>
                                         )
@@ -339,6 +349,21 @@ const styles = StyleSheet.create({
     },
     list: {
         paddingRight: 5
+    },
+    listItem: {
+        // minHeight: 100
+    },
+    reviewActionBtn:{
+        flexDirection: 'column',
+        alignSelf: 'center'
+    },
+    reviewActionIcon:{
+        color: theme.PRIMARY_COLOR,
+        fontSize: 20
+    },
+    reviewNegativeActionIcon: {
+        color: theme.DANGER_COLOR,
+        fontSize: 20
     },
     noReviewConatiner: {
         minHeight: 200,
