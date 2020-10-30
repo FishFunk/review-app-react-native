@@ -5,6 +5,7 @@ export interface reviewSummary {
     avg_rating: number;
     date: string;
     reviewer_id: string;
+    place_id: string;
   }
 
   export interface dbReview {

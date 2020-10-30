@@ -1,4 +1,3 @@
-import { dbReview, reviewSummary } from "../models/reviews";
 import { dbPlace } from "../models/place";
 
 export const generateRandomString = function(){

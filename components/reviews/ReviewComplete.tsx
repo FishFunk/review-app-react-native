@@ -5,6 +5,7 @@ import {
     Text
 } from 'native-base'
 import ConfettiCannon from 'react-native-confetti-cannon';
+import theme from '../../styles/theme';
 
 export default class ReviewComplete extends Component<{ 
         showModal: boolean, 
@@ -45,7 +46,7 @@ const styles=StyleSheet.create({
     modalView: {
         height: Dimensions.get('screen').height,
         width: Dimensions.get('screen').width,
-        backgroundColor: "white",
+        backgroundColor: theme.LIGHT_COLOR,
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',

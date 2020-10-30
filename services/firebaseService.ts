@@ -300,7 +300,8 @@ class FirebaseService {
 					comments: review.comments,
 					avg_rating: review.avg_rating,
 					date: review.date,
-					reviewer_id: review.reviewer_id
+					reviewer_id: review.reviewer_id,
+					place_id: placeId
 				}
 				
 				reviewSummaries.push(reviewSummary);
@@ -453,6 +454,14 @@ class FirebaseService {
 		} else {
 			return userFriendsSnapshot.val();
 		}
+	}
+
+	async submitReviewReport(reportData: any): Promise<any>{
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		await this.db.ref(`reports/${this.auth?.currentUser.uid}`).push(reportData);
 	}
 
 	logError(log: string | Object | Error){

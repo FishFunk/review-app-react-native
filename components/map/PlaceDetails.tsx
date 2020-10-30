@@ -30,6 +30,7 @@ import _find from 'lodash/find';
 import SpinnerContainer from '../SpinnerContainer';
 import ReviewComplete from '../reviews/ReviewComplete';
 import ReviewDollars from '../reviews/ReviewDollars';
+import ReportModal from '../ReportModal';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -42,6 +43,8 @@ export default class PlaceDetails extends React.Component<
         items: Array<reviewSummary>, 
         showReviewModal: boolean, 
         showReviewCompleteModal: boolean,
+        showReportModal: boolean,
+        reportReview: reviewSummary,
         isLoading: boolean,
         place: fullApiPlace,
         disableEdit: boolean,
@@ -50,12 +53,15 @@ export default class PlaceDetails extends React.Component<
         pricing: number
     }> {
 
-    initialPlace: fullApiPlace = {}
+    initialPlace: fullApiPlace = {};
+    initialReportReview: any = {};
 
     state = {
         isLoading: true,
         showReviewModal: false,
         showReviewCompleteModal: false,
+        showReportModal: false,
+        reportReview: this.initialReportReview,
         items: new Array<reviewSummary>(),
         place: this.initialPlace,
         photoUrls: new Array<string>(),
@@ -143,6 +149,14 @@ export default class PlaceDetails extends React.Component<
             // longitude: lng, 
             query: name, 
             end: formatted_address });
+    }
+
+    onReportReview(reviewSummary: reviewSummary){
+        this.setState({ reportReview: reviewSummary, showReportModal: true });
+    }
+
+    onDismissReportModal(){
+        this.setState({ showReportModal: false })
     }
 
     render() {
@@ -256,21 +270,24 @@ export default class PlaceDetails extends React.Component<
                                                 </Left>
                                                 <Body>
                                                     <ReviewStars rating={item.avg_rating} fontSize={18} />
-                                                    <Text>{item.name}</Text>
+                                                    <Text>{item.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : item.name}</Text>
                                                     <Text note>{item.comments}</Text>
                                                 </Body>
                                                 <Right>
                                                     <Text style={{position: 'absolute', right: '20%', top: 10 }} note>{ item.date }</Text>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
-                                                        <Button style={styles.reviewActionBtn} transparent onPress={()=>{}}>
-                                                            <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'thumbs-up'}/>
-                                                            <Label style={{fontSize: 10}}>Thank</Label>
-                                                        </Button>
-                                                        <Button style={styles.reviewActionBtn} transparent onPress={()=>{}}>
-                                                            <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
-                                                            <Label style={{fontSize: 10}}>Report</Label>
-                                                        </Button>
-                                                    </View>
+                                                    {/* {
+                                                        item.reviewer_id !== FirebaseService.getCurrentUserId() ?
+                                                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+                                                            <Button style={styles.reviewActionBtn} transparent onPress={()=>{}}>
+                                                                <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'thumbs-up'}/>
+                                                                <Label style={{fontSize: 10}}>Thank</Label>
+                                                            </Button>
+                                                            <Button style={styles.reviewActionBtn} transparent onPress={this.onReportReview.bind(this, item)}>
+                                                                <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
+                                                                <Label style={{fontSize: 10}}>Report</Label>
+                                                            </Button>
+                                                        </View> : null
+                                                    } */}
                                                 </Right>
                                             </ListItem>
                                         )
@@ -289,9 +306,15 @@ export default class PlaceDetails extends React.Component<
                 place={this.state.place}
                 showModal={this.state.showReviewModal} 
                 onDismissModal={this.onDismissModal.bind(this)}/>
+
             <ReviewComplete 
                 showModal={this.state.showReviewCompleteModal} 
                 onDismissModal={this.onDismissReviewCompleteModal.bind(this)}/>
+
+            <ReportModal 
+                showModal={this.state.showReportModal} 
+                onDismissModal={this.onDismissReportModal.bind(this)} 
+                review={this.state.reportReview}/>     
         </View>)
     }
 }

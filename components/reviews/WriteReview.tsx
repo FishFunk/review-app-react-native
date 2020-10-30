@@ -274,7 +274,7 @@ const styles=StyleSheet.create({
         paddingTop: 40,
         height: Dimensions.get('screen').height,
         width: Dimensions.get('screen').width,
-        backgroundColor: "white",
+        backgroundColor: theme.LIGHT_COLOR,
         padding: 10,
         alignItems: "center",
         borderRadius: 20,
