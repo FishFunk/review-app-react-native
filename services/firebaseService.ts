@@ -2,7 +2,6 @@ import * as firebase from 'firebase/app';
 import config from './firebaseServiceConfig';
 import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';
-import _, { filter } from 'lodash';
 import { Email, Contact } from 'expo-contacts';
 import { fullApiPlace, dbPlace } from '../models/place';
 import _get from 'lodash/get';
@@ -25,11 +24,13 @@ class FirebaseService {
 			throw new Error('Missing Firebase Configuration!');
 		}
 
-		firebase.initializeApp(config);
+		if(!firebase.apps.length){
+			firebase.initializeApp(config);
+			console.log(`Firebase initialized successfully`);
+		}
+
 		this.db = firebase.database();
 		this.auth = firebase.auth();
-		
-		console.log(`Firebase initialized successfully`);
 	}
 
 	getCurrentUserId(){
@@ -217,6 +218,7 @@ class FirebaseService {
 		const usersSnapshot = await this.db.ref(`users`).once('value');
 		usersSnapshot.forEach((snap)=>{
 			const user = snap.val();
+			// Exclude current user from results
 			if(user.id !== this.auth.currentUser?.uid && _indexOf(userIds, user.id) >= 0){
 				result.push(user);
 			}
@@ -266,7 +268,7 @@ class FirebaseService {
 		// Filter reviews if they were written by target user IDs
 		let filteredReviews = [];
 		for(let review of place.reviews){
-			if(review.reviewer_id === this.getCurrentUserId() ||
+			if(review.reviewer_id === this.getCurrentUserId() || 
 				_indexOf(targetIds, review.reviewer_id) >= 0){
 					filteredReviews.push(review);
 			}
@@ -287,12 +289,36 @@ class FirebaseService {
 			return Promise.resolve([]);
 		}
 
-		const dbReviews = dbReviewSnapshot.val();
+		const userFollowingIds = await this.getUserFollowingIds();
+		let reviewSummaries: reviewSummary[] = [];
+		let promises: Promise<any>[] = [];
 
-		const reviewSummaries: reviewSummary[] = [];
-		for(let review of dbReviews){
+		dbReviewSnapshot.forEach((snapshot: firebase.database.DataSnapshot)=>{
+			promises.push(this.asyncForEachReviewSummary.apply(this, 
+				[snapshot, placeId, reviewSummaries, userFollowingIds]));
+		});
+		
+		await Promise.all(promises);
+
+		return reviewSummaries;
+	};
+
+	async asyncForEachReviewSummary(
+		snapshot: firebase.database.DataSnapshot, 
+		placeId: string, 
+		reviewSummaries: reviewSummary[],
+		followingIds: string[]){
+
+		const key = snapshot.key;
+		const review = snapshot.val();
+
+		// Filter reviews if they were written by target user IDs
+		if(_indexOf(followingIds, review.reviewer_id) >= 0 || 
+			review.reviewer_id === this.auth.currentUser?.uid){
+
 			const usrSnap = await this.db.ref(`users/${review.reviewer_id}`).once('value');
 			let usr: appUser = usrSnap.val();
+	
 			if(usr){
 				let reviewSummary: reviewSummary = {
 					img: usr.photoUrl || '',
@@ -301,15 +327,16 @@ class FirebaseService {
 					avg_rating: review.avg_rating,
 					date: review.date,
 					reviewer_id: review.reviewer_id,
-					place_id: placeId
+					place_id: placeId,
+					review_key: key,
+					reports: review.reports,
+					thanks: review.thanks
 				}
 				
 				reviewSummaries.push(reviewSummary);
 			}
 		}
-		
-		return reviewSummaries;
-	};
+	}
 
 	async findFriends(contactList: Contact[]): Promise<appUser[]>{
 		this._verifyInitialized();
@@ -356,7 +383,9 @@ class FirebaseService {
 			avg_rating: review.avg_rating,
 			pricing: review.pricing,
 			comments: review.comments,
-			date: new Date().toDateString()
+			date: new Date().toDateString(),
+			reports: [],
+			thanks: []
 		}
 
 		const dbPlaceSnapshot = await this.db.ref(`places/${place.place_id}`).once('value');
@@ -375,9 +404,7 @@ class FirebaseService {
 			await this.db.ref(`places/${place.place_id}`).set(dbPlace);
 		} else {
 			// Update existing place review list
-			const dbPlace = dbPlaceSnapshot.val();
-			dbPlace.reviews.push(newReview);
-			await this.db.ref(`places/${newReview.place_id}/reviews`).set(dbPlace.reviews);
+			await this.db.ref(`places/${newReview.place_id}/reviews`).push(newReview);
 		}
 
 		// Update user review list
@@ -461,7 +488,15 @@ class FirebaseService {
 			throw new Error("Firebase not initialized correctly!");
 		}
 
-		await this.db.ref(`reports/${this.auth?.currentUser.uid}`).push(reportData);
+		await this.db.ref(`places/${reportData.place_id}/reviews/${reportData.review_key}/reports`).push(reportData);
+	}
+
+	async submitReviewThankYou(reviewSummary: reviewSummary){
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		await this.db.ref(`places/${reviewSummary.place_id}/reviews/${reviewSummary.review_key}/thanks`).push({user_id: this.auth.currentUser.uid});
 	}
 
 	logError(log: string | Object | Error){

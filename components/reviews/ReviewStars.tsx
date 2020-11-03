@@ -3,7 +3,7 @@ import { View, StyleSheet  } from "react-native";
 import { Icon } from 'native-base';
 import theme from "../../styles/theme";
 
-class ReviewStars extends Component<{ rating: number, fontSize: number }> {
+class ReviewStars extends Component<{ rating: number, fontSize: number, style?: any }> {
 
   styles = StyleSheet.create({
     star: {
@@ -59,7 +59,7 @@ class ReviewStars extends Component<{ rating: number, fontSize: number }> {
       stars.push(star);
     }
 
-    return <View style={{ flexDirection: "row" }}>{stars}</View>;
+    return <View style={{ flexDirection: "row", ...this.props.style }}>{stars}</View>;
   }
 }
 

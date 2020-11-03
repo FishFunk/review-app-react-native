@@ -100,7 +100,8 @@ export default class ReportModal extends Component<{
             reviewer_name: review.name,
             date: new Date().toDateString(),
             report_reasons: `${checkbox1 ? ' Offensive ' : ''}${checkbox2 ? ' Inappropriate ' : ''}${checkbox3 ? ' Fake/Spam ' : ''}`,
-            report_comments: comments
+            report_comments: comments,
+            review_key: review.review_key
         }
 
         this.setState({ submittingReport: true });

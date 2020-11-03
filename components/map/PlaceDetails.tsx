@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image, Linking, Dimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { 
     List, 
     ListItem, 
     Text, 
     Body, 
     Left, 
-    Right, 
     Thumbnail,
     Button,
     Icon,
@@ -31,6 +30,7 @@ import SpinnerContainer from '../SpinnerContainer';
 import ReviewComplete from '../reviews/ReviewComplete';
 import ReviewDollars from '../reviews/ReviewDollars';
 import ReportModal from '../ReportModal';
+import HorizontalButtonList from '../HorizontalButtonList';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -155,152 +155,133 @@ export default class PlaceDetails extends React.Component<
         this.setState({ reportReview: reviewSummary, showReportModal: true });
     }
 
-    onDismissReportModal(){
-        this.setState({ showReportModal: false })
+    async onThankReview(reviewSummary: reviewSummary){
+        this.setState({ isLoading: true });
+        await FirebaseService.submitReviewThankYou(reviewSummary);
+        let newState = await this.getReviewState();
+        this.setState({ isLoading: false, items: newState.items });
+    }
+
+    async onDismissReportModal(){
+        this.setState({ isLoading: true });
+        let newState = await this.getReviewState();
+        this.setState({ isLoading: false, showReportModal: false, items: newState.items });
+    }
+
+    renderReviewSummaries(){
+        const { items: reviewSummaries } = this.state;
+        let elements = [];
+
+        for (let review of reviewSummaries){
+            const disableThanks = _find(review.thanks, (t) => t.user_id === FirebaseService.getCurrentUserId());
+            const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId());
+            elements.push(<ListItem avatar key={review.review_key} style={styles.listItem}>
+                <Left style={{ 
+                    flexDirection: 'column', 
+                    width: 50, 
+                    height: '100%' }}>
+                    <Thumbnail 
+                        style={{width: 40, height: 40, alignSelf: 'center'}}
+                        source={{ uri: review.img }} 
+                        defaultSource={require('../../assets/images/profile.png')} />
+                        {review.reviewer_id !== FirebaseService.getCurrentUserId() ?
+                        <View style={{ 
+                            flexDirection: 'column', 
+                            alignSelf: 'center'}}>
+                            <Button 
+                                disabled={disableThanks}
+                                transparent
+                                style={disableThanks ? styles.reviewActionBtnDisabled : styles.reviewActionBtn} 
+                                onPress={this.onThankReview.bind(this, review)}>
+                                <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'thumbs-up'}/>
+                                <Label style={{fontSize: 8}}>{disableThanks ? 'Thanked' : 'Thank'}</Label>
+                            </Button>
+                            <Button 
+                                disabled={disableReport}
+                                transparent
+                                style={disableReport ? styles.reviewActionBtnDisabled : styles.reviewActionBtn} 
+                                onPress={this.onReportReview.bind(this, review)}>
+                                <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
+                                <Label style={{fontSize: 8}}>{disableReport ? 'Reported' : 'Report'}</Label>
+                            </Button>
+                        </View> : null}
+                </Left>
+                <Body style={{transform: [{ translateX: -5 }], height: '100%'}}>
+                    <ReviewStars rating={review.avg_rating} fontSize={18} />
+                    <Text>{review.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : review.name}</Text>
+                    <Text note style={{paddingRight: 10}}>{review.comments}</Text>
+                    <Text note style={{position: 'absolute', top: 10, right: 10, fontSize: 12 }}>{ review.date }</Text>
+                </Body>
+            </ListItem>
+            );
+        }
+
+        return elements;
     }
 
     render() {
         return (
         <View style={styles.container}>
-            {
-                // this.state.isLoading ?
-                // <SpinnerContainer /> :
+            <View style={styles.titleView}>
                 <View>
-                    <View style={styles.titleView}>
-                        <View>
-                            <Button 
-                                transparent
-                                style={{ width: 50, height: 50}}
-                                onPress={this.props.navigation.goBack}>
-                                <Icon 
-                                    style={styles.buttonIcon}
-                                    name={'arrow-left'} 
-                                    type={'FontAwesome5'}/>
-                            </Button>
-                        </View>
-                        <View>
-                            <Text style={styles.title}>{this.state.place.name}</Text>
-                            <TouchableOpacity 
-                                containerStyle = {styles.starTouchable}
-                                style={styles.starsView} 
-                                onPress={this.onPressWriteReview.bind(this)}
-                                disabled={this.state.disableEdit}>
-                                <ReviewStars rating={this.state.rating} fontSize={22}/>
-                            </TouchableOpacity>
-                            <ReviewDollars style={{alignSelf: 'center', marginBottom: 10}} rating={this.state.pricing} fontSize={14}/>
-                        </View>
-                        <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>
-                            {this.state.isLoading ? <SpinnerContainer /> : null }
-                        </View>
-                    </View>
-                    {
-                        this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
-                        <Badge style={styles.badge}>
-                            <Text style={styles.badgeText}>Closed Temporarily</Text>
-                        </Badge> : null
-                    }
-                    {
-                        this.state.place.business_status === 'CLOSED_PERMANENTLY' ?
-                        <Badge style={styles.badge}>
-                            <Text style={styles.badgeText}>Closed Permanently</Text>
-                        </Badge> : null
-                    }
-                    <View>
-                        <HorizontalPhotoList photoUrls={this.state.photoUrls} />
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <ScrollView 
-                            style={{alignSelf: 'center'}}
-                            horizontal 
-                            showsHorizontalScrollIndicator={false}>
-                            <Button small rounded transparent 
-                                style={this.state.disableEdit ? styles.disabledButton : styles.roundButton} 
-                                onPress={this.onPressWriteReview.bind(this)}
-                                disabled={this.state.disableEdit}>
-                                <Icon type={'FontAwesome5'} name={'edit'} 
-                                    style={this.state.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
-                                <Label style={{fontSize: 12}}>Review</Label>
-                            </Button>
-                            <Button small rounded transparent style={styles.roundButton}
-                                onPress={this.onOpenMaps.bind(this)}>
-                                <Icon type={'FontAwesome5'} name={'directions'} style={styles.buttonIcon}></Icon>
-                                <Label style={{fontSize: 12}}>Directions</Label>
-                            </Button>
-                            {
-                                this.state.place.formatted_phone_number != null ? 
-                                    <Button small rounded transparent style={styles.roundButton}
-                                        onPress={()=>Linking.openURL(`tel:${this.state.place.formatted_phone_number}`)}>
-                                        <Icon type={'FontAwesome5'} name={'phone'} style={styles.buttonIcon}></Icon>
-                                        <Label style={{fontSize: 12}}>Call</Label>
-                                    </Button> : null
-                            }
-                            {
-                                this.state.place.website != null ? 
-                                    <Button small rounded transparent style={styles.roundButton}
-                                        onPress={()=>Linking.openURL(`${this.state.place.website}`)}>
-                                        <Icon type={'FontAwesome5'} name={'globe'} style={styles.buttonIcon}></Icon>
-                                        <Label style={{fontSize: 12}}>Website</Label>
-                                    </Button> : null
-                            }
-                            {
-                                <Button small rounded transparent style={styles.roundButton}
-                                    onPress={()=>{alert("not implemented")}}>
-                                    <Icon type={'FontAwesome5'} name={'share'} style={styles.buttonIcon}></Icon>
-                                    <Label style={{fontSize: 12}}>Share</Label>
-                                </Button>
-                            }
-                            {/* <Button small rounded transparent style={styles.roundButton}
-                                onPress={()=>{alert("not implemented")}}>
-                                <Icon type={'FontAwesome5'} name={'star'} style={styles.buttonIcon}></Icon>
-                                <Label style={{fontSize: 12}}>Favorite</Label>
-                            </Button> */}
-                        </ScrollView>
-                    </View>
-                    {       
-                        this.state.items.length > 0 ?       
-                            <ScrollView>
-                                <List style={styles.list}>
-                                    {
-                                        this.state.items.map((item: reviewSummary, idx: number)=> 
-                                            <ListItem avatar key={idx} style={styles.listItem}>
-                                                <Left>
-                                                    <Thumbnail 
-                                                        source={{ uri: item.img }} 
-                                                        defaultSource={require('../../assets/images/profile.png')} />
-                                                </Left>
-                                                <Body>
-                                                    <ReviewStars rating={item.avg_rating} fontSize={18} />
-                                                    <Text>{item.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : item.name}</Text>
-                                                    <Text note>{item.comments}</Text>
-                                                </Body>
-                                                <Right>
-                                                    <Text style={{position: 'absolute', right: '20%', top: 10 }} note>{ item.date }</Text>
-                                                    {/* {
-                                                        item.reviewer_id !== FirebaseService.getCurrentUserId() ?
-                                                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
-                                                            <Button style={styles.reviewActionBtn} transparent onPress={()=>{}}>
-                                                                <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'thumbs-up'}/>
-                                                                <Label style={{fontSize: 10}}>Thank</Label>
-                                                            </Button>
-                                                            <Button style={styles.reviewActionBtn} transparent onPress={this.onReportReview.bind(this, item)}>
-                                                                <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
-                                                                <Label style={{fontSize: 10}}>Report</Label>
-                                                            </Button>
-                                                        </View> : null
-                                                    } */}
-                                                </Right>
-                                            </ListItem>
-                                        )
-                                    }
-                                </List>
-                            </ScrollView>
-                        :
-                        <View style={styles.noReviewConatiner}>
-                            <Title>Hmm... No reviews from your network yet.</Title>
-                            <Text>Be the first to write one!</Text>
-                        </View>
-                    }
+                    <Button 
+                        transparent
+                        style={{ width: 50, height: 50}}
+                        onPress={this.props.navigation.goBack}>
+                        <Icon 
+                            style={{color: theme.PRIMARY_COLOR}}
+                            name={'arrow-left'} 
+                            type={'FontAwesome5'}/>
+                    </Button>
                 </View>
+                <View>
+                    <Text style={styles.title}>{this.state.place.name}</Text>
+                    <TouchableOpacity 
+                        containerStyle={styles.starTouchable}
+                        style={styles.starsView} 
+                        onPress={this.onPressWriteReview.bind(this)}
+                        disabled={this.state.disableEdit}>
+                        <ReviewStars rating={this.state.rating} fontSize={22}/>
+                    </TouchableOpacity>
+                    <ReviewDollars style={{alignSelf: 'center', marginBottom: 10}} rating={this.state.pricing} fontSize={14}/>
+                </View>
+                <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>
+                    {this.state.isLoading ? <SpinnerContainer /> : null }
+                </View>
+            </View>
+            {
+                this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
+                <Badge style={styles.badge}>
+                    <Text style={styles.badgeText}>Closed Temporarily</Text>
+                </Badge> : null
+            }
+            {
+                this.state.place.business_status === 'CLOSED_PERMANENTLY' ?
+                <Badge style={styles.badge}>
+                    <Text style={styles.badgeText}>Closed Permanently</Text>
+                </Badge> : null
+            }
+            <View>
+                <HorizontalPhotoList photoUrls={this.state.photoUrls} />
+            </View>
+            <HorizontalButtonList 
+                disableEdit={this.state.disableEdit}
+                place={this.state.place}
+                onPressWriteReview={this.onPressWriteReview.bind(this)}/>
+            {       
+                this.state.items.length > 0 ?
+                    <ScrollView style={{flex: 1}}>
+                        <List>
+                            {
+                                this.renderReviewSummaries()
+                            }
+                        </List>
+                    </ScrollView>
+                    :
+                    <View style={styles.noReviewConatiner}>
+                        <Title>Hmm... No reviews from your network yet.</Title>
+                        <Text>Be the first to write one!</Text>
+                    </View>
             }
             <WriteReview 
                 place={this.state.place}
@@ -321,7 +302,7 @@ export default class PlaceDetails extends React.Component<
 
 const styles = StyleSheet.create({
     container: {
-        height: Dimensions.get('screen').height
+        flex: 1
     },
     titleView: {
         flexDirection: 'row', 
@@ -344,49 +325,29 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignSelf: 'center'
     },
-    buttonContainer: {
-        margin: 5
-    },
-    roundButton: {
-        margin: 5,
-        width: 80,
-        borderWidth: 1,
-        borderColor: theme.PRIMARY_COLOR,
-        height: 50,
-        flexDirection: 'column'
-    },
-    buttonIcon:{
-        color: theme.PRIMARY_COLOR
-    },
-    disabledButton: {
-        margin: 5,
-        width: 80,
-        borderWidth: 1,
-        borderColor: theme.PRIMARY_COLOR,
-        height: 50,
-        flexDirection: 'column',
-        opacity: .5
-    },
-    disabledIcon: {
-        color: theme.PRIMARY_COLOR
-    },
     list: {
         paddingRight: 5
     },
     listItem: {
-        // minHeight: 100
+    //    minHeight: 150
     },
     reviewActionBtn:{
         flexDirection: 'column',
         alignSelf: 'center'
     },
+    reviewActionBtnDisabled: {
+        padding: 0,
+        flexDirection: 'column',
+        alignSelf: 'center',
+        opacity: 0.5
+    },
     reviewActionIcon:{
         color: theme.PRIMARY_COLOR,
-        fontSize: 20
+        fontSize: 14
     },
     reviewNegativeActionIcon: {
         color: theme.DANGER_COLOR,
-        fontSize: 20
+        fontSize: 14
     },
     noReviewConatiner: {
         minHeight: 200,
