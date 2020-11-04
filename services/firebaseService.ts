@@ -325,6 +325,7 @@ class FirebaseService {
 					name: `${usr.firstName} ${usr.lastName}`,
 					comments: review.comments,
 					avg_rating: review.avg_rating,
+					pricing: review.pricing,
 					date: review.date,
 					reviewer_id: review.reviewer_id,
 					place_id: placeId,

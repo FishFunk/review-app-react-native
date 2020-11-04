@@ -55,7 +55,7 @@ export default class PlaceList extends React.Component<
                 // prefetch first photo
                 if(apiPlace.photos[0]){
                     photoUrl = getPhotoUrl(apiKey, apiPlace.photos[0].photo_reference);
-                    await Image.prefetch(photoUrl);
+                    // await Image.prefetch(photoUrl);
                 }
             }
 

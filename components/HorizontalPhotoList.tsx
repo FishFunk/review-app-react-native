@@ -1,28 +1,25 @@
 import React from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
-import { List, ListItem } from 'native-base';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, FlatList } from 'react-native';
 
 export default function HorizontalPhotoList(
     props: { photoUrls: string[] }){
-    return (
-        <ScrollView 
+
+    const _renderItem = function({item}){
+        return( 
+            <Image 
+                style={styles.photo}
+                source={{ uri: item }}>
+            </Image>)
+    }
+
+    return ( 
+        <FlatList 
             horizontal 
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scrollView}>
-            <List style={styles.photoList}>
-            {
-                props.photoUrls.map((url: string, idx: number)=> <ListItem 
-                    key={idx} style={styles.photoListItem} noBorder>
-                    <Image 
-                        key={idx}
-                        style={styles.photo}
-                        source={{ uri: url }}>
-                    </Image>
-                </ListItem>)
-            }
-            </List>
-        </ScrollView>
+            contentContainerStyle={styles.scrollView} 
+            data={props.photoUrls} 
+            keyExtractor={(x, i) => i.toString()}
+            renderItem={_renderItem}/>
     )
 }
 
@@ -30,18 +27,13 @@ const photoWidth = 250;
 const photoHeight = 160;
 const styles = StyleSheet.create({
     scrollView: {
-        height: photoHeight
-    },
-    photoList: {
-        flexDirection:'row',
-        height: photoHeight
-    },
-    photoListItem: {
         height: photoHeight,
-        width: photoWidth
+        marginRight: 8,
+        marginLeft: 8
     },
     photo: {
         height: photoHeight,
-        width: photoWidth
+        width: photoWidth,
+        margin: 2
     }
   });

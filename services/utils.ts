@@ -1,4 +1,5 @@
 import { dbPlace } from "../models/place";
+import { dbReview, reviewSummary } from "../models/reviews";
 
 export const generateRandomString = function(){
     return Math.random().toString(20).substr(2, 8);
@@ -24,10 +25,32 @@ export const isInRadius = function(
     return distance <= desiredRadiusKm;
 }
 
+export const getReviewAverages = (reviews: reviewSummary[]): {avgPrice: number, avgRating: number}=>{
+    let avgPrice = 0;
+    let avgRating = 0;
+
+    if(reviews && reviews.length > 0){
+        let priceSum = 0;
+        let ratingSum = 0;
+
+        for(let r of reviews){
+            priceSum += r.pricing;
+            ratingSum += r.avg_rating;
+        }
+
+        avgPrice = priceSum/reviews.length;
+        avgRating = ratingSum/reviews.length;
+
+        return { avgPrice: avgPrice, avgRating: avgRating};
+    } else {
+        return { avgPrice: 0, avgRating: 0};
+    }
+}
+
 export const getPlaceAvgRating = function(
     dbPlace: dbPlace | null): number {
     let total = 0;
-    // If there are relevant reviews, calculate average rating
+
     if(dbPlace?.reviews && dbPlace?.reviews.length > 0){
         let sum = 0;
         for(let r of dbPlace?.reviews){
@@ -42,7 +65,7 @@ export const getPlaceAvgRating = function(
 export const getPlaceAvgPricing = function(
     dbPlace: dbPlace | null): number {
     let total = 0;
-    // If there are relevant reviews, calculate average rating
+
     if(dbPlace?.reviews && dbPlace?.reviews.length > 0){
         let sum = 0;
         for(let r of dbPlace?.reviews){

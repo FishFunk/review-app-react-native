@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -24,7 +24,7 @@ import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { getPlaceAvgPricing, getPlaceAvgRating } from '../../services/utils';
+import { getReviewAverages } from '../../services/utils';
 import _find from 'lodash/find';
 import SpinnerContainer from '../SpinnerContainer';
 import ReviewComplete from '../reviews/ReviewComplete';
@@ -87,7 +87,7 @@ export default class PlaceDetails extends React.Component<
             for(let i=0; i<3; i++){
                 if(place.photos[i]){
                     const url = getPhotoUrl(this.props.apiKey, place.photos[i].photo_reference);
-                    await Image.prefetch(url);
+                    // await Image.prefetch(url);
                     photoUrls.push(url);
                     this.setState({ photoUrls: photoUrls });
                 }
@@ -104,14 +104,16 @@ export default class PlaceDetails extends React.Component<
 
     async getReviewState(){
         const userId = FirebaseService.getCurrentUserId();
-        const dbPlace = await FirebaseService.getPlace(this.props.placeId);
-        const reviews = await FirebaseService.getReviewSummaries(this.props.placeId)
+        const reviews = await FirebaseService.getReviewSummaries(this.props.placeId);
+        const averages = getReviewAverages(reviews);
 
-        let total = getPlaceAvgRating(dbPlace);
-        let pricing = getPlaceAvgPricing(dbPlace);
-        let disableEditing = _find(dbPlace?.reviews, (r) => r.reviewer_id === userId) != null;
+        let disableEditing = _find(reviews, (r) => r.reviewer_id === userId) != null;
 
-        return { items: reviews, rating: total, pricing: pricing, disableEdit: disableEditing };
+        return { 
+            items: reviews, 
+            rating: averages.avgRating, 
+            pricing: averages.avgPrice, 
+            disableEdit: disableEditing };
     }
 
     onPressWriteReview(){
@@ -176,18 +178,22 @@ export default class PlaceDetails extends React.Component<
             const disableThanks = _find(review.thanks, (t) => t.user_id === FirebaseService.getCurrentUserId());
             const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId());
             elements.push(<ListItem avatar key={review.review_key} style={styles.listItem}>
-                <Left style={{ 
-                    flexDirection: 'column', 
-                    width: 50, 
-                    height: '100%' }}>
+                <Left>
                     <Thumbnail 
-                        style={{width: 40, height: 40, alignSelf: 'center'}}
+                        style={{width: 50, height: 50, alignSelf: 'center'}}
                         source={{ uri: review.img }} 
                         defaultSource={require('../../assets/images/profile.png')} />
-                        {review.reviewer_id !== FirebaseService.getCurrentUserId() ?
+                </Left>
+                <Body style={{transform: [{ translateX: -5 }]}}>
+                    <ReviewStars rating={review.avg_rating} fontSize={18} />
+                    <Text>{review.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : review.name}</Text>
+                    <Text note>{review.comments}</Text>
+                    <Text note style={{position: 'absolute', top: 10, right: 5, fontSize: 12 }}>{ review.date }</Text>
+                    {review.reviewer_id !== FirebaseService.getCurrentUserId() ?
                         <View style={{ 
-                            flexDirection: 'column', 
-                            alignSelf: 'center'}}>
+                            marginRight: 5,
+                            flexDirection: 'row',
+                            alignSelf: 'flex-end'}}>
                             <Button 
                                 disabled={disableThanks}
                                 transparent
@@ -205,12 +211,6 @@ export default class PlaceDetails extends React.Component<
                                 <Label style={{fontSize: 8}}>{disableReport ? 'Reported' : 'Report'}</Label>
                             </Button>
                         </View> : null}
-                </Left>
-                <Body style={{transform: [{ translateX: -5 }], height: '100%'}}>
-                    <ReviewStars rating={review.avg_rating} fontSize={18} />
-                    <Text>{review.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : review.name}</Text>
-                    <Text note style={{paddingRight: 10}}>{review.comments}</Text>
-                    <Text note style={{position: 'absolute', top: 10, right: 10, fontSize: 12 }}>{ review.date }</Text>
                 </Body>
             </ListItem>
             );
@@ -326,28 +326,27 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     list: {
-        paddingRight: 5
+        
     },
     listItem: {
-    //    minHeight: 150
+
     },
     reviewActionBtn:{
         flexDirection: 'column',
         alignSelf: 'center'
     },
     reviewActionBtnDisabled: {
-        padding: 0,
         flexDirection: 'column',
         alignSelf: 'center',
         opacity: 0.5
     },
     reviewActionIcon:{
         color: theme.PRIMARY_COLOR,
-        fontSize: 14
+        fontSize: 12
     },
     reviewNegativeActionIcon: {
         color: theme.DANGER_COLOR,
-        fontSize: 14
+        fontSize: 12
     },
     noReviewConatiner: {
         minHeight: 200,

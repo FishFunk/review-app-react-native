@@ -3,6 +3,7 @@ export interface reviewSummary {
     name: string;
     comments: string;
     avg_rating: number;
+    pricing: number;
     date: string;
     reviewer_id: string;
     place_id: string;
