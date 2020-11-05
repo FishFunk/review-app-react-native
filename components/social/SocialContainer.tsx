@@ -5,7 +5,8 @@ import {
   ListItem, 
   Text, 
   Button, 
-  Icon
+  Icon,
+  Toast
 } from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import { 
@@ -47,7 +48,10 @@ export default class SocialContainer extends React.Component<{
     }
 
     componentDidMount(){
-        this._unsubscribe = this.props.navigation.addListener('focus', () => {this.init()});
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.populateSocialLists();
+        });
+
         this.init()
             .finally(()=>this.setState({ loading: false }));
     }
@@ -63,24 +67,33 @@ export default class SocialContainer extends React.Component<{
         }
 
         if(finalPermission){
-            const contacts = await getContacts();
-            const allSuggestedFriends = await FirebaseService.findFriends(contacts);
-            const followingIds = await FirebaseService.getUserFollowingIds();
-            const followingUsers = await FirebaseService.getMultipleUsers(followingIds);
-            let suggestedFriends = [];
-
-            for(let possibleFriend of allSuggestedFriends){
-                // Suggested Friends not yet following
-                if(_indexOf(followingIds, possibleFriend.id) === -1){
-                    suggestedFriends.push(possibleFriend);
-                }
-            }
-            
-            this.setState({ 
-                suggestedFriends: suggestedFriends, 
-                followingFriends: followingUsers 
+            await this.populateSocialLists();
+        } else {
+            Toast.show({
+                text: 'This feature requires permission to access your contacts. You can grant this in your phone settings.',
+                position: 'bottom'
             });
         }
+    }
+
+    async populateSocialLists(){
+        const contacts = await getContacts();
+        const allSuggestedFriends = await FirebaseService.findFriends(contacts);
+        const followingIds = await FirebaseService.getUserFollowingIds();
+        const followingUsers = await FirebaseService.getMultipleUsers(followingIds);
+        let suggestedFriends = [];
+
+        for(let possibleFriend of allSuggestedFriends){
+            // Suggested Friends not yet following
+            if(_indexOf(followingIds, possibleFriend.id) === -1){
+                suggestedFriends.push(possibleFriend);
+            }
+        }
+        
+        this.setState({ 
+            suggestedFriends: suggestedFriends, 
+            followingFriends: followingUsers 
+        });
     }
 
     onAddContact(user: appUser){
@@ -195,7 +208,7 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     itemDivider: {
-        backgroundColor: theme.LIGHT_COLOR,
+        backgroundColor: theme.GRAY_COLOR,
         justifyContent: 'space-between',
         paddingRight: 25
     },

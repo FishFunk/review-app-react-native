@@ -12,7 +12,7 @@ import {
 } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
-import { Spinner, Button, Icon, Label } from 'native-base';
+import { Spinner, Button, Icon, Label, Toast } from 'native-base';
 import theme from '../../styles/theme';
 import { isInRadius, getPlaceAvgRating } from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
@@ -115,6 +115,15 @@ export default class MapContainer extends React.Component<
         }
 
         const places = await FirebaseService.getNearbyPlaces(lat, lng, radius);
+
+        if(!places || places.length === 0){
+            Toast.show({
+                text: 'No reviewed places nearby',
+                position: 'bottom'
+            });
+            return this.setState({ loadingNearby: false });
+        }
+
         const markers = this.convertPlacesToMarkers(places);
 
         if(this.mapViewRef){
@@ -219,7 +228,7 @@ export default class MapContainer extends React.Component<
                 this.state.region.longitude,
                 region.latitude,
                 region.longitude,
-                10);
+                50);
 
             if(hideCallout) marker.hideCallout();
         }

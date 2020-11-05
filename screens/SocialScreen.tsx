@@ -5,7 +5,7 @@ import {
   Content} from "native-base";
 import AppHeader from "../components/AppHeader";
 import SocialContainer from '../components/social/SocialContainer';
-import { useLinkProps } from "@react-navigation/native";
+import theme from "../styles/theme";
 
 export default function SocialScreen(props: any){
     return(
@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      backgroundColor: theme.LIGHT_COLOR
     }
 });
   

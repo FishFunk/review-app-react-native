@@ -13,7 +13,7 @@ import theme from '../styles/theme';
 export default function AppHeader(props: any) {
     const fontSize = 24;
     return (
-        <Header>
+        <Header style={{backgroundColor: theme.LIGHT_COLOR}}>
             <Left>
             {
                 <Button transparent onPress={props.onPressButton}>

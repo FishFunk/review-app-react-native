@@ -6,7 +6,7 @@ import {
   Grid,
   Row,
   Title,
-  Icon, Toast} from 'native-base';
+  Icon } from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -14,19 +14,23 @@ import { appUser } from '../../models/user';
 import SpinnerContainer from '../SpinnerContainer';
 import PhoneVerifyRecaptcha from '../PhoneVerifyRecaptcha';
 
-export default class ProfileContainer extends React.Component<{},{
+export default class ProfileContainer extends React.Component<{navigation: any},{
     user: appUser, emailSent: boolean
 }> {
   
     state: any = { user: {}, emailSent: false };
 
+    componentDidMount(){
+        this.load()
+            .catch(error => console.error(error));
+    }
+
     onLogout(){
         FirebaseService.signOut();
     }
 
-    componentDidMount(){
-        this.load()
-            .catch(error => console.error(error));
+    showEula(){
+        this.props.navigation.push('EULA');
     }
 
     async load(){
@@ -114,6 +118,9 @@ export default class ProfileContainer extends React.Component<{},{
                     }
                     <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
                         <Text style={styles.buttonText}>Logout</Text>
+                    </Button>
+                    <Button transparent onPress={this.showEula.bind(this)} style={styles.logoutBtn}>
+                        <Text>License Agreement</Text>
                     </Button>
                 </Grid>
             </ScrollView>

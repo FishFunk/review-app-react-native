@@ -2,7 +2,7 @@ import React from "react";
 import { Dimensions, StyleSheet, Image } from 'react-native';
 import { Body, Icon, Left, List, ListItem, Text, Thumbnail, Title, View } from "native-base";
 import { dbPlace } from "../../models/place";
-import { ScrollView } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 import ReviewStars from "../reviews/ReviewStars";
 import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
 import ReviewDollars from "../reviews/ReviewDollars";
@@ -97,6 +97,27 @@ export default class PlaceList extends React.Component<
         this.setState({ detailedPlaces: orderedList });
     }
 
+    renderListItem(item: any){
+        return (<ListItem 
+            style={styles.listItem}
+            avatar
+            onPress={this.props.onShowPlaceDetails.bind(this, item.id)}>
+            <Left>
+                <Thumbnail 
+                    square
+                    source={{ uri: item.photoUrl }} 
+                    // TODO: Add default image
+                    />
+            </Left>
+            <Body>
+                <Text style={styles.name}>{item.name}</Text>
+                <ReviewStars rating={item.rating} fontSize={18} />
+                <ReviewDollars rating={item.pricing} fontSize={14} />
+                <Text style={styles.info}>{item.address.split(',')[0]}</Text>
+            </Body>
+        </ListItem>)
+    }
+
     render(){
         return (
             <View style={styles.container}>
@@ -122,33 +143,11 @@ export default class PlaceList extends React.Component<
                     <View style={styles.header}>
                         <Title style={styles.title}>Nearby Places</Title>
                     </View>
-                    <ScrollView>
-                        <List style={styles.list}>
-                        {
-                            this.state.detailedPlaces.map((place: any, idx: number)=> 
-                                <ListItem 
-                                    key={idx}
-                                    style={styles.listItem}
-                                    avatar
-                                    onPress={this.props.onShowPlaceDetails.bind(this, place.id)}>
-                                    <Left>
-                                        <Thumbnail 
-                                            square
-                                            source={{ uri: place.photoUrl }} 
-                                            // TODO: Add default image
-                                            />
-                                    </Left>
-                                    <Body>
-                                        <Text style={styles.name}>{place.name}</Text>
-                                        <ReviewStars rating={place.rating} fontSize={18} />
-                                        <ReviewDollars rating={place.pricing} fontSize={14} />
-                                        <Text style={styles.info}>{place.address.split(',')[0]}</Text>
-                                    </Body>
-                                </ListItem>
-                            )
-                        }
-                        </List>
-                    </ScrollView>
+                    <FlatList 
+                        contentContainerStyle={styles.list} 
+                        data={this.state.detailedPlaces} 
+                        keyExtractor={(x, i) => i.toString()}
+                        renderItem={({item}) => this.renderListItem(item)}/>
                     { this.state.loading ? 
                             <SpinnerContainer /> : null }
                 </View>
