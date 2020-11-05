@@ -121,36 +121,34 @@ export default class PlaceList extends React.Component<
     render(){
         return (
             <View style={styles.container}>
-                <View>
-                    <DropDownPicker 
-                        searchable={false}
-                        items={[
-                            {label: 'Rating', value: 'rating', 
-                                icon: () => <Icon name="star" type={'FontAwesome5'} style={{fontSize: 14, color: theme.STAR_COLOR}} />},
-                            {label: 'Price', value: 'pricing', 
-                                icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR}} /> }
-                        ]}
-                        defaultValue={this.props.orderBy}
-                        style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0}}
-                        placeholder="Order by"
-                        containerStyle={{
-                            height: 40,
-                            width: 100, 
-                            right: 5,
-                            top: 5,
-                            position: 'absolute' }}
-                        onChangeItem={item => this.onChangeDropdownItem(item.value)}/>
-                    <View style={styles.header}>
-                        <Title style={styles.title}>Nearby Places</Title>
-                    </View>
-                    <FlatList 
-                        contentContainerStyle={styles.list} 
-                        data={this.state.detailedPlaces} 
-                        keyExtractor={(x, i) => i.toString()}
-                        renderItem={({item}) => this.renderListItem(item)}/>
-                    { this.state.loading ? 
-                            <SpinnerContainer /> : null }
+                <DropDownPicker 
+                    searchable={false}
+                    items={[
+                        {label: 'Rating', value: 'rating', 
+                            icon: () => <Icon name="star" type={'FontAwesome5'} style={{fontSize: 14, color: theme.STAR_COLOR}} />},
+                        {label: 'Price', value: 'pricing', 
+                            icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR}} /> }
+                    ]}
+                    defaultValue={this.props.orderBy}
+                    style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0}}
+                    placeholder="Order by"
+                    containerStyle={{
+                        height: 40,
+                        width: 100, 
+                        right: 5,
+                        top: 5,
+                        position: 'absolute' }}
+                    onChangeItem={item => this.onChangeDropdownItem(item.value)}/>
+                <View style={styles.header}>
+                    <Title style={styles.title}>Nearby Places</Title>
                 </View>
+                <FlatList 
+                    contentContainerStyle={styles.list} 
+                    data={this.state.detailedPlaces} 
+                    keyExtractor={(x, i) => i.toString()}
+                    renderItem={({item}) => this.renderListItem(item)}/>
+                { this.state.loading ? 
+                        <SpinnerContainer /> : null }
             </View>
         )
     }
@@ -158,7 +156,7 @@ export default class PlaceList extends React.Component<
 
 const styles = StyleSheet.create({
     container: {
-        height: Dimensions.get('screen').height - 150 // offset plus header height
+        height: Dimensions.get('screen').height - 100 // offset plus header height
     },
     header: {
         flexDirection: 'column',

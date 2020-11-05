@@ -15,7 +15,6 @@ import { checkForUpdates } from './services/updateService';
 import SearchScreen from './screens/SearchScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import PlaceDetailsScreen from './screens/PlaceDetailsScreen';
-import EULAScreen from './screens/PrivacyPolicyScreen';
 // import LoginEmailScreen from './screens/LoginEmailScreen';
 
 export default function App(props: any) {
@@ -87,10 +86,11 @@ export default function App(props: any) {
             }}>
               <mainStackNavigator.Screen name="Home" component={HomeScreen} />
               <mainStackNavigator.Screen name="PlaceDetails" component={PlaceDetailsScreen} />
-              <mainStackNavigator.Screen name="Account" options={{gestureDirection: 'horizontal-inverted'}} component={ProfileScreen} />
+              <mainStackNavigator.Screen name="Account" 
+                options={{gestureDirection: 'horizontal-inverted'}} 
+                component={ProfileScreen} />
               <mainStackNavigator.Screen name="Social" component={SocialScreen} />
               <mainStackNavigator.Screen name="Search" component={SearchScreen} />
-              <mainStackNavigator.Screen name="EULA" component={EULAScreen} options={{gestureDirection: 'vertical'}}/>
             </mainStackNavigator.Navigator>
           </NavigationContainer>  
         </Container>

@@ -6,19 +6,21 @@ import {
   Grid,
   Row,
   Title,
-  Icon } from 'native-base';
+  Icon, 
+  View} from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
 import { ScrollView } from 'react-native-gesture-handler';
 import { appUser } from '../../models/user';
 import SpinnerContainer from '../SpinnerContainer';
 import PhoneVerifyRecaptcha from '../PhoneVerifyRecaptcha';
+import LicenseAgreementModal from '../LicenseAgreementModal';
 
 export default class ProfileContainer extends React.Component<{navigation: any},{
-    user: appUser, emailSent: boolean
+    user: appUser, emailSent: boolean, isModalOpen: boolean
 }> {
   
-    state: any = { user: {}, emailSent: false };
+    state: any = { user: {}, emailSent: false, isModalOpen: false };
 
     componentDidMount(){
         this.load()
@@ -29,8 +31,12 @@ export default class ProfileContainer extends React.Component<{navigation: any},
         FirebaseService.signOut();
     }
 
-    showEula(){
-        this.props.navigation.push('EULA');
+    showModal(){
+        this.setState({ isModalOpen: true });
+    }
+
+    onDismissModal(){
+        this.setState({ isModalOpen: false });
     }
 
     async load(){
@@ -65,72 +71,71 @@ export default class ProfileContainer extends React.Component<{navigation: any},
             return <SpinnerContainer/>
         }
         return (
-            <ScrollView style={styles.container}>
-                <Grid>
-                    <Row style={styles.row}>
-                        <Image 
-                            style={styles.profileImage}
-                            source={{uri: this.getPhotoUrl()}} 
-                            defaultSource={require('../../assets/images/profile.png')} />
-                    </Row>
-                    <Row style={styles.row}>
-                        <Title style={styles.title}>{this.state.user.firstName} {this.state.user.lastName}</Title>
-                    </Row>
-                    <Row style={styles.row}>
-                        <Text style={styles.label}>Review Count: </Text>
-                        <Text style={styles.text}>{this.state.user.reviews? this.state.user.reviews.length : 0}</Text>
-                    </Row>
-                    <Row style={styles.row}>
-                        <Text style={styles.label}>Email Verified</Text>
-                        {           
-                            this.state.user.email_verified ?             
-                                <Icon type={'FontAwesome5'} name={'check'} 
-                                    fontSize={16} style={styles.verifiedIcon}></Icon> :
-                                <Icon type={'FontAwesome5'} name={'times'} 
-                                    style={styles.notVerifiedIcon}></Icon>
-                        }
-                    </Row>
-                    {
-                        !this.state.user.email_verified ? 
-                            <Row style={styles.row}>
-                                {        
-                                    !this.state.emailSent ?                         
-                                    <Button full transparent onPress={this.sendVerificationEmail.bind(this)}>
-                                        <Text>Resend Email Verification Link</Text>
-                                    </Button> : 
-                                    <Text>Email Sent!</Text>
-                                }
-                            </Row> : null
+            <View style={styles.container}>
+                <View style={styles.row}>
+                    <Image 
+                        style={styles.profileImage}
+                        source={{uri: this.getPhotoUrl()}} 
+                        defaultSource={require('../../assets/images/profile.png')} />
+                </View>
+                <View style={styles.row}>
+                    <Title style={styles.title}>{this.state.user.firstName} {this.state.user.lastName}</Title>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Review Count: </Text>
+                    <Text style={styles.text}>{this.state.user.reviews? this.state.user.reviews.length : 0}</Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Email Verified</Text>
+                    {           
+                        this.state.user.email_verified ?             
+                            <Icon type={'FontAwesome5'} name={'check'} 
+                                fontSize={16} style={styles.verifiedIcon}></Icon> :
+                            <Icon type={'FontAwesome5'} name={'times'} 
+                                style={styles.notVerifiedIcon}></Icon>
                     }
-                    <Row style={styles.row}>
-                        <Text style={styles.label}>Phone Verified</Text>
-                        {           
-                            this.state.user.phone_verified ?             
-                                <Icon type={'FontAwesome5'} name={'check'} 
-                                    fontSize={16} style={styles.verifiedIcon}></Icon> :
-                                <Icon type={'FontAwesome5'} name={'times'} 
-                                    style={styles.notVerifiedIcon}></Icon>
-                        }
-                    </Row>
-                    {
-                        !this.state.user.phone_verified ? 
-                            <PhoneVerifyRecaptcha /> : null
+                </View>
+                {
+                    !this.state.user.email_verified ? 
+                        <Row style={styles.row}>
+                            {        
+                                !this.state.emailSent ?                         
+                                <Button full transparent onPress={this.sendVerificationEmail.bind(this)}>
+                                    <Text>Resend Email Verification Link</Text>
+                                </Button> : 
+                                <Text>Email Sent!</Text>
+                            }
+                        </Row> : null
+                }
+                <View style={styles.row}>
+                    <Text style={styles.label}>Phone Verified</Text>
+                    {           
+                        this.state.user.phone_verified ?             
+                            <Icon type={'FontAwesome5'} name={'check'} 
+                                fontSize={16} style={styles.verifiedIcon}></Icon> :
+                            <Icon type={'FontAwesome5'} name={'times'} 
+                                style={styles.notVerifiedIcon}></Icon>
                     }
-                    <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
-                        <Text style={styles.buttonText}>Logout</Text>
-                    </Button>
-                    <Button transparent onPress={this.showEula.bind(this)} style={styles.logoutBtn}>
-                        <Text>License Agreement</Text>
-                    </Button>
-                </Grid>
-            </ScrollView>
+                </View>
+                {
+                    !this.state.user.phone_verified ? 
+                        <PhoneVerifyRecaptcha /> : null
+                }
+                <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
+                    <Text style={styles.buttonText}>Logout</Text>
+                </Button>
+                <Button transparent onPress={this.showModal.bind(this)} style={styles.logoutBtn}>
+                    <Text style={{fontSize: 12}}>License Agreement</Text>
+                </Button>
+                <LicenseAgreementModal onDismissModal={this.onDismissModal.bind(this)} isOpen={this.state.isModalOpen}/>
+            </View>
         )};
 };
 
 const styles = StyleSheet.create({
     container: {
-        height: '100%',
-        width: '100%'
+        flex: 1,
+        backgroundColor: theme.LIGHT_COLOR
     },
     title: {
         fontSize: 30,

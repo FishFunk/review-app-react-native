@@ -1,35 +1,26 @@
 import React from "react";
-import { StyleSheet } from 'react-native';
-import { Title, View, Text, Container, Content, Label } from "native-base";
-import AppHeader from "../components/AppHeader";
-import { ScrollView } from "react-native-gesture-handler";
+import { Dimensions, StyleSheet } from 'react-native';
+import Modal from "react-native-modal";
 import theme from "../styles/theme";
+import { Text, Title, View } from "native-base";
+import AppHeader from "./AppHeader";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
-export default function EULAScreen(props: any) {
+export default class LicenseAgreement extends React.Component<
+    {
+        onDismissModal: () => any
+    }>{
 
-    const styles = StyleSheet.create({
-        container: {
-          flex: 1
-        },
-        sectionHeader: {
-            fontSize: 16,
-            fontWeight: 'bold',
-            marginTop: 10,
-            marginBottom: 10,
-            alignSelf: 'center'
-        }
-      });
-
-    return (
-        <View style={styles.container}>
-            <AppHeader 
-                title={'Legal'}
-                onPressButton={props.navigation.goBack} 
-                buttonIconName={'times'}/>
-            <Content style={{backgroundColor: theme.LIGHT_COLOR}}>
-                <ScrollView style={{padding: 10, paddingBottom: 10}}>
-                    <Title style={{padding: 5}}><Text>Software License Agreement</Text></Title>
-                    <Text style={{textAlign: 'justify'}}>
+    render(){
+        return (
+<View style={styles.container}>
+<AppHeader 
+    title={'Legal'}
+    onPressButton={this.props.onDismissModal.bind(this)} 
+    buttonIconName={'times'}/>
+        <ScrollView style={{}}>
+        <Title style={{marginTop: 15, fontSize: 18}}><Text>Software License Agreement</Text></Title>
+        <Text style={styles.content}>
 {`1. Under this Software License Agreement (the "Agreement"), Wanderlust Labs, LLC (the "Vendor") grants to the user (the "Licensee") a non-exclusive and non-transferable license (the "License") to use ReVew (the "Software").
 2. "Software" includes the executable computer programs and any related printed, electronic and online documentation and any other files that may accompany the product.
 3. Title, copyright, intellectual property rights and distribution rights of the Software remain exclusively with the Vendor. Intellectual property rights include the look and feel of the Software. This Agreement constitutes a license for use only and is not in any way a transfer of ownership rights to the Software.
@@ -39,7 +30,7 @@ export default function EULAScreen(props: any) {
 7. Failure to comply with any of the terms under the License section will be considered a material breach of this Agreement.`}</Text>
 
 <Text style={styles.sectionHeader}>License Fee</Text>
-<Text>
+<Text style={styles.content}>
 {`8. The original purchase price paid by the Licensee will constitute the entire license fee and is the full consideration for this Agreement.
 9. The Software is provided by the Vendor and accepted by the Licensee "as is". Liability of the Vendor will be limited to a maximum of the original purchase price of the Software. The Vendor will not be liable for any general, special, incidental or consequential damages including, but not limited to, loss of production, loss of profits, loss of revenue, loss of data, or any other business or economic disadvantage suffered by the Licensee arising out of the use or failure to use the Software.
 10. The Vendor makes no warranty expressed or implied regarding the fitness of the Software for a particular purpose or that the Software will be suitable or appropriate for the specific requirements of the Licensee.
@@ -47,24 +38,24 @@ export default function EULAScreen(props: any) {
 </Text>
 
 <Text style={styles.sectionHeader}>Warrants and Representations</Text>
-<Text>
+<Text style={styles.content}>
 {`12. The Vendor warrants and represents that it is the copyright holder of the Software. The Vendor warrants and represents that granting the license to use this Software is not in violation of any other agreement, copyright or applicable statute.`}
 </Text>
 
 <Text style={styles.sectionHeader}>Acceptance</Text>
-<Text>
+<Text style={styles.content}>
 {`13. All terms, conditions and obligations of this Agreement will be deemed to be accepted by the Licensee ("Acceptance") on installation of the Software.
 14. The term of this Agreement will begin on Acceptance and is perpetual.`}
 </Text>
 
 <Text style={styles.sectionHeader}>Termination</Text>
-<Text>
+<Text style={styles.content}>
 {`15. This Agreement will be terminated and the License forfeited where the Licensee has failed to comply with any of the terms of this Agreement or is in breach of this Agreement. On termination of this Agreement for any reason, the Licensee will promptly destroy the Software or return the Software to the Vendor.
 16. The Vendor will be free of liability to the Licensee where the Vendor is prevented from executing its obligations under this Agreement in whole or in part due to Force Majeure, such as earthquake, typhoon, flood, fire, and war or any other unforeseen and uncontrollable event where the Vendor has taken any and all appropriate action to mitigate such an event.`}
 </Text>
 
 <Text style={styles.sectionHeader}>Governing Law</Text>
-<Text>
+<Text style={styles.content}>
 {`17. The Parties to this Agreement submit to the jurisdiction of the courts of the District of Columbia for the enforcement of this Agreement or any arbitration award or decision arising from this Agreement. This Agreement will be enforced or construed according to the laws of the District of Columbia.
 18. This Agreement can only be modified in writing signed by both the Vendor and the Licensee.
 19. This Agreement does not create or imply any relationship in agency or partnership between the Vendor and the Licensee.
@@ -74,11 +65,25 @@ export default function EULAScreen(props: any) {
 23. This Agreement and the terms and conditions contained in this Agreement apply to and are binding upon the Vendor's successors and assigns.
 24. All notices to the Vendor under this Agreement are to be provided at the following address: Wanderlust Labs, LLC: 1032 15th St. NW #244, Washington DC, 20005`}
 </Text>
-
-
-                </ScrollView>
-            </Content>
-        </View>
-    );
+</ScrollView>
+</View>)
+    }
 }
-  
+
+const styles = StyleSheet.create({
+    container: {
+        height: Dimensions.get('screen').height - 100
+    },
+    sectionHeader: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginTop: 10,
+        marginBottom: 10,
+        alignSelf: 'center'
+    },
+    content: {
+        fontSize: 14,
+        margin: 10,
+        textAlign: 'justify'
+    }
+});

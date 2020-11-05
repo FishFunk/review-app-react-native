@@ -10,7 +10,7 @@ import theme from "../styles/theme";
 export default function ProfileScreen(props: any) {
     return (
       <Container>
-        <AppHeader onPressButton={props.navigation.goBack} buttonIconName={'arrow-left'}/>
+        <AppHeader onPressButton={props.navigation.goBack} buttonIconName={'arrow-left'} title={'Profile'}/>
         <Content contentContainerStyle={styles.container}>
             <ProfileContainer navigation={props.navigation}/>
         </Content>
