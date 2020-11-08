@@ -13,7 +13,7 @@ export default function SearchScreen(props: any){
                 onPressButton={props.navigation.goBack} 
                 buttonIconName={'arrow-left'} 
                 title={'Friend Finder'}/>
-            <Content contentContainerStyle={styles.container}>
+            <Content contentContainerStyle={styles.container} scrollEnabled={false}>
                 <SearchContainer />
             </Content>
         </Container>

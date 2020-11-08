@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { View, StyleSheet, StyleProp, ViewStyle  } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Icon } from 'native-base';
 import theme from "../../styles/theme";
-import { Object } from "lodash";
 
 class ReviewDollars extends Component<{ rating: number, fontSize: number, style?: any }> {
 
@@ -35,7 +34,7 @@ class ReviewDollars extends Component<{ rating: number, fontSize: number, style?
   render() {
     const { rating } = this.props;
     const fullDollarCount = Math.round(rating);
-    let emptyDollarCount = 5 - fullDollarCount;
+    let emptyDollarCount = 4 - fullDollarCount;
 
     let dollarSigns = [];
     for (let i = 1; i <= fullDollarCount; i++) {
@@ -48,7 +47,9 @@ class ReviewDollars extends Component<{ rating: number, fontSize: number, style?
       dollarSigns.push(icon);
     }
 
-    return <View style={{ flexDirection: "row", ...this.props.style }}>{dollarSigns}</View>;
+    return <View style={{ flexDirection: "row", ...this.props.style }}>
+        {dollarSigns}
+      </View>;
   }
 }
 

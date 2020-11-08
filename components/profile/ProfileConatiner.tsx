@@ -71,7 +71,7 @@ export default class ProfileContainer extends React.Component<{navigation: any},
             return <SpinnerContainer/>
         }
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={styles.row}>
                     <Image 
                         style={styles.profileImage}
@@ -117,10 +117,12 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                                 style={styles.notVerifiedIcon}></Icon>
                     }
                 </View>
+                <View style={styles.row}>
                 {
                     !this.state.user.phone_verified ? 
                         <PhoneVerifyRecaptcha /> : null
                 }
+                </View>
                 <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
                     <Text style={styles.buttonText}>Logout</Text>
                 </Button>
@@ -128,14 +130,14 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                     <Text style={{fontSize: 12}}>License Agreement</Text>
                 </Button>
                 <LicenseAgreementModal onDismissModal={this.onDismissModal.bind(this)} isOpen={this.state.isModalOpen}/>
-            </View>
+            </ScrollView>
         )};
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: theme.LIGHT_COLOR
+        width: '100%'
     },
     title: {
         fontSize: 30,

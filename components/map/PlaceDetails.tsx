@@ -243,7 +243,10 @@ export default class PlaceDetails extends React.Component<
                         disabled={this.state.disableEdit}>
                         <ReviewStars rating={this.state.rating} fontSize={22}/>
                     </TouchableOpacity>
-                    <ReviewDollars style={{alignSelf: 'center', marginBottom: 10}} rating={this.state.pricing} fontSize={14}/>
+                    {
+                        this.state.pricing ?
+                        <ReviewDollars style={{alignSelf: 'center', marginBottom: 10}} rating={this.state.pricing} fontSize={14}/> : null
+                    }
                 </View>
                 <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>
                     {this.state.isLoading ? <SpinnerContainer /> : null }
@@ -279,8 +282,16 @@ export default class PlaceDetails extends React.Component<
                     </ScrollView>
                     :
                     <View style={styles.noReviewConatiner}>
-                        <Title>Hmm... No reviews from your network yet.</Title>
-                        <Text>Be the first to write one!</Text>
+                        <Text style={styles.noReviewText}>Hmm... No reviews from your network yet.</Text>
+                        <Text style={styles.noReviewText}>Be the first to write one...</Text>
+                        <Text style={styles.noReviewText}>or</Text>
+                        <Text style={styles.noReviewText}>Find more reviewers!</Text>
+                        <Button 
+                            small
+                            style={styles.navigationButton}
+                            onPress={()=>{this.props.navigation.push('Social')}}>
+                            <Text>Find Reviewers</Text>
+                        </Button>
                     </View>
             }
             <WriteReview 
@@ -349,6 +360,7 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     noReviewConatiner: {
+        padding: 10,
         minHeight: 200,
         width: '100%',
         justifyContent: 'center',
@@ -360,5 +372,13 @@ const styles = StyleSheet.create({
     },
     badgeText: {
         fontSize: 14
+    },
+    noReviewText: {
+        color: theme.DARK_COLOR
+    },
+    navigationButton: {
+        marginTop: 10,
+        backgroundColor: theme.PRIMARY_COLOR,
+        alignSelf: 'center'
     }
   });

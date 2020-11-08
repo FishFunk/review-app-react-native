@@ -2,26 +2,22 @@ import React, { useState, useRef } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import firebaseConfig from '../services/firebaseServiceConfig';
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { Button, Input, Label, Text, Toast, View } from 'native-base';
-import { Platform } from 'react-native';
+import { Button, Input, Item, Label, Text, Toast, View } from 'native-base';
 import theme from '../styles/theme';
 import FirebaseService from '../services/firebaseService';
 import PhoneInput from "react-native-phone-number-input";
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
 export default function PhoneVerifyRecaptcha() {
 
     const recaptchaVerifier = useRef<any>(null);
 
     const [phoneValue, setPhoneValue] = useState("");
     const [formattedPhoneValue, setFormattedPhoneValue] = useState("");
-    const [phoneValid, setPhoneValid] = useState(false);
     const phoneInput = useRef<PhoneInput>(null);
 
     const [verificationId, setVerificationId] = useState<string>('');
     const [verificationCode, setVerificationCode] = useState<string>('');
 
-    const [toggleView, setToggleView] = useState<boolean>(false);
+    const [toggleView, setToggleView] = useState<boolean>(true);
     const flyInLeftAnim = useRef(new Animated.Value(5000)).current;
     const flyOffLeftAnim = useRef(new Animated.Value(0)).current;
 
@@ -50,7 +46,7 @@ export default function PhoneVerifyRecaptcha() {
                 duration: 1000
               }
             ).start();
-        }, 1000)
+        }, 1500);
     }
 
     return (
@@ -67,6 +63,9 @@ export default function PhoneVerifyRecaptcha() {
                 {/* <Label>Enter phone number</Label> */}
                 <PhoneInput
                     ref={phoneInput}
+                    containerStyle={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 1, borderRadius: 25 }}
+                    flagButtonStyle={{backgroundColor: theme.LIGHT_COLOR, borderRadius: 25}}
+                    textContainerStyle={{backgroundColor: theme.LIGHT_COLOR, borderRadius: 25}}
                     defaultValue={phoneValue}
                     defaultCode="US"
                     onChangeText={(text) => {
@@ -107,12 +106,15 @@ export default function PhoneVerifyRecaptcha() {
                 flexDirection: 'column',
                 transform: [{translateX: flyInLeftAnim}]}}>
                 <Label>Enter Verification code</Label>
-                <Input
-                    style={styles.input}
-                    editable={!!verificationId}
-                    placeholder="123456"
-                    onChangeText={text => setVerificationCode(text)}
-                />
+                <Item style={styles.verificationIten}>
+                    <Input
+                        value={verificationCode}
+                        style={styles.verificationInput}
+                        // editable={verificationId.length > 0}
+                        placeholder="123456"
+                        onChangeText={text => setVerificationCode(text)}
+                    />
+                </Item>
                 <Button
                     small
                     style={styles.btn}
@@ -136,22 +138,30 @@ export default function PhoneVerifyRecaptcha() {
 
 const styles = StyleSheet.create({
     container: {
-        display: 'flex',
-        justifyContent: 'center'
+        // display: 'flex',
+        // justifyContent: 'space-evenly'
     },
-    input: {
+    verificationInput: {
         marginTop: 5,
+        marginBottom: 5,
         alignSelf: 'center',
         backgroundColor: theme.LIGHT_COLOR,
-        borderRadius: 50,
+        borderRadius: 10,
         borderWidth: 1, 
         borderStyle: 'solid', 
         borderColor: theme.DARK_COLOR,
-        width: '100%',
-        textAlign: 'center'
+        width: 100,
+        textAlign: 'center',
+        margin: 0,
+        padding: 0,
+        fontSize: 16
     },
     btn: {
+        backgroundColor: theme.PRIMARY_COLOR,
         marginTop: 10,
         alignSelf: 'center'
+    },
+    verificationIten: {
+        borderBottomWidth: 0
     }
 });

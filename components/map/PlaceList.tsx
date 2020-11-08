@@ -1,8 +1,8 @@
 import React from "react";
-import { Dimensions, StyleSheet, Image } from 'react-native';
-import { Body, Icon, Left, List, ListItem, Text, Thumbnail, Title, View } from "native-base";
+import { Dimensions, StyleSheet } from 'react-native';
+import { Body, Icon, Left, ListItem, Text, Thumbnail, Title, View } from "native-base";
 import { dbPlace } from "../../models/place";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 import ReviewStars from "../reviews/ReviewStars";
 import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
 import ReviewDollars from "../reviews/ReviewDollars";

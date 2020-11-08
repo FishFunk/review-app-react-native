@@ -184,8 +184,8 @@ export default class SocialContainer extends React.Component<{
                         </List> : 
                         <View style={styles.emptyListView}>
                             <Text style={styles.emptyListText}>
-                                Looks like we can't find anybody you might know in our system. 
-                                Let's change that!
+                                We can't find any of your contacts in our system. 
+                                Lucky there is an easy fix for that!
                             </Text>
                             <Button  
                                 style={styles.inviteButton}

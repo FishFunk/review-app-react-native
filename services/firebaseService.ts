@@ -8,7 +8,9 @@ import _get from 'lodash/get';
 import _filter from 'lodash/filter';
 import _indexOf from 'lodash/indexOf';
 import _intersection from 'lodash/intersection';
-import _uniq from 'lodash/uniq'
+import _uniq from 'lodash/uniq';
+import _first from 'lodash/first';
+import _last from 'lodash/last';
 import { registerForPushNotificationsAsync } from './notificationService';
 import { generateRandomString, isInRadius } from './utils';
 import { signInWithGoogle } from './auth/googleAuth';
@@ -102,13 +104,13 @@ class FirebaseService {
 			const today = new Date().toDateString();
 			const newUser: appUser = {
 				id: loggedInUserData.uid,
-				firstName: _.first(names) || '',
-				lastName: _.last(names)|| '',
-				email: loggedInUserData.email|| '',
+				firstName: _first(names) || '',
+				lastName: _last(names)|| '',
+				email: loggedInUserData.email || '',
 				dateJoined: today,
 				lastActive: today,
 				following: [],
-				placesReviewed: [],
+				reviews: [],
 				mobile: loggedInUserData.phoneNumber || '',
 				photoUrl: loggedInUserData.photoURL || '',
 				push_tokens: []
@@ -361,8 +363,8 @@ class FirebaseService {
 		usersSnapshot.forEach((snap)=>{
 			const user = snap.val();
 			if(this.auth.currentUser.uid !== user.id){ // Exclude self from results
-				if(emails[user.email.toLowerCase()] || 
-					lastNames[user.lastName.toLowerCase()]){
+				if((user.email && emails[user.email.toLowerCase()]) || 
+					(user.lastName && lastNames[user.lastName.toLowerCase()])){
 					matches.push(user);
 				}
 			}

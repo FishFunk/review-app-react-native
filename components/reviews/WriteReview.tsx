@@ -17,9 +17,9 @@ import EditableStars from './EditableStars';
 import { fullApiPlace } from '../../models/place';
 import FirebaseService from '../../services/firebaseService';
 import _indexOf from 'lodash/indexOf';
+import _some from 'lodash/some';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import EditableDollars from './EditableDollars';
-import SpinnerContainer from '../SpinnerContainer';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
@@ -79,13 +79,23 @@ export default class WriteReview extends Component<{
         }
     }
 
-    isFoodEsablishment(){
+    isServiceEstablishment(){
         const { place } = this.props;
 
         if(place.types){
-            return (
-                _indexOf(place.types, 'restaurant') >= 0 || 
-                _indexOf(place.types, 'food')  >= 0);
+            const matchingTypes = [
+                'bar', 
+                'cafe', 
+                'food', 
+                'restaurant', 
+                'bakery',
+                'spa',
+                'beauty_salon',
+                'hair_care',
+                'lodging',
+                'night_club'];
+            
+            return _some(place.types, (type)=>_indexOf(matchingTypes, type) >= 0);
         }
 
         return false;
@@ -100,17 +110,17 @@ export default class WriteReview extends Component<{
         if(avg === 0){
             Toast.show({
                 position: 'top',
-                text: 'That bad huh? Total star rating must be between 1 and 5.',
+                text: 'That bad? Select a star rating between 1 and 5.',
                 duration: 3000,
                 buttonText: 'Ok'
             });
             return;
         }
 
-        if(this.isFoodEsablishment() && pricing === 0){
+        if(this.isServiceEstablishment() && pricing === 0){
             Toast.show({
                 position: 'top',
-                text: 'Free 99!? Enter a price rating between 1 and 5.',
+                text: 'Please select a price rating.',
                 duration: 3000,
                 buttonText: 'Ok'
             });
@@ -145,7 +155,7 @@ export default class WriteReview extends Component<{
     }
 
     avgRating(){
-        if(this.isFoodEsablishment()){
+        if(this.isServiceEstablishment()){
             const avg = (this.state.rating1 + this.state.rating2 + this.state.rating3) / 3;
             return +avg.toFixed(1);
         } 
@@ -168,7 +178,7 @@ export default class WriteReview extends Component<{
                 </View>
                 <View style={styles.formContainer}>
                     {
-                        this.isFoodEsablishment() ? 
+                        this.isServiceEstablishment() ? 
                         // Food / Restaurant Review Form
                         <Form style={styles.form}>
                             <Item bordered={false} style={styles.starItem}>
@@ -179,7 +189,7 @@ export default class WriteReview extends Component<{
                                     onRatingChanged={this.onUpdateRating1.bind(this)}  />
                             </Item>
                             <Item bordered={false} style={styles.starItem}>
-                                <Label>Food</Label>
+                                <Label>Quality</Label>
                                 <EditableStars 
                                     fontSize={30}
                                     initalRating={this.state.rating2} 
@@ -324,7 +334,8 @@ const styles=StyleSheet.create({
     starItem: {
         justifyContent: 'space-between',
         borderBottomWidth: 0,
-        marginBottom: 10
+        marginBottom: 12,
+        alignItems: 'center'
     },
     title: {
         fontWeight: 'bold',

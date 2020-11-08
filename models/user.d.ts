@@ -6,7 +6,7 @@ export interface appUser {
     lastName?: string;
     following?: string[];
     id?: string;
-    placesReviewed?: object[];
+    reviews?: object[];
     mobile?: string;
     photoUrl?: string;
     email_verified?: boolean;

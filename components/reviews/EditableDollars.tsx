@@ -37,18 +37,15 @@ class EditableDollars extends Component<{
 
         switch(rating){
             case(1):
-                description = '$5-$15 per person';
+                description = 'FREE - $5 per person';
                 break;
             case(2):
-                description = '$15-$25 per person';
+                description = '$10-$30 per person';
                 break;
             case(3):
-                description = '$25-$35 per person';
+                description = '$30-$45 per person';
                 break;
             case(4):
-                description = '$35-$45 per person';
-                break;
-            case(5):
                 description = '$50+ per person';
                 break;
             default:
@@ -78,7 +75,7 @@ class EditableDollars extends Component<{
         const { rating } = this.state;
 
         let dollarSigns = [];
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= 4; i++) {
             let icon: JSX.Element;
             if(i <= rating){
                 icon = this.FullDollar(i);
@@ -90,8 +87,15 @@ class EditableDollars extends Component<{
         }
 
         return <View>
-                    <View style={{ flexDirection: "row" }}>{dollarSigns}</View>
-                    <Label style={{ fontSize: 12, alignSelf: 'center' }}>{this.getDescription()}</Label>
+                    <Label/>
+                    <View style={{
+                        flexDirection: "row", 
+                        justifyContent: 'flex-end'
+                        }}>{dollarSigns}</View>
+                    <Label style={{ 
+                        fontSize: 12 }}>
+                        {this.getDescription()}
+                    </Label>
             </View>;
     }
 }
