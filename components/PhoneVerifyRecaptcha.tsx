@@ -17,7 +17,7 @@ export default function PhoneVerifyRecaptcha() {
     const [verificationId, setVerificationId] = useState<string>('');
     const [verificationCode, setVerificationCode] = useState<string>('');
 
-    const [toggleView, setToggleView] = useState<boolean>(true);
+    const [toggleView, setToggleView] = useState<boolean>(false);
     const flyInLeftAnim = useRef(new Animated.Value(5000)).current;
     const flyOffLeftAnim = useRef(new Animated.Value(0)).current;
 
