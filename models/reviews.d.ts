@@ -10,6 +10,7 @@ export interface reviewSummary {
     review_key: string;
     reports: Array[];
     thanks: Array[];
+    user_verified: boolean;
   }
 
   export interface dbReview {

@@ -179,10 +179,26 @@ export default class PlaceDetails extends React.Component<
             const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId());
             elements.push(<ListItem avatar key={review.review_key} style={styles.listItem}>
                 <Left>
-                    <Thumbnail 
-                        style={{width: 50, height: 50, alignSelf: 'center'}}
-                        source={{ uri: review.img }} 
-                        defaultSource={require('../../assets/images/profile.png')} />
+                    {
+                        review.user_verified ?
+                        <View style={styles.verifiedUserAvatar}>
+                            <Thumbnail
+                                style={styles.userAvatar}
+                                source={{ uri: review.img }} 
+                                defaultSource={require('../../assets/images/profile.png')} />
+                            <View style={{flexDirection: 'row', marginTop: 5, justifyContent: 'space-evenly'}}>
+                                <Icon style={{
+                                    fontSize: 14,
+                                    color: theme.STAR_COLOR,
+                                    alignSelf: 'center' }} name={'award'} type={'FontAwesome5'}></Icon>
+                                <Label style={styles.verifiedLabel}>Verified</Label>
+                            </View>
+                        </View> : 
+                        <Thumbnail
+                            style={styles.userAvatar}
+                            source={{ uri: review.img }} 
+                            defaultSource={require('../../assets/images/profile.png')} />
+                    }
                 </Left>
                 <Body style={{transform: [{ translateX: -5 }]}}>
                     <ReviewStars rating={review.avg_rating} fontSize={18} />
@@ -379,6 +395,24 @@ const styles = StyleSheet.create({
     navigationButton: {
         marginTop: 10,
         backgroundColor: theme.PRIMARY_COLOR,
+        alignSelf: 'center'
+    },
+    userAvatar: {
+        width: 50, 
+        height: 50, 
+        alignSelf: 'center',
+        justifyContent: 'center'
+    },
+    verifiedUserAvatar: {
+        width: 58, 
+        height: 58,
+        borderWidth: 4,
+        borderColor: theme.PRIMARY_COLOR,
+        borderRadius: 30
+    },
+    verifiedLabel: {
+        fontSize: 10,
+        color: theme.DARK_COLOR,
         alignSelf: 'center'
     }
   });

@@ -337,7 +337,8 @@ class FirebaseService {
 					place_id: placeId,
 					review_key: key,
 					reports: review.reports,
-					thanks: review.thanks
+					thanks: review.thanks,
+					user_verified: usr.email_verified && usr.phone_verified && usr.reviews?.length > 0
 				}
 				
 				reviewSummaries.push(reviewSummary);

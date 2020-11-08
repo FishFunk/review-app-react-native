@@ -3,11 +3,11 @@ import { StyleSheet, Image } from 'react-native';
 import { 
   Text, 
   Button, 
-  Grid,
   Row,
   Title,
   Icon, 
-  View} from 'native-base';
+  View,
+  Label} from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -17,10 +17,26 @@ import PhoneVerifyRecaptcha from '../PhoneVerifyRecaptcha';
 import LicenseAgreementModal from '../LicenseAgreementModal';
 
 export default class ProfileContainer extends React.Component<{navigation: any},{
-    user: appUser, emailSent: boolean, isModalOpen: boolean
+    user: appUser, 
+    emailSent: boolean, 
+    isModalOpen: boolean, 
+    verificationSteps: {
+        email_verified: boolean,
+        phone_verified: boolean,
+        review_verified: boolean
+    }
 }> {
   
-    state: any = { user: {}, emailSent: false, isModalOpen: false  };
+    state: any = { 
+        user: {}, 
+        emailSent: false, 
+        isModalOpen: false,
+        verificationSteps: {
+            email_verified: false,
+            phone_verified: false,
+            review_verified: false
+        }
+    };
 
     componentDidMount(){
         this.load()
@@ -40,8 +56,15 @@ export default class ProfileContainer extends React.Component<{navigation: any},
     }
 
     async load(){
+
         const currentUser = await FirebaseService.getUser();
-        this.setState({ user: currentUser });
+        const verificationSteps = {
+            email_verified: currentUser.email_verified,
+            phone_verified: currentUser.phone_verified,
+            review_verified: currentUser.reviews?.length > 0
+        };
+
+        this.setState({ user: currentUser, verificationSteps: verificationSteps });
     }
 
     async sendVerificationEmail(){
@@ -70,6 +93,37 @@ export default class ProfileContainer extends React.Component<{navigation: any},
         this.load();
     }
 
+    getImageStyle(){
+        let stepsComplete = 0;
+        const { email_verified, phone_verified, review_verified } = this.state.verificationSteps;
+
+        if(email_verified){
+            stepsComplete++;
+        }
+        if(phone_verified){
+            stepsComplete++;
+        }
+        if(review_verified){
+            stepsComplete++;
+        }
+
+        switch(stepsComplete){
+            case(3):
+                return styles.fullyVerified;
+            case(2):
+                return styles.almostVerified;
+            case(1):
+                return styles.partialVerified;
+            default:
+                return styles.notVerified;
+        }
+    }
+
+    allVerifcationStepsComplete(){
+        const { email_verified, phone_verified, review_verified } = this.state.verificationSteps;
+        return (email_verified && phone_verified && review_verified);
+    }
+
     render(){
         if(!this.state.user){
             return <SpinnerContainer/>
@@ -77,16 +131,26 @@ export default class ProfileContainer extends React.Component<{navigation: any},
         return (
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={styles.row}>
-                    <Image 
-                        style={styles.profileImage}
-                        source={{uri: this.getPhotoUrl()}} 
-                        defaultSource={require('../../assets/images/profile.png')} />
+                    <View style={this.getImageStyle()}>
+                        <Image 
+                            style={styles.profileImage}
+                            source={{uri: this.getPhotoUrl()}} 
+                            defaultSource={require('../../assets/images/profile.png')} />
+                    </View>
+                    {
+                        <View style={{ position: 'absolute', top: 10 }}>
+                            <Icon style={{
+                                fontSize: 40,
+                                color: theme.STAR_COLOR,
+                                alignSelf: 'center' }} name={'award'} type={'FontAwesome5'}></Icon>
+                        </View>
+                    }
                 </View>
                 <View style={styles.row}>
                     <Title style={styles.title}>{this.state.user.firstName} {this.state.user.lastName}</Title>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.label}>Review Count: </Text>
+                    <Text style={styles.label}>Review Count</Text>
                     <Text style={styles.text}>{this.state.user.reviews? this.state.user.reviews.length : 0}</Text>
                 </View>
                 <View style={styles.row}>
@@ -121,11 +185,21 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                                 style={styles.notVerifiedIcon}></Icon>
                     }
                 </View>
-                <View style={styles.row}>
                 {
                     !this.state.user.phone_verified ? 
-                        <PhoneVerifyRecaptcha onSuccess={this.onRecaptchaSuccess.bind(this)}/> : null
+                    <View style={styles.row}>
+                        <PhoneVerifyRecaptcha onSuccess={this.onRecaptchaSuccess.bind(this)}/>
+                    </View> : null
                 }
+                <View style={styles.row}>
+                    <Text style={styles.label}>Wrote a Review</Text>
+                    {           
+                        this.state.verificationSteps.review_verified ?             
+                            <Icon type={'FontAwesome5'} name={'check'} 
+                                fontSize={16} style={styles.verifiedIcon}></Icon> :
+                            <Icon type={'FontAwesome5'} name={'times'} 
+                                style={styles.notVerifiedIcon}></Icon>
+                    }
                 </View>
                 <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
                     <Text style={styles.buttonText}>Logout</Text>
@@ -144,6 +218,8 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     title: {
+        marginTop: 10,
+        marginBottom: 10,
         fontSize: 30,
         color: theme.DARK_COLOR
     },
@@ -155,14 +231,12 @@ const styles = StyleSheet.create({
         fontSize: 20
     },
     profileImage: {
-        marginTop: 10,
-        marginBottom: 10,
         width: 150,
         height: 150,
         borderRadius: 150
     },
     row: {
-        justifyContent: "space-evenly",
+        justifyContent: 'space-around',
         flexDirection: 'row',
         minHeight: 60
     },
@@ -180,5 +254,45 @@ const styles = StyleSheet.create({
     logoutBtn: {
         alignSelf: 'center',
         marginTop: '10%'
+    },
+    // Account created - need to verify email, phone, and write a review
+    notVerified: {
+        marginTop: 10,
+        borderWidth: 5,
+        borderRadius: 150,
+        borderTopColor: theme.PRIMARY_COLOR,
+        borderRightColor: theme.LIGHT_COLOR,
+        borderBottomColor: theme.LIGHT_COLOR,
+        borderLeftColor: theme.LIGHT_COLOR
+    },
+    // 1 out of 3 verification steps complete
+    partialVerified: {
+        marginTop: 10,
+        borderWidth: 5,
+        borderRadius: 150,
+        borderTopColor: theme.PRIMARY_COLOR,
+        borderRightColor: theme.PRIMARY_COLOR,
+        borderBottomColor: theme.LIGHT_COLOR,
+        borderLeftColor: theme.LIGHT_COLOR
+    },
+    // 2 out of 3 verification steps complete
+    almostVerified: {
+        marginTop: 10,
+        borderWidth: 5,
+        borderRadius: 150,
+        borderTopColor: theme.PRIMARY_COLOR,
+        borderRightColor: theme.PRIMARY_COLOR,
+        borderBottomColor: theme.PRIMARY_COLOR,
+        borderLeftColor: theme.LIGHT_COLOR
+    },
+    // Completed all 3 verification steps
+    fullyVerified: {
+        marginTop: 10,
+        borderWidth: 5,
+        borderRadius: 150,
+        borderTopColor: theme.PRIMARY_COLOR,
+        borderRightColor: theme.PRIMARY_COLOR,
+        borderBottomColor: theme.PRIMARY_COLOR,
+        borderLeftColor: theme.PRIMARY_COLOR
     }
 });
