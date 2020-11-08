@@ -6,7 +6,7 @@ import { Button, Input, Item, Label, Text, Toast, View } from 'native-base';
 import theme from '../styles/theme';
 import FirebaseService from '../services/firebaseService';
 import PhoneInput from "react-native-phone-number-input";
-export default function PhoneVerifyRecaptcha() {
+export default function PhoneVerifyRecaptcha(props: { onSuccess: ()=> any }) {
 
     const recaptchaVerifier = useRef<any>(null);
 
@@ -65,7 +65,11 @@ export default function PhoneVerifyRecaptcha() {
                     ref={phoneInput}
                     containerStyle={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 1, borderRadius: 25 }}
                     flagButtonStyle={{backgroundColor: theme.LIGHT_COLOR, borderRadius: 25}}
-                    textContainerStyle={{backgroundColor: theme.LIGHT_COLOR, borderRadius: 25}}
+                    textContainerStyle={{
+                        backgroundColor: theme.LIGHT_COLOR, 
+                        borderRadius: 25
+                    }}
+                    textInputStyle={{ color: theme.DARK_COLOR }}
                     defaultValue={phoneValue}
                     defaultCode="US"
                     onChangeText={(text) => {
@@ -110,7 +114,6 @@ export default function PhoneVerifyRecaptcha() {
                     <Input
                         value={verificationCode}
                         style={styles.verificationInput}
-                        // editable={verificationId.length > 0}
                         placeholder="123456"
                         onChangeText={text => setVerificationCode(text)}
                     />
@@ -123,6 +126,7 @@ export default function PhoneVerifyRecaptcha() {
                         FirebaseService.confirmPhoneVerification(verificationId, verificationCode)
                             .then(successMsg =>{
                                 showMessage(`${successMsg}`);
+                                props.onSuccess();
                             })
                             .catch(failMsg => {
                                 showMessage(`Error: ${failMsg}`);

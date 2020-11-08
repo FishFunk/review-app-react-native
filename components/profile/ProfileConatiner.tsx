@@ -20,7 +20,7 @@ export default class ProfileContainer extends React.Component<{navigation: any},
     user: appUser, emailSent: boolean, isModalOpen: boolean
 }> {
   
-    state: any = { user: {}, emailSent: false, isModalOpen: false };
+    state: any = { user: {}, emailSent: false, isModalOpen: false  };
 
     componentDidMount(){
         this.load()
@@ -64,6 +64,10 @@ export default class ProfileContainer extends React.Component<{navigation: any},
         } else {
             return '';
         }
+    }
+
+    onRecaptchaSuccess(){
+        this.load();
     }
 
     render(){
@@ -120,7 +124,7 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                 <View style={styles.row}>
                 {
                     !this.state.user.phone_verified ? 
-                        <PhoneVerifyRecaptcha /> : null
+                        <PhoneVerifyRecaptcha onSuccess={this.onRecaptchaSuccess.bind(this)}/> : null
                 }
                 </View>
                 <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
