@@ -56,7 +56,6 @@ export default class ProfileContainer extends React.Component<{navigation: any},
     }
 
     async load(){
-
         const currentUser = await FirebaseService.getUser();
         const verificationSteps = {
             email_verified: currentUser.email_verified,
@@ -138,12 +137,13 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                             defaultSource={require('../../assets/images/profile.png')} />
                     </View>
                     {
+                        this.allVerifcationStepsComplete()?
                         <View style={{ position: 'absolute', top: 10 }}>
                             <Icon style={{
                                 fontSize: 40,
                                 color: theme.STAR_COLOR,
                                 alignSelf: 'center' }} name={'award'} type={'FontAwesome5'}></Icon>
-                        </View>
+                        </View> : null
                     }
                 </View>
                 <View style={styles.row}>
@@ -152,6 +152,16 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                 <View style={styles.row}>
                     <Text style={styles.label}>Review Count</Text>
                     <Text style={styles.text}>{this.state.user.reviews? this.state.user.reviews.length : 0}</Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Wrote a Review</Text>
+                    {           
+                        this.state.verificationSteps.review_verified ?             
+                            <Icon type={'FontAwesome5'} name={'check'} 
+                                fontSize={16} style={styles.verifiedIcon}></Icon> :
+                            <Icon type={'FontAwesome5'} name={'times'} 
+                                style={styles.notVerifiedIcon}></Icon>
+                    }
                 </View>
                 <View style={styles.row}>
                     <Text style={styles.label}>Email Verified</Text>
@@ -191,16 +201,6 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                         <PhoneVerifyRecaptcha onSuccess={this.onRecaptchaSuccess.bind(this)}/>
                     </View> : null
                 }
-                <View style={styles.row}>
-                    <Text style={styles.label}>Wrote a Review</Text>
-                    {           
-                        this.state.verificationSteps.review_verified ?             
-                            <Icon type={'FontAwesome5'} name={'check'} 
-                                fontSize={16} style={styles.verifiedIcon}></Icon> :
-                            <Icon type={'FontAwesome5'} name={'times'} 
-                                style={styles.notVerifiedIcon}></Icon>
-                    }
-                </View>
                 <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
                     <Text style={styles.buttonText}>Logout</Text>
                 </Button>
@@ -236,6 +236,7 @@ const styles = StyleSheet.create({
         borderRadius: 150
     },
     row: {
+        paddingTop: 15,
         justifyContent: 'space-around',
         flexDirection: 'row',
         minHeight: 60
