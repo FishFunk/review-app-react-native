@@ -60,7 +60,6 @@ export default function PhoneVerifyRecaptcha(props: { onSuccess: ()=> any }) {
                 display: toggleView ? 'none' : 'flex',
                 transform: [{translateX: flyOffLeftAnim}]
             }}>
-                {/* <Label>Enter phone number</Label> */}
                 <PhoneInput
                     ref={phoneInput}
                     containerStyle={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 1, borderRadius: 25 }}
@@ -69,7 +68,9 @@ export default function PhoneVerifyRecaptcha(props: { onSuccess: ()=> any }) {
                         backgroundColor: theme.LIGHT_COLOR, 
                         borderRadius: 25
                     }}
-                    textInputStyle={{ color: theme.DARK_COLOR }}
+                    textInputProps={{ placeholderTextColor: theme.GRAY_COLOR }}
+                    textInputStyle={{ color: theme.DARK_COLOR, fontSize: 18 }}
+                    codeTextStyle={{ color: theme.DARK_COLOR, fontSize: 18 }}
                     defaultValue={phoneValue}
                     defaultCode="US"
                     onChangeText={(text) => {

@@ -95,7 +95,9 @@ class FirebaseService {
 	}
 
 	async initializeUser(loggedInUserData: firebase.User): Promise<authResult>{
-		this._verifyInitialized();
+		if(!firebase.apps.length){
+			throw new Error("Firebase not initialized correctly!");
+		}
 
 		const userSnap = await this.db.ref(`users/${loggedInUserData.uid}`).once('value');
 		if(!userSnap.exists()){
@@ -207,7 +209,9 @@ class FirebaseService {
 
 		const userSnap = await this.db.ref(`users/${userId}`).once('value');
 		if(userSnap.exists()){
-			return userSnap.val();
+			const userData: appUser = userSnap.val();
+			userData.email_verified = this.auth.currentUser?.emailVerified;
+			return userData;
 		} else {
 			throw new Error(`No user found matching id: ${userId}`);
 		}

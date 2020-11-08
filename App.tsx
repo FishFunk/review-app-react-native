@@ -24,11 +24,12 @@ export default function App(props: any) {
 
 
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<firebase.User>();
   const [fontLoaded, setFontLoaded] = useState(false);
   const [updating, setUpdating] = useState(true);
 
-  function onAuthStateChanged(user: any){
+  async function onAuthStateChanged(user: firebase.User){
+    if(user) await FirebaseService.initializeUser(user);
     setUser(user);
     if(initializing) setInitializing(false);
   }
