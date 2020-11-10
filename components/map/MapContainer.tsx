@@ -118,7 +118,7 @@ export default class MapContainer extends React.Component<
 
         if(!places || places.length === 0){
             Toast.show({
-                text: 'No reviewed places nearby',
+                text: 'No reviews found in this area within your network. Try following more reviewers in the social tab!',
                 position: 'bottom'
             });
             return this.setState({ loadingNearby: false });

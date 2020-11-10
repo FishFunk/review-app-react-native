@@ -507,6 +507,14 @@ class FirebaseService {
 		await this.db.ref(`places/${reviewSummary.place_id}/reviews/${reviewSummary.review_key}/thanks`).push({user_id: this.auth.currentUser.uid});
 	}
 
+	async submitFeedback(data: any){
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+
+		await this.db.ref(`feedback`).push(data);
+	}
+
 	logError(log: string | Object | Error){
 		if(!firebase.apps.length){
 			throw new Error("Firebase not initialized correctly!");

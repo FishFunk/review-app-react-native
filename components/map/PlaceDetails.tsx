@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
         
     },
     listItem: {
-
+        minHeight: 100
     },
     reviewActionBtn:{
         flexDirection: 'column',
@@ -404,9 +404,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     verifiedUserAvatar: {
-        width: 58, 
-        height: 58,
-        borderWidth: 4,
+        width: 56, 
+        height: 56,
+        borderWidth: 3,
         borderColor: theme.PRIMARY_COLOR,
         borderRadius: 30
     },
