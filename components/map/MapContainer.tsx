@@ -34,7 +34,8 @@ export default class MapContainer extends React.Component<
         placeId: string,
         apiKey: string,
         refreshCallout: boolean,
-        listOrderedBy: string
+        listOrderedBy: string,
+        hideCallout: boolean
     }> {
 
 
@@ -64,7 +65,8 @@ export default class MapContainer extends React.Component<
         reshowListModal: false,
         apiKey: '',
         refreshCallout: false,
-        listOrderedBy: ''
+        listOrderedBy: '',
+        hideCallout: true
     };
     
     componentDidMount(){
@@ -200,8 +202,8 @@ export default class MapContainer extends React.Component<
         const region = {
             latitude: get(place, 'result.geometry.location.lat'),
             longitude: get(place, 'result.geometry.location.lng'),
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.09
+            latitudeDelta: 0.02,
+            longitudeDelta: 0.02
         };
 
         const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
@@ -216,13 +218,13 @@ export default class MapContainer extends React.Component<
             placeId: place_id
         }
 
-        this.setState({ markers: [marker], placeId: place_id, places: [] });
+        this.setState({ markers: [marker], placeId: place_id, places: [], hideCallout: false });
 
         this.mapViewRef?.animateToRegion(region);
     }
 
     onHandleRegionChange(region: Region, marker: Marker | null){
-        if(marker){
+        if(marker && this.state.hideCallout){
             const hideCallout = !isInRadius(
                 this.state.region.latitude, 
                 this.state.region.longitude,
@@ -236,7 +238,7 @@ export default class MapContainer extends React.Component<
         // Calculate map zoom level
         const zoom = Math.log2(360 * ((Dimensions.get('screen').width /256) / region.longitudeDelta)) + 1;
 
-        this.setState({ region:  { ...region }, zoomLevel: zoom  });
+        this.setState({ region:  { ...region }, zoomLevel: zoom, hideCallout: true  });
     }
 
     async onMarkerSelect(marker: markerData){
@@ -285,6 +287,8 @@ export default class MapContainer extends React.Component<
             this.setState({ markers: [marker], placeId: placeId, places: [] });
 
             this.mapViewRef?.animateToRegion(region);
+
+            
         }
     }
 

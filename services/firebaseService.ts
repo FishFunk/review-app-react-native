@@ -268,21 +268,6 @@ class FirebaseService {
 		}
 	}
 
-	async _getFilteredPlaceReviews(place: dbPlace, targetIds: string[]): Promise<Array<dbReview>> {
-		this._verifyInitialized();
-
-		// Filter reviews if they were written by target user IDs
-		let filteredReviews = [];
-		for(let review of place.reviews){
-			if(review.reviewer_id === this.getCurrentUserId() || 
-				_indexOf(targetIds, review.reviewer_id) >= 0){
-					filteredReviews.push(review);
-			}
-		}
-		
-		return filteredReviews;
-	}
-
 	async getReviewSummaries(placeId: string): Promise<Array<reviewSummary>>{
 		this._verifyInitialized();
 
@@ -425,57 +410,23 @@ class FirebaseService {
 	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<dbPlace[]>{
 		this._verifyInitialized();
 	
-		let places: dbPlace[] = [];
+		// let places: dbPlace[] = [];
 		const placesSnapshot = await this.db.ref(`places`).once('value');
-		placesSnapshot.forEach((snap)=>{
-			const place = snap.val();
-			if(isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
+		const targetIds = await this.getUserFollowingIds();
+
+		let places: dbPlace[] = [];
+		let promises: any[] = [];
+		placesSnapshot.forEach((snapshot: firebase.database.DataSnapshot)=>{
+			const place = snapshot.val();
+			if(this._doesPlaceHaveRelevantReviews(place, targetIds) && 
+				isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
 				places.push(place);
 			}
 		});
+		
+		await Promise.all(promises);
 
-		const result = await this._filterPlacesByReviewFollowers(places);
-		return result;
-	}
-
-	async getPlacesById(placeIds: string[], filterByFollowers = true): Promise<dbPlace[]>{
-		this._verifyInitialized();
-	
-		let places: dbPlace[] = [];
-		const placesSnapshot = await this.db.ref(`places`).once('value');
-		placesSnapshot.forEach((snap)=>{
-			const place = snap.val();
-			if(_indexOf(placeIds, place.id) >= 0){
-				places.push(place);
-			}
-		});
-
-		if(filterByFollowers){
-			return this._filterPlacesByReviewFollowers(places);
-		} else {
-			return places;
-		}
-	}
-
-	async _filterPlacesByReviewFollowers(places: dbPlace[]){
-		// Filter places if they contain reviews by current user or followers
-		let filteredPlaces = [];
-		for(let place of places){
-			const targetIds = await this.getUserFollowingIds();
-			const targetReviews = await this._getFilteredPlaceReviews(place, targetIds);
-
-			if(targetReviews.length > 0){
-				filteredPlaces.push(place);
-			}
-		}
-
-		return filteredPlaces;
-	}
-
-	_verifyInitialized(){
-		if(!firebase.apps.length || !this.auth.currentUser){
-			throw new Error("Firebase not initialized correctly!");
-		}
+		return places;
 	}
 
 	async getUserFollowingIds(): Promise<string[]> {
@@ -553,6 +504,43 @@ class FirebaseService {
 		}
 		this.auth.signOut();
 	};
+
+	async _getFilteredPlaceReviews(
+		place: dbPlace, 
+		targetIds: string[]): Promise<Array<dbReview>> {
+
+		// Filter reviews if they were written by target user IDs
+		let filteredReviews = [];
+		for(let review of place.reviews){
+			if(review.reviewer_id === this.getCurrentUserId() || 
+				_indexOf(targetIds, review.reviewer_id) >= 0){
+					filteredReviews.push(review);
+			}
+		}
+		
+		return filteredReviews;
+	}
+
+	_doesPlaceHaveRelevantReviews(
+		place: dbPlace, 
+		targetIds: string[]) {
+			
+		// Filter reviews if they were written by target user IDs
+		for(let review of place.reviews){
+			if(review.reviewer_id === this.getCurrentUserId() || 
+				_indexOf(targetIds, review.reviewer_id) >= 0){
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	_verifyInitialized(){
+		if(!firebase.apps.length || !this.auth.currentUser){
+			throw new Error("Firebase not initialized correctly!");
+		}
+	}
 }
 
 const instance = new FirebaseService();
