@@ -7,6 +7,7 @@ import { Text } from 'native-base';
 import ReviewStars from '../reviews/ReviewStars';
 import { markerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';
+import MapToolbar from './MapToolbar';
 
 export default class Map extends React.Component<
     {
@@ -18,7 +19,12 @@ export default class Map extends React.Component<
         onMarkerSelect: (marker: markerData) => void,
         onPoiSelect: (placeId: string) => void,
         onRegionChange: (region: Region, markerRef: Marker | null) => void,
-        onShowDetails: (placeId: string) => void
+        onShowDetails: (placeId: string) => void,
+        loadingLocation: boolean,
+        loadingNearby: boolean,
+        onPressCurrentLocation: () => any,
+        onPressListView: () => any,
+        onPressLoadNearby: () => any,
     },
     {}>{
 
@@ -26,14 +32,14 @@ export default class Map extends React.Component<
     markerRef: Marker | null  = null;
 
     componentDidUpdate(prevProps: any){
-        if(!_isEqual(prevProps.markers, this.props.markers)){
-            // refresh callout when a new review was written
-            if(this.props.refreshCallout && Platform.OS === 'ios'){
+        if(this.props.refreshCallout && this.props.refreshCallout !== prevProps.refreshCallout){
+            if(Platform.OS === 'ios'){
                 this.markerRef?.redrawCallout();
             } else {
                 this.markerRef?.hideCallout();
                 this.markerRef?.showCallout();
             }
+            return;
         }
     }
 
@@ -66,8 +72,22 @@ export default class Map extends React.Component<
         this.props.setMapRef(ref);
     }
 
+    handlePressCurrentLocation(){
+        this.props.onPressCurrentLocation();
+    }
+
+    handlePressListView(){
+        this.props.onPressListView();
+    }
+
+    handlePressLoadNearby(){
+        if(this.markerRef) this.markerRef.hideCallout();
+        this.props.onPressLoadNearby();
+    }
+
     render() {
         return (
+            <View style={{flex: 1}}>
             <MapView
                 ref={ref => this.setMapViewRef(ref)}
                 zoomEnabled={true}
@@ -128,6 +148,15 @@ export default class Map extends React.Component<
                     </Marker>
                 ))}
             </MapView>
+            <MapToolbar 
+                loadingLocation={this.props.loadingLocation}
+                loadingNearby={this.props.loadingNearby}
+                showListViewButton={this.props.markers.length > 0}
+                onPressCurrentLocation={this.handlePressCurrentLocation.bind(this)}
+                onPressListView={this.handlePressListView.bind(this)}
+                onPressLoadNearby={this.handlePressLoadNearby.bind(this)}
+            />
+            </View>
         )
     }
 }
@@ -200,5 +229,31 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
         borderRightColor: theme.DARK_COLOR,
         alignSelf: 'center'
+    },
+    mapToolButtonContainer: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: 'rgba(169,169,169, 0.7)'  
+    },
+    mapButton: {
+        height: 60,
+        width: 60,
+        backgroundColor: theme.LIGHT_COLOR,
+        borderRadius: 60,
+        margin: 5,
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+    buttonIcon:{
+        padding: 2,
+        color: theme.DARK_COLOR,
+        fontSize: 20
+    },
+    buttonText: {
+        textAlign: 'center',
+        alignSelf: 'center',
+        color: theme.DARK_COLOR,
+        fontSize: 8
     }
 });

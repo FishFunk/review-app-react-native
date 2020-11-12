@@ -78,10 +78,10 @@ export default function App(props: any) {
     )
   } else {
     return (
-      <Root>
         <Container>
           <StatusBar />
           <NavigationContainer>
+            <Root>
             <mainStackNavigator.Navigator initialRouteName="Home" screenOptions={{
               headerShown: false,
             }}>
@@ -93,9 +93,9 @@ export default function App(props: any) {
               <mainStackNavigator.Screen name="Social" component={SocialScreen} />
               <mainStackNavigator.Screen name="Search" component={SearchScreen} />
             </mainStackNavigator.Navigator>
+            </Root>
           </NavigationContainer>  
         </Container>
-      </Root>
     );
   }
 }

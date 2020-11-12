@@ -6,41 +6,41 @@ import {
     Right, 
     Icon, 
     Button, 
-    Thumbnail
+    Thumbnail,
+    Body
   } from 'native-base';
 import { StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
 import { appUser } from '../../models/user';
+import ListAvatar from '../profile/ListAvatar';
 
 export default function UserListItem(
     props: { user: appUser, onButtonPress: (following: boolean) => void, following: boolean }) {
 
     const { user, onButtonPress, following } = props;
+    const verified = user.reviews ? user.reviews.length > 0 : false
+        && user.email_verified 
+        && user.phone_verified;
+
     return (
-        <ListItem>
-            <Left>
-                <Thumbnail 
-                    source={{ uri: user.photoUrl }} 
-                    defaultSource={require('../../assets/images/profile.png')}/>
-                <Text style={styles.name}>{user.firstName} {user.lastName}</Text>
-            </Left>
-            <Right>
-                <Button 
-                    transparent
-                    onPress={()=>onButtonPress(following)}>
-                    {
-                        following ? 
-                            <Icon 
-                                style={styles.followingIcon} 
-                                type={"SimpleLineIcons"} 
-                                name="user-following" /> : 
-                            <Icon 
-                                style={styles.followIcon} 
-                                type={"SimpleLineIcons"} 
-                                name="user-follow" />
-                    }
-                </Button>
-            </Right>
+        <ListItem style={{justifyContent: 'space-evenly'}}>
+            <ListAvatar user_verified={verified} img={user.photoUrl || ''} />
+            <Body><Text style={styles.name}>{user.firstName} {user.lastName}</Text></Body>
+            <Button 
+                transparent
+                onPress={()=>onButtonPress(following)}>
+                {
+                    following ? 
+                        <Icon 
+                            style={styles.followingIcon} 
+                            type={"SimpleLineIcons"} 
+                            name="user-following" /> : 
+                        <Icon 
+                            style={styles.followIcon} 
+                            type={"SimpleLineIcons"} 
+                            name="user-follow" />
+                }
+            </Button>
         </ListItem>
     );
 }

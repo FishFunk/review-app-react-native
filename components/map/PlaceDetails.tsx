@@ -6,10 +6,8 @@ import {
     Text, 
     Body, 
     Left, 
-    Thumbnail,
     Button,
     Icon,
-    Title,
     Badge,
     Label
 } from 'native-base';
@@ -31,6 +29,7 @@ import ReviewComplete from '../reviews/ReviewComplete';
 import ReviewDollars from '../reviews/ReviewDollars';
 import ReportModal from '../ReportModal';
 import HorizontalButtonList from '../HorizontalButtonList';
+import ListAvatar from '../profile/ListAvatar';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -44,6 +43,7 @@ export default class PlaceDetails extends React.Component<
         showReviewModal: boolean, 
         showReviewCompleteModal: boolean,
         showReportModal: boolean,
+        editReview: reviewSummary,
         reportReview: reviewSummary,
         isLoading: boolean,
         place: fullApiPlace,
@@ -53,14 +53,17 @@ export default class PlaceDetails extends React.Component<
         pricing: number
     }> {
 
+    // Initalize complex state values to remove type warnings
     initialPlace: fullApiPlace = {};
     initialReportReview: any = {};
+    initialEditReview: any = null;
 
     state = {
         isLoading: true,
         showReviewModal: false,
         showReviewCompleteModal: false,
         showReportModal: false,
+        editReview: this.initialEditReview,
         reportReview: this.initialReportReview,
         items: new Array<reviewSummary>(),
         place: this.initialPlace,
@@ -170,6 +173,11 @@ export default class PlaceDetails extends React.Component<
         this.setState({ isLoading: false, showReportModal: false, items: newState.items });
     }
 
+    async onEditReview(reviewSummary: reviewSummary){
+        // TODO: Preload review modal with existing review data
+        this.setState({ showReviewModal: true, editReview: reviewSummary });
+    }
+
     renderReviewSummaries(){
         const { items: reviewSummaries } = this.state;
         let elements = [];
@@ -179,26 +187,7 @@ export default class PlaceDetails extends React.Component<
             const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId());
             elements.push(<ListItem avatar key={review.review_key} style={styles.listItem}>
                 <Left>
-                    {
-                        review.user_verified ?
-                        <View style={styles.verifiedUserAvatar}>
-                            <Thumbnail
-                                style={styles.userAvatar}
-                                source={{ uri: review.img }} 
-                                defaultSource={require('../../assets/images/profile.png')} />
-                            <View style={{flexDirection: 'row', marginTop: 5, justifyContent: 'space-evenly'}}>
-                                <Icon style={{
-                                    fontSize: 14,
-                                    color: theme.STAR_COLOR,
-                                    alignSelf: 'center' }} name={'award'} type={'FontAwesome5'}></Icon>
-                                <Label style={styles.verifiedLabel}>Verified</Label>
-                            </View>
-                        </View> : 
-                        <Thumbnail
-                            style={styles.userAvatar}
-                            source={{ uri: review.img }} 
-                            defaultSource={require('../../assets/images/profile.png')} />
-                    }
+                    <ListAvatar user_verified={review.user_verified} img={review.img} />
                 </Left>
                 <Body style={{transform: [{ translateX: -5 }]}}>
                     <ReviewStars rating={review.avg_rating} fontSize={18} />
@@ -206,10 +195,7 @@ export default class PlaceDetails extends React.Component<
                     <Text note>{review.comments}</Text>
                     <Text note style={{position: 'absolute', top: 10, right: 5, fontSize: 12 }}>{ review.date }</Text>
                     {review.reviewer_id !== FirebaseService.getCurrentUserId() ?
-                        <View style={{ 
-                            marginRight: 5,
-                            flexDirection: 'row',
-                            alignSelf: 'flex-end'}}>
+                        <View style={styles.reviewIconContainer}>
                             <Button 
                                 disabled={disableThanks}
                                 transparent
@@ -226,7 +212,16 @@ export default class PlaceDetails extends React.Component<
                                 <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
                                 <Label style={{fontSize: 8}}>{disableReport ? 'Reported' : 'Report'}</Label>
                             </Button>
-                        </View> : null}
+                        </View> : 
+                        <View style={styles.reviewIconContainer}>
+                            <Button 
+                                transparent
+                                style={styles.reviewActionBtn} 
+                                onPress={this.onEditReview.bind(this, review)}>
+                                <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'edit'}/>
+                                <Label style={{fontSize: 8}}>Edit</Label>
+                            </Button>
+                        </View>}
                 </Body>
             </ListItem>
             );
@@ -311,6 +306,7 @@ export default class PlaceDetails extends React.Component<
                     </View>
             }
             <WriteReview 
+                editReview={this.state.editReview}
                 place={this.state.place}
                 showModal={this.state.showReviewModal} 
                 onDismissModal={this.onDismissModal.bind(this)}/>
@@ -352,11 +348,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignSelf: 'center'
     },
-    list: {
-        
-    },
     listItem: {
-        minHeight: 100
+        minHeight: 100,
     },
     reviewActionBtn:{
         flexDirection: 'column',
@@ -374,6 +367,11 @@ const styles = StyleSheet.create({
     reviewNegativeActionIcon: {
         color: theme.DANGER_COLOR,
         fontSize: 12
+    },
+    reviewIconContainer: {
+        marginRight: 5,
+        flexDirection: 'row',
+        alignSelf: 'flex-end'
     },
     noReviewConatiner: {
         padding: 10,
@@ -395,24 +393,6 @@ const styles = StyleSheet.create({
     navigationButton: {
         marginTop: 10,
         backgroundColor: theme.PRIMARY_COLOR,
-        alignSelf: 'center'
-    },
-    userAvatar: {
-        width: 50, 
-        height: 50, 
-        alignSelf: 'center',
-        justifyContent: 'center'
-    },
-    verifiedUserAvatar: {
-        width: 56, 
-        height: 56,
-        borderWidth: 3,
-        borderColor: theme.PRIMARY_COLOR,
-        borderRadius: 30
-    },
-    verifiedLabel: {
-        fontSize: 10,
-        color: theme.DARK_COLOR,
         alignSelf: 'center'
     }
   });

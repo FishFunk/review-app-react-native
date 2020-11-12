@@ -407,6 +407,12 @@ class FirebaseService {
 		return await this.db.ref(`users/${this.auth.currentUser.uid}/reviews`).set(userReviewIds);
 	}
 
+	async updateReview(key: string, review: any): Promise<any>{
+		this._verifyInitialized();
+
+		return await this.db.ref(`places/${review.place_id}/reviews/${key}`).update(review);
+	}
+
 	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<dbPlace[]>{
 		this._verifyInitialized();
 	

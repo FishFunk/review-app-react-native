@@ -12,9 +12,9 @@ import {
 } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
-import { Spinner, Button, Icon, Label, Toast } from 'native-base';
+import { Toast } from 'native-base';
 import theme from '../../styles/theme';
-import { isInRadius, getPlaceAvgRating } from '../../services/utils';
+import { getPlaceAvgRating } from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
 
 export default class MapContainer extends React.Component<
@@ -66,7 +66,7 @@ export default class MapContainer extends React.Component<
         apiKey: '',
         refreshCallout: false,
         listOrderedBy: '',
-        hideCallout: true
+        hideCallout: false
     };
     
     componentDidMount(){
@@ -106,7 +106,7 @@ export default class MapContainer extends React.Component<
         if(!radius){
             const { zoomLevel } = this.state;
             if(zoomLevel >= 15){
-                radius = 5;
+                radius = 6;
             } else if (zoomLevel >= 14){
                 radius = 10;
             } else if (zoomLevel >= 13){
@@ -121,7 +121,8 @@ export default class MapContainer extends React.Component<
         if(!places || places.length === 0){
             Toast.show({
                 text: 'No reviews found in this area within your network. Try following more reviewers in the social tab!',
-                position: 'bottom'
+                position: 'bottom',
+                duration: 3000
             });
             return this.setState({ loadingNearby: false });
         }
@@ -141,7 +142,7 @@ export default class MapContainer extends React.Component<
                     edgePadding: {top: 80, right: 80, bottom: 80, left: 80 }});
         }
 
-        this.setState({ markers: markers, loadingNearby: false, places: places  });
+        this.setState({ markers: markers, loadingNearby: false, places: places, hideCallout: true  });
     }
 
     async load(){
@@ -225,20 +226,13 @@ export default class MapContainer extends React.Component<
 
     onHandleRegionChange(region: Region, marker: Marker | null){
         if(marker && this.state.hideCallout){
-            const hideCallout = !isInRadius(
-                this.state.region.latitude, 
-                this.state.region.longitude,
-                region.latitude,
-                region.longitude,
-                50);
-
-            if(hideCallout) marker.hideCallout();
+            marker.hideCallout();
         }
 
         // Calculate map zoom level
         const zoom = Math.log2(360 * ((Dimensions.get('screen').width /256) / region.longitudeDelta)) + 1;
 
-        this.setState({ region:  { ...region }, zoomLevel: zoom, hideCallout: true  });
+        this.setState({ region:  { ...region }, zoomLevel: zoom, hideCallout: false });
     }
 
     async onMarkerSelect(marker: markerData){
@@ -258,6 +252,9 @@ export default class MapContainer extends React.Component<
     async loadSingleMarker(placeId: string){
         let marker: markerData;
         let geometry, name;
+        
+        this.setState({ refreshCallout: false });
+
         const dbPlace = await FirebaseService.getPlace(placeId);
 
         if(!dbPlace){
@@ -284,19 +281,16 @@ export default class MapContainer extends React.Component<
                 longitudeDelta: this.state.region.longitudeDelta
             }
             
-            this.setState({ markers: [marker], placeId: placeId, places: [] });
+            this.setState({ markers: [marker], placeId: placeId, places: [], refreshCallout: true });
 
             this.mapViewRef?.animateToRegion(region);
-
-            
         }
     }
 
     reloadPlaceReviews(){
         // Reload single marker
         const { placeId, markers } = this.state;
-
-        this.setState({refreshCallout: true});
+        this.setState({ refreshCallout: false });
 
         if(markers.length === 1){
             this.loadSingleMarker(placeId);      
@@ -353,62 +347,13 @@ export default class MapContainer extends React.Component<
                                 onPoiSelect={this.loadSingleMarker.bind(this)}
                                 onRegionChange={this.onHandleRegionChange.bind(this)}
                                 onShowDetails={this.onShowDetails.bind(this)}
+
+                                loadingLocation={this.state.loadingLocation}
+                                loadingNearby={this.state.loadingNearby}
+                                onPressLoadNearby={this.loadNearbyPlaceMarkers.bind(this)}
+                                onPressListView={this.showListModal.bind(this)}
+                                onPressCurrentLocation={this.goToMyLocation.bind(this)}
                             />
-                            <View
-                                style={styles.mapToolButtonContainer}
-                            >
-                                <Button 
-                                    style={styles.mapButton} 
-                                    onPress={this.goToMyLocation.bind(this)}>
-                                    {
-                                        this.state.loadingLocation ?
-                                        <Spinner 
-                                            style={{marginTop: 2, marginLeft: 2}} 
-                                            color={theme.DARK_COLOR}/> : 
-                                        <View>
-                                            <Icon 
-                                                type={'FontAwesome5'} 
-                                                name={'location-arrow'}
-                                                style={styles.buttonIcon}>
-                                            </Icon>
-                                            <Label style={styles.buttonText}>Current Location</Label>
-                                        </View>
-                                    }
-                                </Button>
-                                <Button 
-                                    style={styles.mapButton} 
-                                    onPress={()=>this.loadNearbyPlaceMarkers()}>
-                                    {
-                                        this.state.loadingNearby ?
-                                        <Spinner 
-                                            style={{marginTop: 2, marginLeft: 2}} 
-                                            color={theme.DARK_COLOR}/> : 
-                                        <View>
-                                            <Icon 
-                                                type={'FontAwesome5'} 
-                                                name={'map-marked-alt'}
-                                                style={styles.buttonIcon}>
-                                            </Icon>
-                                            <Label style={styles.buttonText}>Nearby Reviews</Label>
-                                        </View>
-                                    }
-                                </Button>
-                                {
-                                    this.state.places.length > 1 ?
-                                    <Button 
-                                        style={styles.mapButton} 
-                                        onPress={this.showListModal.bind(this)}>
-                                        <View>
-                                            <Icon 
-                                                type={'FontAwesome5'} 
-                                                name={'list'}
-                                                style={styles.buttonIcon}>
-                                            </Icon>
-                                            <Label style={styles.buttonText}>List View</Label>
-                                        </View>
-                                    </Button> : null
-                                }
-                            </View>
                         </View> : null
                 }
 
@@ -452,4 +397,4 @@ const styles = StyleSheet.create({
         color: theme.DARK_COLOR,
         fontSize: 8
     }
-})
+});

@@ -20,11 +20,13 @@ import _indexOf from 'lodash/indexOf';
 import _some from 'lodash/some';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import EditableDollars from './EditableDollars';
+import { reviewSummary } from '../../models/reviews';
 
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
         onDismissModal: Function,
-        place: fullApiPlace
+        place: fullApiPlace,
+        editReview?: reviewSummary
     },
     {
         rating1: number,
@@ -45,6 +47,20 @@ export default class WriteReview extends Component<{
             comments: '',
             submittingReview: false
         }
+    }
+
+    static getDerivedStateFromProps(nextProps: any, prevState: any) {
+        if(nextProps.editReview){
+            return {
+                rating1: nextProps.editReview.avg_rating,
+                rating2: nextProps.editReview.avg_rating,
+                rating3: nextProps.editReview.avg_rating,
+                pricing: nextProps.editReview.pricing,
+                comments: nextProps.editReview.comments
+            };
+        }
+
+        return prevState;
     }
 
     onDismissModal(showReviewComplete: boolean){
@@ -149,7 +165,16 @@ export default class WriteReview extends Component<{
         }
 
         this.setState({ submittingReview: true });
-        await FirebaseService.submitReview(this.props.place, reviewData);
+
+        if(this.props.editReview){
+            // Update exsiting review
+            await FirebaseService.updateReview(this.props.editReview.review_key, reviewData);
+        } else {
+            // Create new review
+            await FirebaseService.submitReview(this.props.place, reviewData);
+        }
+
+        this.setState({ submittingReview: false });
         
         this.onDismissModal(true);
     }
@@ -185,28 +210,28 @@ export default class WriteReview extends Component<{
                                 <Label>Atmosphere</Label>
                                 <EditableStars 
                                     fontSize={30}
-                                    initalRating={this.state.rating1} 
+                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating1} 
                                     onRatingChanged={this.onUpdateRating1.bind(this)}  />
                             </Item>
                             <Item bordered={false} style={styles.starItem}>
                                 <Label>Quality</Label>
                                 <EditableStars 
                                     fontSize={30}
-                                    initalRating={this.state.rating2} 
+                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating2} 
                                     onRatingChanged={this.onUpdateRating2.bind(this)}  />
                             </Item>
                             <Item bordered={false} style={styles.starItem}>
                                 <Label>Service</Label>
                                 <EditableStars 
                                     fontSize={30}
-                                    initalRating={this.state.rating3} 
+                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating3} 
                                     onRatingChanged={this.onUpdateRating3.bind(this)}  />
                             </Item>
                             <Item bordered={false} style={styles.starItem}>
                                 <Label>Pricing</Label>
                                 <EditableDollars 
                                     fontSize={30}
-                                    initalRating={this.state.pricing} 
+                                    initalRating={this.props.editReview ? this.props.editReview.pricing : this.state.pricing} 
                                     onRatingChanged={this.onUpdatePricing.bind(this)}  />
                             </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
@@ -215,7 +240,7 @@ export default class WriteReview extends Component<{
                                 <Textarea 
                                     returnKeyType='done'
                                     onKeyPress={this.onKeyPress.bind(this)}
-                                    value={this.state.comments}
+                                    value={this.props.editReview ? this.props.editReview.comments : this.state.comments}
                                     maxLength={250}
                                     multiline={true}
                                     onChangeText={this.onEditComment.bind(this)}
@@ -235,7 +260,7 @@ export default class WriteReview extends Component<{
                                 <Label>Rating</Label>
                                 <EditableStars 
                                     fontSize={30}
-                                    initalRating={this.state.rating1} 
+                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating1} 
                                     onRatingChanged={this.onUpdateRating1.bind(this)}  />
                             </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
@@ -244,7 +269,7 @@ export default class WriteReview extends Component<{
                                 <Textarea 
                                     returnKeyType='done'
                                     onKeyPress={this.onKeyPress.bind(this)}
-                                    value={this.state.comments}
+                                    value={this.props.editReview ? this.props.editReview.comments : this.state.comments}
                                     maxLength={250}
                                     multiline={true}
                                     onChangeText={this.onEditComment.bind(this)}
