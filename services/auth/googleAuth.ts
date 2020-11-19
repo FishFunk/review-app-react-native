@@ -4,8 +4,8 @@ import { Platform } from 'react-native';
 import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';
 import firebase from 'firebase';
-import { signInWithFacebook } from './facebookAuth';
 import { authResult } from '../../models/auth';
+import AuthMerger from './authMerger';
 
 export const signInWithGoogle = 
     async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
@@ -95,7 +95,7 @@ const _handleAuthTypeSuccess = async (
         if (errorCode === 'auth/account-exists-with-different-credential') {
             // TODO: Convert alert to toast or modal
             alert(`Email already associated with another account. Let's link your Facebook account.`);
-            return signInWithFacebook(error.credential);
+            return AuthMerger.SignInWithFacebook(error.credential);
         } else {
             throw error;
         }

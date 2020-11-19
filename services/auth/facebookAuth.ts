@@ -1,10 +1,10 @@
 import firebase from 'firebase';
 import appConfig from '../../app.json';
 import * as Facebook from 'expo-facebook';
-import { signInWithGoogle } from './googleAuth';
 import { authResult } from '../../models/auth';
 import { AsyncStorage } from 'react-native';
 import { FACEBOOK_TOKEN_KEY } from '../../constants/AsyncStorage';
+import AuthMerger from './authMerger';
 
 export const signInWithFacebook = 
     async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
@@ -29,8 +29,8 @@ export const signInWithFacebook =
                 var errorCode = error.code;
                 if (errorCode === 'auth/account-exists-with-different-credential') {
                     // TODO: Convert alert to toast or modal
-                    alert(`Email already associated with another account. Let's link your Google account.`);
-                    return signInWithGoogle(error.credential);
+                    alert(`Email already associated with a Google account. Luckily we can link them!`);
+                    return AuthMerger.SignInWithGoogle(error.credential);
                 } else {
                     throw error;
                 }

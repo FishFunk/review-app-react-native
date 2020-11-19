@@ -174,7 +174,6 @@ export default class PlaceDetails extends React.Component<
     }
 
     async onEditReview(reviewSummary: reviewSummary){
-        // TODO: Preload review modal with existing review data
         this.setState({ showReviewModal: true, editReview: reviewSummary });
     }
 

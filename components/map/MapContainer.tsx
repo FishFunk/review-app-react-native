@@ -290,7 +290,6 @@ export default class MapContainer extends React.Component<
     reloadPlaceReviews(){
         // Reload single marker
         const { placeId, markers } = this.state;
-        this.setState({ refreshCallout: false });
 
         if(markers.length === 1){
             this.loadSingleMarker(placeId);      
