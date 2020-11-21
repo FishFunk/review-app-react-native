@@ -18,13 +18,13 @@ import { appUser } from '../../models/user';
 import _without from 'lodash/without';
 import _indexOf from 'lodash/indexOf';
 import _map from 'lodash/map';
-import UndrawFollowingSvg from '../../svgs/undraw_following';
 import UserListItem from './UserListItem';
 import { ScrollView } from 'react-native-gesture-handler';
 import { openShareSheet } from '../../services/shareService';
 import { iosAppStoreUrl, androidPlayStoreUrl } from '../../constants/Urls';
 import { socialShareMessage } from '../../constants/Messages';
 import SpinnerContainer from '../SpinnerContainer';
+import UndrawFollowersSvg from '../../svgs/undraw_followers';
 
 export default class SocialContainer extends React.Component<{
         navigation: any
@@ -142,7 +142,7 @@ export default class SocialContainer extends React.Component<{
         return (
           <ScrollView style={styles.container}>
             <View style={styles.svgContainer}>
-                <UndrawFollowingSvg width='75%' height='200px'/>
+                <UndrawFollowersSvg width='75%' height='200px'/>
             </View>
             {
                 this.state.loading ? 

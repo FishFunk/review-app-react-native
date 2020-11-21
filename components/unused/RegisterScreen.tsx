@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import theme from '../styles/theme';
-import FirebaseService from '../services/firebaseService';
+import theme from '../../styles/theme';
+import FirebaseService from '../../services/firebaseService';
 import { Content, Button, Item, Input, Text } from 'native-base';
 
 export default function RegisterScreen(props: any) {

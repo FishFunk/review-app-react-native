@@ -1,5 +1,5 @@
 import { dbPlace } from "../models/place";
-import { dbReview, reviewSummary } from "../models/reviews";
+import { reviewSummary } from "../models/reviews";
 
 export const generateRandomString = function(){
     return Math.random().toString(20).substr(2, 8);

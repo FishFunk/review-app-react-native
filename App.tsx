@@ -7,14 +7,15 @@ import { AppLoading } from 'expo';
 import FirebaseService from './services/firebaseService';
 import HomeScreen from './screens/HomeScreen';
 import { NavigationContainer } from '@react-navigation/native';
-import LoginScreen from './screens/LoginSocialScreen';
-import RegisterScreen from './screens/RegisterScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import SocialScreen from './screens/SocialScreen';
 import { checkForUpdates } from './services/updateService';
 import SearchScreen from './screens/SearchScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import PlaceDetailsScreen from './screens/PlaceDetailsScreen';
+import IntroScreen from './screens/IntroScreen';
+// import LoginScreen from './screens/LoginSocialScreen';
+// import RegisterScreen from './screens/RegisterScreen';
 // import LoginEmailScreen from './screens/LoginEmailScreen';
 
 export default function App(props: any) {
@@ -60,19 +61,23 @@ export default function App(props: any) {
   if(!user){
     return (
         <NavigationContainer>
-          <stackNavigator.Navigator initialRouteName="LoginFacebook">
-            <stackNavigator.Screen name="LoginFacebook" component={LoginScreen} 
+          <stackNavigator.Navigator initialRouteName="IntroScreen">
+          <stackNavigator.Screen name="IntroScreen" component={IntroScreen} 
               options={{
                 headerShown: false
-              }}/>
+          }}/>
+            {/* <stackNavigator.Screen name="LoginScreen" component={LoginScreen} 
+              options={{
+                headerShown: false
+              }}/> */}
             {/* <stackNavigator.Screen name="LoginEmail" component={LoginEmailScreen} 
               options={{
                 headerShown: false
               }}/> */}
-            <stackNavigator.Screen name="Register" component={RegisterScreen} 
+            {/* <stackNavigator.Screen name="Register" component={RegisterScreen} 
               options={{
                 headerShown: false
-              }}/>
+              }}/> */}
           </stackNavigator.Navigator>
         </NavigationContainer>
     )

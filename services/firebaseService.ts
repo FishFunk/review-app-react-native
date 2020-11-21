@@ -13,8 +13,7 @@ import _first from 'lodash/first';
 import _last from 'lodash/last';
 import { registerForPushNotificationsAsync } from './notificationService';
 import { generateRandomString, isInRadius } from './utils';
-import { signInWithGoogle } from './auth/googleAuth';
-import { signInWithFacebook } from './auth/facebookAuth';
+import { signInWithGoogle, signInWithFacebook } from './authService';
 import { authResult } from '../models/auth';
 
 class FirebaseService {
@@ -413,10 +412,10 @@ class FirebaseService {
 		return await this.db.ref(`places/${review.place_id}/reviews/${key}`).update(review);
 	}
 
+	// TODO: Move to Functions? - Single API call returns nearby results
 	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<dbPlace[]>{
 		this._verifyInitialized();
 	
-		// let places: dbPlace[] = [];
 		const placesSnapshot = await this.db.ref(`places`).once('value');
 		const targetIds = await this.getUserFollowingIds();
 

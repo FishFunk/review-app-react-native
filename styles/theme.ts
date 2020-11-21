@@ -12,12 +12,12 @@
 
 export default {
     PRIMARY_COLOR: '#0D3B66',
-    SECONDARY_COLOR: '#2bb6a8', // rgb(43, 182, 168)
-    DARK_COLOR: '#1E1C22', // rgb(30, 28, 34)
+    SECONDARY_COLOR: '#2bb6a8',
+    DARK_COLOR: '#1E1C22',
     GRAY_COLOR: '#D5D5D7',
     LIGHT_COLOR: '#F5F5F5',
-    STAR_COLOR: 'rgb(252,186,0)', // rgb(255, 201, 51)
-    DANGER_COLOR: '#960200', // rgb(150, 2, 0)
+    STAR_COLOR: '#FCBA00',
+    DANGER_COLOR: '#960200',
 
     facebookBlue: '#4267b2',
     googleRed: '#db3236'

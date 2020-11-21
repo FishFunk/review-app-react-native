@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import theme from '../styles/theme';
+import theme from '../../styles/theme';
 import { Button, Item, Input, Content, Text } from 'native-base';
-import UndrawReviewSvg from '../svgs/undraw_reviews';
-import FirebaseService from '../services/firebaseService';
+import UndrawReviewSvg from '../../svgs/undraw_reviews';
+import FirebaseService from '../../services/firebaseService';
 
 export default function LoginEmailScreen(props: any) {
 
