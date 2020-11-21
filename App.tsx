@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Container, Root } from 'native-base';
+import { Container, Root, StyleProvider } from 'native-base';
 import useCachedResources from './hooks/useCachedResources';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
@@ -17,12 +17,13 @@ import IntroScreen from './screens/IntroScreen';
 // import LoginScreen from './screens/LoginSocialScreen';
 // import RegisterScreen from './screens/RegisterScreen';
 // import LoginEmailScreen from './screens/LoginEmailScreen';
+import getTheme from './native-base-theme/components';
+import platform from './native-base-theme/variables/platform';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
   const stackNavigator = createStackNavigator();
   const mainStackNavigator = createStackNavigator();
-
 
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<firebase.User>();
@@ -57,32 +58,24 @@ export default function App(props: any) {
   if (!isLoadingComplete || initializing || !fontLoaded || updating) {
     return <AppLoading/>;
   }
-  
+
+  // TODO: Update all text to use loaded font
   if(!user){
     return (
+      <StyleProvider style={getTheme(platform)}>
         <NavigationContainer>
           <stackNavigator.Navigator initialRouteName="IntroScreen">
-          <stackNavigator.Screen name="IntroScreen" component={IntroScreen} 
-              options={{
-                headerShown: false
-          }}/>
-            {/* <stackNavigator.Screen name="LoginScreen" component={LoginScreen} 
-              options={{
-                headerShown: false
-              }}/> */}
-            {/* <stackNavigator.Screen name="LoginEmail" component={LoginEmailScreen} 
-              options={{
-                headerShown: false
-              }}/> */}
-            {/* <stackNavigator.Screen name="Register" component={RegisterScreen} 
-              options={{
-                headerShown: false
-              }}/> */}
+            <stackNavigator.Screen name="IntroScreen" component={IntroScreen} 
+                options={{
+                  headerShown: false
+            }}/>
           </stackNavigator.Navigator>
         </NavigationContainer>
+      </StyleProvider>
     )
   } else {
     return (
+      <StyleProvider style={getTheme(platform)}>
         <Container>
           <StatusBar />
           <NavigationContainer>
@@ -101,6 +94,7 @@ export default function App(props: any) {
             </Root>
           </NavigationContainer>  
         </Container>
+      </StyleProvider>
     );
   }
 }

@@ -34,7 +34,8 @@ export default class WriteReview extends Component<{
         rating3: number,
         pricing: number,
         comments: string,
-        submittingReview: boolean
+        submittingReview: boolean,
+        editingReview: boolean
     }> {
 
     constructor(props: any){
@@ -45,18 +46,21 @@ export default class WriteReview extends Component<{
             rating3: 0,
             pricing: 0,
             comments: '',
-            submittingReview: false
+            submittingReview: false,
+            editingReview: false,
         }
     }
 
     static getDerivedStateFromProps(nextProps: any, prevState: any) {
-        if(nextProps.editReview){
+        if(nextProps.editReview && !prevState.editingReview){
             return {
                 rating1: nextProps.editReview.avg_rating,
                 rating2: nextProps.editReview.avg_rating,
                 rating3: nextProps.editReview.avg_rating,
                 pricing: nextProps.editReview.pricing,
-                comments: nextProps.editReview.comments
+                comments: nextProps.editReview.comments,
+                avg_rating: nextProps.editReview.avg_rating,
+                editingReview: true
             };
         }
 
@@ -65,6 +69,7 @@ export default class WriteReview extends Component<{
 
     onDismissModal(showReviewComplete: boolean){
         Keyboard.dismiss();
+        this.setState({ editingReview: false, submittingReview: false });
         this.props.onDismissModal(showReviewComplete);
     }
 
@@ -174,7 +179,7 @@ export default class WriteReview extends Component<{
             await FirebaseService.submitReview(this.props.place, reviewData);
         }
 
-        this.setState({ submittingReview: false });
+        this.setState({ submittingReview: false, editingReview: false });
         
         this.onDismissModal(true);
     }

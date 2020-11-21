@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { 
     List, 
     ListItem, 
@@ -177,56 +177,50 @@ export default class PlaceDetails extends React.Component<
         this.setState({ showReviewModal: true, editReview: reviewSummary });
     }
 
-    renderReviewSummaries(){
-        const { items: reviewSummaries } = this.state;
-        let elements = [];
+    renderReviewSummaries(listItem: any){
+        const { item: review } = listItem;
 
-        for (let review of reviewSummaries){
-            const disableThanks = _find(review.thanks, (t) => t.user_id === FirebaseService.getCurrentUserId());
-            const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId());
-            elements.push(<ListItem avatar key={review.review_key} style={styles.listItem}>
-                <Left>
-                    <ListAvatar user_verified={review.user_verified} img={review.img} />
-                </Left>
-                <Body style={{transform: [{ translateX: -5 }]}}>
-                    <ReviewStars rating={review.avg_rating} fontSize={18} />
-                    <Text>{review.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : review.name}</Text>
-                    <Text note>{review.comments}</Text>
-                    <Text note style={{position: 'absolute', top: 10, right: 5, fontSize: 12 }}>{ review.date }</Text>
-                    {review.reviewer_id !== FirebaseService.getCurrentUserId() ?
-                        <View style={styles.reviewIconContainer}>
-                            <Button 
-                                disabled={disableThanks}
-                                transparent
-                                style={disableThanks ? styles.reviewActionBtnDisabled : styles.reviewActionBtn} 
-                                onPress={this.onThankReview.bind(this, review)}>
-                                <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'thumbs-up'}/>
-                                <Label style={{fontSize: 8}}>{disableThanks ? 'Thanked' : 'Thank'}</Label>
-                            </Button>
-                            <Button 
-                                disabled={disableReport}
-                                transparent
-                                style={disableReport ? styles.reviewActionBtnDisabled : styles.reviewActionBtn} 
-                                onPress={this.onReportReview.bind(this, review)}>
-                                <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
-                                <Label style={{fontSize: 8}}>{disableReport ? 'Reported' : 'Report'}</Label>
-                            </Button>
-                        </View> : 
-                        <View style={styles.reviewIconContainer}>
-                            <Button 
-                                transparent
-                                style={styles.reviewActionBtn} 
-                                onPress={this.onEditReview.bind(this, review)}>
-                                <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'edit'}/>
-                                <Label style={{fontSize: 8}}>Edit</Label>
-                            </Button>
-                        </View>}
-                </Body>
-            </ListItem>
-            );
-        }
-
-        return elements;
+        const disableThanks = _find(review.thanks, (t) => t.user_id === FirebaseService.getCurrentUserId());
+        const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId());
+        return <ListItem avatar style={styles.listItem}>
+            <Left>
+                <ListAvatar user_verified={review.user_verified} img={review.img} />
+            </Left>
+            <Body style={{transform: [{ translateX: -5 }]}}>
+                <ReviewStars rating={review.avg_rating} fontSize={18} />
+                <Text>{review.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : review.name}</Text>
+                <Text note>{review.comments}</Text>
+                <Text note style={{position: 'absolute', top: 10, right: 5, fontSize: 12 }}>{ review.date }</Text>
+                {review.reviewer_id !== FirebaseService.getCurrentUserId() ?
+                    <View style={styles.reviewIconContainer}>
+                        <Button 
+                            disabled={disableThanks}
+                            transparent
+                            style={disableThanks ? styles.reviewActionBtnDisabled : styles.reviewActionBtn} 
+                            onPress={this.onThankReview.bind(this, review)}>
+                            <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'thumbs-up'}/>
+                            <Label style={{fontSize: 8}}>{disableThanks ? 'Thanked' : 'Thank'}</Label>
+                        </Button>
+                        <Button 
+                            disabled={disableReport}
+                            transparent
+                            style={disableReport ? styles.reviewActionBtnDisabled : styles.reviewActionBtn} 
+                            onPress={this.onReportReview.bind(this, review)}>
+                            <Icon style={styles.reviewNegativeActionIcon} type={'FontAwesome5'} name={'flag'}/>
+                            <Label style={{fontSize: 8}}>{disableReport ? 'Reported' : 'Report'}</Label>
+                        </Button>
+                    </View> : 
+                    <View style={styles.reviewIconContainer}>
+                        <Button 
+                            transparent
+                            style={styles.reviewActionBtn} 
+                            onPress={this.onEditReview.bind(this, review)}>
+                            <Icon style={styles.reviewActionIcon} type={'FontAwesome5'} name={'edit'}/>
+                            <Label style={{fontSize: 8}}>Edit</Label>
+                        </Button>
+                    </View>}
+            </Body>
+        </ListItem>;
     }
 
     render() {
@@ -281,15 +275,13 @@ export default class PlaceDetails extends React.Component<
                 disableEdit={this.state.disableEdit}
                 place={this.state.place}
                 onPressWriteReview={this.onPressWriteReview.bind(this)}/>
-            {       
+            {
                 this.state.items.length > 0 ?
-                    <ScrollView style={{flex: 1}}>
-                        <List>
-                            {
-                                this.renderReviewSummaries()
-                            }
-                        </List>
-                    </ScrollView>
+                    <FlatList 
+                        keyExtractor={item => item.review_key}
+                        data={this.state.items}
+                        renderItem={this.renderReviewSummaries.bind(this)}
+                    />
                     :
                     <View style={styles.noReviewConatiner}>
                         <Text style={styles.noReviewText}>Hmm... No reviews from your network yet.</Text>

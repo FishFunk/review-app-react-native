@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignSelf: 'center',
         color: theme.DARK_COLOR,
-        fontSize: 8
+        fontSize: 8,
+        width: 50
     }
 });

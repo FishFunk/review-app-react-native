@@ -38,7 +38,7 @@ export default function ListAvatar(props: { img: string, user_verified: boolean 
                     <View style={styles.verifiedUserAvatar}>
                         <Thumbnail
                             style={styles.userAvatar}
-                            source={{ uri: props.img }} 
+                            source={{ uri: props.img ? props.img : null }} 
                             defaultSource={require('../../assets/images/profile.png')} />
                         <View style={styles.verifiedContainer}>
                             <Icon style={{
@@ -52,7 +52,7 @@ export default function ListAvatar(props: { img: string, user_verified: boolean 
                     </View> : 
                     <Thumbnail
                         style={styles.userAvatar}
-                        source={{ uri: props.img }} 
+                        source={{ uri: props.img ? props.img : null }} 
                         defaultSource={require('../../assets/images/profile.png')} />
                 }
         </View>

@@ -27,14 +27,12 @@ export default class PlaceListModal extends React.Component<
                 onBackdropPress={() => this.props.onDismissModal()}
                 onSwipeComplete={() => this.props.onDismissModal()}
                 swipeDirection="down">
-                <Content scrollEnabled={false}>
                     <PlaceList 
                         apiKey={this.props.apiKey}
                         places={this.props.places}
                         onShowPlaceDetails={this.props.onShowPlaceDetails.bind(this)}
                         onUpdateSortOrder={this.props.onUpdateSortOrder.bind(this)} 
                         orderBy={this.props.orderBy}/>
-                </Content>
             </Modal>
         )
     }

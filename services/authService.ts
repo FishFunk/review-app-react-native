@@ -4,12 +4,12 @@ import * as Facebook from 'expo-facebook';
 import { authResult } from '../models/auth';
 import { AsyncStorage } from 'react-native';
 import { FACEBOOK_TOKEN_KEY } from '../constants/AsyncStorage';
-
 import Constants, { AppOwnership } from 'expo-constants';
 import { iosClientId, androidClientId } from '../constants/Keys';
 import { Platform } from 'react-native';
 import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';
+import { Toast } from 'native-base';
 
 export const signInWithFacebook = 
     async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
@@ -33,8 +33,12 @@ export const signInWithFacebook =
             } catch(error){
                 var errorCode = error.code;
                 if (errorCode === 'auth/account-exists-with-different-credential') {
-                    // TODO: Convert alert to toast or modal
-                    alert(`Email already associated with a Google account. Luckily we can link them!`);
+                    Toast.show({
+                        text: `Email already associated with a Google account. Luckily we can link them!`,
+                        duration: 5000,
+                        position: 'bottom',
+                        buttonText: 'OK'
+                    });
                     return signInWithGoogle(error.credential);
                 } else {
                     throw error;
@@ -143,8 +147,12 @@ const _handleAuthTypeSuccess = async (
     } catch(error){
         var errorCode = error.code;
         if (errorCode === 'auth/account-exists-with-different-credential') {
-            // TODO: Convert alert to toast or modal
-            alert(`Email already associated with another account. Let's link your Facebook account.`);
+            Toast.show({
+                text: `Email already associated with a Facebook account. Luckily we can link them!`,
+                duration: 5000,
+                position: 'bottom',
+                buttonText: 'OK'
+            });
             return signInWithFacebook(error.credential);
         } else {
             throw error;

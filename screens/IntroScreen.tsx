@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, StyleSheet } from 'react-native';
 import { 
   Button,
@@ -22,7 +22,7 @@ export default function IntroScreen(props: any) {
     const styles = StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: theme.SECONDARY_COLOR
+        backgroundColor: theme.LIGHT_COLOR
       },
       slide: {
         height: '100%',
@@ -37,20 +37,18 @@ export default function IntroScreen(props: any) {
         marginLeft: 20, 
         marginRight: 20,
         marginBottom: 30,
-        textAlign: 'center',
-        fontFamily: 'Nunito-Bold'
+        textAlign: 'center'
       },
       text: {
         fontSize: 18,
         marginTop: 20,
         marginLeft: 20,
         marginRight: 20,
-        fontFamily: 'Nunito-Regular',
         textAlign: 'center'
       },
       subText: {
         fontSize: 14,
-        fontFamily: 'Nunito-Light'
+        fontFamily: theme.fontLight
       },
       buttonGroup: {
         width: '100%',
@@ -85,11 +83,6 @@ export default function IntroScreen(props: any) {
       },
       googleIcon: {
         color: theme.googleRed
-      },
-      warning: {
-        color: theme.DANGER_COLOR,
-        fontSize: 12,
-        fontFamily: 'Nunito-Bold'
       }
     });
 
@@ -98,22 +91,19 @@ export default function IntroScreen(props: any) {
           key: 1,
           title: 'Welcome to ReVew!',
           text: 'Tired of sifting through hundreds of reviews written by strangers? We are too...',
-          image: require('../assets/svg/undraw_neighbors.svg'),
-          backgroundColor: '#59b2ab',
+          image: require('../assets/svg/undraw_neighbors.svg')
         },
         {
           key: 2,
           title: 'Reviews You Can Trust',
           text: 'Our platform allows you to follow people you trust so that you see only their reviews on your map.',
-          image: require('../assets/svg/undraw_neighbors.svg'),
-          backgroundColor: '#febe29',
+          image: require('../assets/svg/undraw_neighbors.svg')
         },
         {
           key: 3,
           title: 'Ready to Get Started?',
-          text: 'Signing up is easy!\nYour opinions matter.',
-          image: require('../assets/svg/undraw_neighbors.svg'),
-          backgroundColor: '#22bcb5',
+          text: 'Join our community,\n because your opinions matter!',
+          image: require('../assets/svg/undraw_neighbors.svg')
         }
     ];
 
@@ -139,7 +129,7 @@ export default function IntroScreen(props: any) {
           console.log(result.message);
         })
         .catch(error =>{
-          setError(true);
+          Toast.show({ text: 'Login Failed!', position: 'bottom', duration: 3000 });
           console.error(error);
           FirebaseService.logError(error);
         });
