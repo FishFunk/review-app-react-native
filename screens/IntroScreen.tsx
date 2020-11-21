@@ -83,6 +83,18 @@ export default function IntroScreen(props: any) {
       },
       googleIcon: {
         color: theme.googleRed
+      },
+      pagingIcon: {
+        color: theme.LIGHT_COLOR,
+        fontSize: 22
+      },
+      pagingCircle: {
+        width: 40,
+        height: 40,
+        backgroundColor: theme.PRIMARY_COLOR,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
       }
     });
 
@@ -90,13 +102,13 @@ export default function IntroScreen(props: any) {
         {
           key: 1,
           title: 'Welcome to ReVew!',
-          text: 'Tired of sifting through hundreds of reviews written by strangers? We are too...',
+          text: 'Tired of sifting through hundreds of reviews written by strangers?\nWe are too...',
           image: require('../assets/svg/undraw_neighbors.svg')
         },
         {
           key: 2,
           title: 'Reviews You Can Trust',
-          text: 'Our platform allows you to follow people you trust so that you see only their reviews on your map.',
+          text: 'Our platform allows you to follow people you trust so that you only see their reviews on your map.',
           image: require('../assets/svg/undraw_neighbors.svg')
         },
         {
@@ -162,7 +174,7 @@ export default function IntroScreen(props: any) {
                   {_getSvg(item.key)}
                   <Text style={styles.text}>{item.text}</Text>
                   <Text style={styles.subText}>
-                    Log In With
+                    Login With
                   </Text>
                   <View style={styles.buttonGroup}>
                     <Button transparent style={styles.facebookButton} onPress={onFacebookLogin}>
@@ -180,6 +192,30 @@ export default function IntroScreen(props: any) {
         );
     }
 
+    const _renderNextButton = () => {
+      return (
+        <View style={styles.pagingCircle}>
+          <Icon
+            type={'FontAwesome5'}
+            name="arrow-right"
+            style={styles.pagingIcon}
+          />
+        </View>
+      );
+    };
+
+    // const _renderPrevButton = () => {
+    //   return (
+    //     <View style={styles.pagingCircle}>
+    //       <Icon
+    //         type={'FontAwesome5'}
+    //         name="arrow-left"
+    //         style={styles.pagingIcon}
+    //       />
+    //     </View>
+    //   );
+    // };
+
     return (
       <ScrollView contentContainerStyle={styles.container} scrollEnabled={false}>
         <Root>
@@ -188,7 +224,12 @@ export default function IntroScreen(props: any) {
           renderItem={_renderItem} 
           data={slides} 
           showDoneButton={false} 
-          showPrevButton={true} />
+          // showPrevButton={true} 
+          renderNextButton={_renderNextButton}
+          dotStyle={{ backgroundColor: theme.GRAY_COLOR }}
+          activeDotStyle={{ backgroundColor: theme.SECONDARY_COLOR }}
+          // renderPrevButton={_renderPrevButton}
+          />
         </Root>
       </ScrollView>
     );
