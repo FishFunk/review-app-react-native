@@ -102,7 +102,7 @@ export default function IntroScreen(props: any) {
         {
           key: 1,
           title: 'Welcome to ReVew!',
-          text: 'Tired of sifting through hundreds of reviews written by strangers?\nWe are too...',
+          text: 'Tired of sifting through hundreds of 💩 reviews written by strangers or bots?\nWe are too...',
           image: require('../assets/svg/undraw_neighbors.svg')
         },
         {

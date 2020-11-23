@@ -19,24 +19,6 @@ export default class MapToolbar extends React.Component<
             <View style={styles.mapToolButtonContainer}>
                 <Button 
                     style={styles.mapButton} 
-                    onPress={this.props.onPressCurrentLocation}>
-                    {
-                        this.props.loadingLocation ?
-                        <Spinner 
-                            style={{marginTop: 2, marginLeft: 2}} 
-                            color={theme.DARK_COLOR}/> : 
-                        <View>
-                            <Icon 
-                                type={'FontAwesome5'} 
-                                name={'location-arrow'}
-                                style={styles.buttonIcon}>
-                            </Icon>
-                            <Label style={styles.buttonText}>Current Location</Label>
-                        </View>
-                    }
-                </Button>
-                <Button 
-                    style={styles.mapButton} 
                     onPress={this.props.onPressLoadNearby}>
                     {
                         this.props.loadingNearby ?
@@ -50,6 +32,24 @@ export default class MapToolbar extends React.Component<
                                 style={styles.buttonIcon}>
                             </Icon>
                             <Label style={styles.buttonText}>Nearby Reviews</Label>
+                        </View>
+                    }
+                </Button>
+                <Button 
+                    style={styles.mapButton} 
+                    onPress={this.props.onPressCurrentLocation}>
+                    {
+                        this.props.loadingLocation ?
+                        <Spinner 
+                            style={{marginTop: 2, marginLeft: 2}} 
+                            color={theme.DARK_COLOR}/> : 
+                        <View>
+                            <Icon 
+                                type={'FontAwesome5'} 
+                                name={'location-arrow'}
+                                style={styles.buttonIcon}>
+                            </Icon>
+                            <Label style={styles.buttonText}>Current Location</Label>
                         </View>
                     }
                 </Button>

@@ -59,7 +59,6 @@ export default class WriteReview extends Component<{
                 rating3: nextProps.editReview.avg_rating,
                 pricing: nextProps.editReview.pricing,
                 comments: nextProps.editReview.comments,
-                avg_rating: nextProps.editReview.avg_rating,
                 editingReview: true
             };
         }
@@ -166,7 +165,7 @@ export default class WriteReview extends Component<{
             service: rating3,
             comments: comments,
             pricing: pricing,
-            avg_rating: this.avgRating()
+            avg_rating: avg
         }
 
         this.setState({ submittingReview: true });
@@ -187,7 +186,7 @@ export default class WriteReview extends Component<{
     avgRating(){
         if(this.isServiceEstablishment()){
             const avg = (this.state.rating1 + this.state.rating2 + this.state.rating3) / 3;
-            return +avg.toFixed(1);
+            return +avg.toFixed(2);
         } 
         
         return this.state.rating1;

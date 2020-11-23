@@ -17,7 +17,7 @@ export default function HomeScreen(props: any) {
           rightButtonIconName={'user-friends'}
           onPressRightButton={()=> props.navigation.navigate('Social')}/>
         <Content contentContainerStyle={styles.container}>
-          <MapContainer navigation={props.navigation} />
+          <MapContainer navigation={props.navigation} route={props.route} />
         </Content>
       </Container>
     );

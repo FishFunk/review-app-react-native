@@ -32,7 +32,7 @@ export default class Map extends React.Component<
     markerRef: Marker | null  = null;
 
     componentDidUpdate(prevProps: any){
-        if(this.props.refreshCallout && this.props.refreshCallout !== prevProps.refreshCallout){
+        if(!_isEqual(prevProps.markers, this.props.markers) && this.props.refreshCallout){
             if(Platform.OS === 'ios'){
                 this.markerRef?.redrawCallout();
             } else {
@@ -151,7 +151,7 @@ export default class Map extends React.Component<
             <MapToolbar 
                 loadingLocation={this.props.loadingLocation}
                 loadingNearby={this.props.loadingNearby}
-                showListViewButton={this.props.markers.length > 0}
+                showListViewButton={this.props.markers.length > 1}
                 onPressCurrentLocation={this.handlePressCurrentLocation.bind(this)}
                 onPressListView={this.handlePressListView.bind(this)}
                 onPressLoadNearby={this.handlePressLoadNearby.bind(this)}

@@ -19,7 +19,8 @@ import SpinnerContainer from '../SpinnerContainer';
 
 export default class MapContainer extends React.Component<
     {
-        navigation: any
+        navigation: any,
+        route: any
     }, 
     {
         loadingMap: boolean,
@@ -287,15 +288,6 @@ export default class MapContainer extends React.Component<
         }
     }
 
-    reloadPlaceReviews(){
-        // Reload single marker
-        const { placeId, markers } = this.state;
-
-        if(markers.length === 1){
-            this.loadSingleMarker(placeId);      
-        }
-    }
-
     onPressMapArea(){
         Keyboard.dismiss();
     }
@@ -309,8 +301,15 @@ export default class MapContainer extends React.Component<
         this.setState({ showListModal: true });
     }
 
-    onFocus(){
-        this.reloadPlaceReviews();
+    async onFocus(){
+        const { placeId } = this.state;
+        const { reloadMarkers } = this.props.route.params;
+
+        // Route param passed from Place Details if review was written or edited
+        if(placeId && reloadMarkers){
+            await this.loadSingleMarker(placeId);
+        }
+
         this.setState({ refreshCallout: false, showListModal: this.state.reshowListModal });
     }
 

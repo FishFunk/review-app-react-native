@@ -23,7 +23,7 @@ class ReviewStars extends Component<{ rating: number, fontSize: number, style?: 
     <Icon
       style={this.styles.star}
       key={key}
-      name="md-star-half"
+      name="ios-star-half"
     />
   );
 
@@ -37,26 +37,18 @@ class ReviewStars extends Component<{ rating: number, fontSize: number, style?: 
   render() {
     const { rating } = this.props;
     const fullStarCount = Math.floor(rating);
-    const addHalfStar = rating % 1 > 0.4;
-    let emptyStarCount = 5 - fullStarCount;
-
-    if(addHalfStar){
-      emptyStarCount --;
-    }
+    let addHalfStar = rating % 1 > 0.4;
 
     let stars = [];
-    for (let i = 1; i <= fullStarCount; i++) {
-      let star = this.FullStar(i);
-      stars.push(star);
-    }
-
-    if(addHalfStar){
-      stars.push(this.HalfStar(fullStarCount + 1));
-    }
-
-    for (let i = 1; i <= emptyStarCount; i++) {
-      let star = this.EmptyStar(fullStarCount + 1 + i);
-      stars.push(star);
+    for(let i = 1; i <= 5; i++){
+      if(i <= fullStarCount){
+        stars.push(this.FullStar(i));
+      } else if (addHalfStar){
+        stars.push(this.HalfStar(i));
+        addHalfStar = false;
+      } else {
+        stars.push(this.EmptyStar(i));
+      }
     }
 
     return <View style={{ flexDirection: "row", ...this.props.style }}>{stars}</View>;

@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { 
-    List, 
     ListItem, 
     Text, 
     Body, 
@@ -50,7 +49,8 @@ export default class PlaceDetails extends React.Component<
         disableEdit: boolean,
         photoUrls: Array<string>,
         rating: number,
-        pricing: number
+        pricing: number,
+        reloadMarkers: boolean
     }> {
 
     // Initalize complex state values to remove type warnings
@@ -70,7 +70,8 @@ export default class PlaceDetails extends React.Component<
         photoUrls: new Array<string>(),
         disableEdit: true,
         rating: 0,
-        pricing: 0
+        pricing: 0,
+        reloadMarkers: false
     }
 
 
@@ -127,7 +128,7 @@ export default class PlaceDetails extends React.Component<
         this.props.toggleSummaryModal(false);
     }
 
-    async onDismissModal(showReviewComplete: boolean){
+    async onDismissReviewModal(showReviewComplete: boolean){
         if(showReviewComplete){
             // Review submitted - reload detail view and show review confirmation modal
             this.setState({ 
@@ -135,8 +136,7 @@ export default class PlaceDetails extends React.Component<
                 showReviewModal: false, 
                 showReviewCompleteModal: true });
             const newReviewState = await this.getReviewState();
-            this.setState({ ...newReviewState, isLoading: false });
-
+            this.setState({ ...newReviewState, isLoading: false, reloadMarkers: true });
         } else {
             this.setState({ showReviewModal: false });
         }
@@ -175,6 +175,10 @@ export default class PlaceDetails extends React.Component<
 
     async onEditReview(reviewSummary: reviewSummary){
         this.setState({ showReviewModal: true, editReview: reviewSummary });
+    }
+
+    onNavigateBack(){
+        this.props.navigation.navigate('Home', { reloadMarkers: this.state.reloadMarkers })
     }
 
     renderReviewSummaries(listItem: any){
@@ -231,7 +235,7 @@ export default class PlaceDetails extends React.Component<
                     <Button 
                         transparent
                         style={{ width: 50, height: 50}}
-                        onPress={this.props.navigation.goBack}>
+                        onPress={this.onNavigateBack.bind(this)}>
                         <Icon 
                             style={{color: theme.PRIMARY_COLOR}}
                             name={'arrow-left'} 
@@ -300,7 +304,7 @@ export default class PlaceDetails extends React.Component<
                 editReview={this.state.editReview}
                 place={this.state.place}
                 showModal={this.state.showReviewModal} 
-                onDismissModal={this.onDismissModal.bind(this)}/>
+                onDismissModal={this.onDismissReviewModal.bind(this)}/>
 
             <ReviewComplete 
                 showModal={this.state.showReviewCompleteModal} 

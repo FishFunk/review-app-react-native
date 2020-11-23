@@ -34,6 +34,15 @@ class EditableStars extends Component<{
             key={key} name="ios-star"/>
     );
 
+    HalfStar = (key: any) => (
+        <Icon
+          onPress={this.updateRating.bind(this, key)}
+          style={this.styles.star}
+          key={key}
+          name="ios-star-half"
+        />
+      );
+
     EmptyStar = (key: any) => (
         <Icon
             onPress={this.updateRating.bind(this, key)}
@@ -45,17 +54,19 @@ class EditableStars extends Component<{
 
     render() {
         const { rating } = this.state;
+        const fullStarCount = Math.floor(rating);
+        let addHalfStar = rating % 1 > 0.4;
 
         let stars = [];
-        for (let i = 1; i <= 5; i++) {
-            let star: JSX.Element;
-            if(i <= rating){
-                star = this.FullStar(i);
-            } else {
-                star = this.EmptyStar(i);
-            }
-            
-            stars.push(star);
+        for(let i = 1; i <= 5; i++){
+          if(i <= fullStarCount){
+            stars.push(this.FullStar(i));
+          } else if (addHalfStar){
+            stars.push(this.HalfStar(i));
+            addHalfStar = false;
+          } else {
+            stars.push(this.EmptyStar(i));
+          }
         }
 
         return <View style={{ flexDirection: "row" }}>{stars}</View>;
