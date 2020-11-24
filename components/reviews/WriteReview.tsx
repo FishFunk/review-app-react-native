@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { Modal, View, StyleSheet, Dimensions, ScrollView, NativeSyntheticEvent, TextInputKeyPressEventData, Keyboard } from 'react-native';
+import { 
+    Modal, 
+    View, 
+    StyleSheet, 
+    Dimensions, 
+    ScrollView, 
+    NativeSyntheticEvent, 
+    TextInputKeyPressEventData, 
+    Keyboard } from 'react-native';
 import { 
     Button, 
     Text, 
@@ -93,6 +101,7 @@ export default class WriteReview extends Component<{
     }
 
     onKeyPress(e: NativeSyntheticEvent<TextInputKeyPressEventData>){
+        // console.log(e.nativeEvent.key);
         if(e.nativeEvent.key === 'Enter'){
             e.preventDefault();
             Keyboard.dismiss();
@@ -240,12 +249,12 @@ export default class WriteReview extends Component<{
                             </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
                                 <Label>Comments</Label>
-                                <Label style={styles.sublabel}>up to 250 characters</Label>
+                                <Label style={styles.sublabel}>up to 150 characters</Label>
                                 <Textarea 
                                     returnKeyType='done'
                                     onKeyPress={this.onKeyPress.bind(this)}
-                                    value={this.props.editReview ? this.props.editReview.comments : this.state.comments}
-                                    maxLength={250}
+                                    value={this.state.comments}
+                                    maxLength={150}
                                     multiline={true}
                                     onChangeText={this.onEditComment.bind(this)}
                                     style={styles.textArea} 
@@ -269,12 +278,12 @@ export default class WriteReview extends Component<{
                             </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
                                 <Label>Comments</Label>
-                                <Label style={styles.sublabel}>up to 250 characters</Label>
+                                <Label style={styles.sublabel}>up to 150 characters</Label>
                                 <Textarea 
                                     returnKeyType='done'
                                     onKeyPress={this.onKeyPress.bind(this)}
-                                    value={this.props.editReview ? this.props.editReview.comments : this.state.comments}
-                                    maxLength={250}
+                                    value={this.state.comments}
+                                    maxLength={150}
                                     multiline={true}
                                     onChangeText={this.onEditComment.bind(this)}
                                     style={styles.textArea} 
