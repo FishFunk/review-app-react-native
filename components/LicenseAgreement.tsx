@@ -15,7 +15,8 @@ export default class LicenseAgreement extends React.Component<
         return (
 <View style={styles.container}>
 <AppHeader 
-    title={'Legal'}
+    fontSize={18}
+    headerStyles={{ height: 32 }}
     onPressButton={this.props.onDismissModal.bind(this)} 
     buttonIconName={'times'}/>
         <ScrollView style={{}}>

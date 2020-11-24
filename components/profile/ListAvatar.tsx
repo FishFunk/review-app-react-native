@@ -25,14 +25,14 @@ export default function ListAvatar(props: { img: string, user_verified: boolean 
         },
         verifiedContainer: {
             flexDirection: 'row', 
-            marginTop: 5, 
+            marginTop: 2,
             justifyContent: 'space-evenly'
         }
     });
 
 
     return (
-        <View>
+        <View style={props.user_verified ? {paddingBottom: 5} : {}}>
             {
                 props.user_verified ?
                     <View style={styles.verifiedUserAvatar}>

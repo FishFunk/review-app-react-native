@@ -11,9 +11,9 @@ import {
 import theme from '../styles/theme';
 
 export default function AppHeader(props: any) {
-    const fontSize = 24;
+    const fontSize = props.fontSize ? props.fontSize : 24;
     return (
-        <Header style={{backgroundColor: theme.LIGHT_COLOR}}>
+        <Header style={{backgroundColor: theme.LIGHT_COLOR, ...props.headerStyles }}>
             <Left>
             {
                 <Button transparent onPress={props.onPressButton}>
@@ -23,7 +23,9 @@ export default function AppHeader(props: any) {
             }
             </Left>
             <Body>
-                <Title>{props.title}</Title>
+                {
+                    props.title ? <Title>{props.title}</Title> : null
+                }
             </Body>
             <Right>
                 {

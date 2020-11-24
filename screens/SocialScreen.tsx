@@ -16,7 +16,7 @@ export default function SocialScreen(props: any){
                 title={'Friend Finder'}
                 rightButtonIconName={'search'}
                 onPressRightButton={()=> props.navigation.navigate('Search')}/>
-            <Content contentContainerStyle={styles.container}>
+            <Content contentContainerStyle={styles.container} scrollEnabled={false}>
                 <SocialContainer navigation={props.navigation}/>
             </Content>
         </Container>

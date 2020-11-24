@@ -25,6 +25,7 @@ import { iosAppStoreUrl, androidPlayStoreUrl } from '../../constants/Urls';
 import { socialShareMessage } from '../../constants/Messages';
 import SpinnerContainer from '../SpinnerContainer';
 import UndrawFollowersSvg from '../../svgs/undraw_followers';
+import { Contact } from 'expo-contacts';
 
 export default class SocialContainer extends React.Component<{
         navigation: any
@@ -32,13 +33,19 @@ export default class SocialContainer extends React.Component<{
     { 
         suggestedFriends: Array<appUser>, 
         followingFriends: Array<appUser>, 
-        loading: boolean
+        topReviewers: Array<appUser>, 
+        followingIds: Array<string>,
+        loading: boolean,
+        permissionGranted: boolean
     }> {
   
     state = {
         loading: true,
         suggestedFriends: new Array<appUser>(),
-        followingFriends: new Array<appUser>()
+        followingFriends: new Array<appUser>(),
+        topReviewers: new Array<appUser>(),
+        permissionGranted: false,
+        followingIds: new Array<string>()
     };
 
     _unsubscribe: any;
@@ -48,37 +55,48 @@ export default class SocialContainer extends React.Component<{
     }
 
     componentDidMount(){
-        this._unsubscribe = this.props.navigation.addListener('focus', () => {
-            this.populateSocialLists();
-        });
-
         this.init()
-            .finally(()=>this.setState({ loading: false }));
+            .then((finalPermission: boolean)=> this.setState({ permissionGranted: finalPermission }))
+            .finally(async ()=>{
+                await this.populateSocialLists();
+                this._unsubscribe = this.props.navigation.addListener('focus', this.populateSocialLists.bind(this));
+                this.setState({ loading: false });
+            });
     }
 
     componentWillUnmount(){
         this._unsubscribe();
     }
 
-    async init(){
+    async init(): Promise<boolean>{
         let finalPermission = await checkContactsPermission();
         if(!finalPermission){
             finalPermission = await requestContactsPermission();
         }
 
-        if(finalPermission){
-            await this.populateSocialLists();
-        } else {
+        if(!finalPermission){
             Toast.show({
-                text: 'This feature requires permission to access your contacts. You can grant this in your phone settings.',
-                position: 'bottom'
+                text: 'To work properly, this feature requires access to your phone contacts. You can edit permissions in your phone settings.',
+                position: 'bottom',
+                duration: 5000,
+                buttonText: 'OK'
             });
         }
+
+        return finalPermission;
     }
 
     async populateSocialLists(){
-        const contacts = await getContacts();
-        const allSuggestedFriends = await FirebaseService.findFriends(contacts);
+        let contacts: Contact[] = [];
+        if(this.state.permissionGranted){
+            try {
+                contacts = await getContacts();
+            } catch(ex) {
+                FirebaseService.logError(ex);
+            }
+        }
+        
+        const [allSuggestedFriends, topReviewers] = await FirebaseService.findSuggestedConnections(contacts);
         const followingIds = await FirebaseService.getUserFollowingIds();
         const followingUsers = await FirebaseService.getMultipleUsers(followingIds);
         let suggestedFriends = [];
@@ -91,8 +109,10 @@ export default class SocialContainer extends React.Component<{
         }
         
         this.setState({ 
+            followingIds: followingIds,
             suggestedFriends: suggestedFriends, 
-            followingFriends: followingUsers 
+            followingFriends: followingUsers,
+            topReviewers: topReviewers
         });
     }
 
@@ -103,7 +123,7 @@ export default class SocialContainer extends React.Component<{
         followingFriends.push(user);
         const newIds = _map(followingFriends, f => f.id);
 
-        this.setState({ followingFriends: followingFriends, suggestedFriends: newSuggested });
+        this.setState({ followingIds: newIds, followingFriends: followingFriends, suggestedFriends: newSuggested });
         this.updateUserFollowingIds(newIds);
     }
 
@@ -121,7 +141,7 @@ export default class SocialContainer extends React.Component<{
 
         suggestedFriends.push(user);
 
-        this.setState({ followingFriends: newFriends, suggestedFriends: suggestedFriends });
+        this.setState({ followingIds: newIds, followingFriends: newFriends, suggestedFriends: suggestedFriends });
         this.updateUserFollowingIds(newIds);
     }
 
@@ -165,6 +185,26 @@ export default class SocialContainer extends React.Component<{
                                         user={user} 
                                         following={false} 
                                         onButtonPress={this.onAddContact.bind(this, user)}/>)
+                            }
+                            {                      
+                                this.state.topReviewers.length > 0 ?  
+                                    <ListItem itemDivider style={styles.itemDivider}>
+                                        <Text style={styles.dividerText}>Top Reviewers</Text>
+                                    </ListItem>  : null
+                            }
+                            {
+                                this.state.topReviewers.map((user: appUser, idx)=>
+                                    <UserListItem 
+                                        key={user.id}
+                                        user={user} 
+                                        following={_indexOf(this.state.followingIds, user.id) >= 0} 
+                                        onButtonPress={()=>{
+                                            _indexOf(this.state.followingIds, user.id) >= 0 ?
+                                                this.onRemoveContact(user) :
+                                                this.onAddContact(user);
+                                        }}>
+                                        <Text style={{paddingLeft: 10, fontSize: 14}}>{user.reviews?.length} reviews</Text>
+                                    </UserListItem>)
                             }
                             {                      
                                 this.state.followingFriends.length > 0 ?  

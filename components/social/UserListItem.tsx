@@ -7,7 +7,8 @@ import {
     Icon, 
     Button, 
     Thumbnail,
-    Body
+    Body,
+    View
   } from 'native-base';
 import { StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
@@ -15,7 +16,7 @@ import { appUser } from '../../models/user';
 import ListAvatar from '../profile/ListAvatar';
 
 export default function UserListItem(
-    props: { user: appUser, onButtonPress: (following: boolean) => void, following: boolean }) {
+    props: { user: appUser, onButtonPress: (following: boolean) => void, following: boolean, children?: any }) {
 
     const { user, onButtonPress, following } = props;
     const verified = user.reviews ? user.reviews.length > 0 : false
@@ -25,7 +26,10 @@ export default function UserListItem(
     return (
         <ListItem style={{justifyContent: 'space-evenly'}}>
             <ListAvatar user_verified={verified} img={user.photoUrl || ''} />
-            <Body><Text style={styles.name}>{user.firstName} {user.lastName}</Text></Body>
+            <Body>
+                <Text style={styles.body}>{user.firstName} {user.lastName}</Text>
+                { props.children }
+            </Body>
             <Button 
                 transparent
                 onPress={()=>onButtonPress(following)}>
@@ -54,7 +58,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         color: theme.SECONDARY_COLOR
     },
-    name: {
+    body: {
         paddingLeft: 10
     }
 });

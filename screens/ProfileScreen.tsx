@@ -11,7 +11,7 @@ export default function ProfileScreen(props: any) {
     return (
       <Container>
         <AppHeader onPressButton={props.navigation.goBack} buttonIconName={'arrow-left'} title={'Profile'}/>
-        <Content contentContainerStyle={styles.container}>
+        <Content contentContainerStyle={styles.container} scrollEnabled={false}>
             <ProfileContainer navigation={props.navigation}/>
         </Content>
       </Container>

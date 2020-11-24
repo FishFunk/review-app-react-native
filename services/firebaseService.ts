@@ -330,7 +330,7 @@ class FirebaseService {
 		}
 	}
 
-	async findFriends(contactList: Contact[]): Promise<appUser[]>{
+	async findSuggestedConnections(contactList: Contact[]): Promise<[appUser[], appUser[]]>{
 		this._verifyInitialized();
 
 		const emails = <any>{};
@@ -347,6 +347,7 @@ class FirebaseService {
 			}
 		});
 
+		let topReviewers = new Array<appUser>();
 		let matches = new Array<appUser>();
 		const usersSnapshot = await this.db.ref(`users`).once('value');
 		usersSnapshot.forEach((snap)=>{
@@ -356,10 +357,21 @@ class FirebaseService {
 					(user.lastName && lastNames[user.lastName.toLowerCase()])){
 					matches.push(user);
 				}
+				if(user.reviews && user.reviews.length > 5){
+					if(topReviewers.length === 0){
+						topReviewers.push(user);
+					} else {
+						if(user.reviews.length > topReviewers[topReviewers.length - 1].reviews.length){
+							topReviewers.push(user);
+						}
+					}
+				}
 			}
 		});
 
-		return matches;
+		const topReviewerSlice = topReviewers.length > 5 ? topReviewers.slice(topReviewers.length - 5) : topReviewers;
+
+		return [matches, topReviewerSlice];
 	}
 
 	async submitReview(place: fullApiPlace, review: any): Promise<any>{

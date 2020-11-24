@@ -202,11 +202,19 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                     </View> : null
                 }
                 <Button transparent onPress={this.onLogout} style={styles.logoutBtn}>
-                    <Text style={styles.buttonText}>Logout</Text>
+                    <Text style={styles.logoutText}>Logout</Text>
                 </Button>
-                <Button transparent onPress={this.showModal.bind(this)} style={styles.logoutBtn}>
-                    <Text style={{fontSize: 12}}>License Agreement</Text>
-                </Button>
+                <View style={styles.legalBtnGroup}>
+                    <Button transparent onPress={this.showModal.bind(this)} style={styles.legalBtn}>
+                        <Text style={styles.legalBtnText}>License Agreement</Text>
+                    </Button>
+                    <Button transparent onPress={()=>{alert("Not implemented")}} style={styles.legalBtn}>
+                        <Text style={styles.legalBtnText}>Privacy Policy</Text>
+                    </Button>
+                    <Button transparent onPress={()=>{alert("Not implemented")}} style={styles.legalBtn}>
+                        <Text style={styles.legalBtnText}>Contact Us</Text>
+                    </Button>
+                </View>
                 <LicenseAgreementModal onDismissModal={this.onDismissModal.bind(this)} isOpen={this.state.isModalOpen}/>
             </ScrollView>
         )};
@@ -241,9 +249,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         minHeight: 60
     },
-    buttonText: {
-        color: theme.DANGER_COLOR
-    },
     verifiedIcon: {
         color: theme.PRIMARY_COLOR,
         fontSize: 20
@@ -255,6 +260,22 @@ const styles = StyleSheet.create({
     logoutBtn: {
         alignSelf: 'center',
         marginTop: '10%'
+    },
+    logoutText: {
+        fontSize: 14,
+        color: theme.DANGER_COLOR
+    },
+    legalBtnGroup:{
+        marginTop: 20,
+        padding: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
+    },
+    legalBtn: {
+    },
+    legalBtnText: {
+        color: theme.PRIMARY_COLOR,
+        fontSize: 10
     },
     // Account created - need to verify email, phone, and write a review
     notVerified: {

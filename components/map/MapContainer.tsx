@@ -303,7 +303,7 @@ export default class MapContainer extends React.Component<
 
     async onFocus(){
         const { placeId } = this.state;
-        const { reloadMarkers } = this.props.route.params;
+        const { reloadMarkers } = this.props.route.params ? this.props.route.params : { reloadMarkers: false };
 
         // Route param passed from Place Details if review was written or edited
         if(placeId && reloadMarkers){
