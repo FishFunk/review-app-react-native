@@ -5,15 +5,13 @@ import {
     StyleSheet, 
     Dimensions, 
     ScrollView, 
-    NativeSyntheticEvent, 
-    TextInputKeyPressEventData, 
+    TextInput,
     Keyboard } from 'react-native';
 import { 
     Button, 
     Text, 
     Form, 
     Item, 
-    Textarea, 
     Label, 
     Toast,
     Root,
@@ -98,14 +96,6 @@ export default class WriteReview extends Component<{
 
     onUpdatePricing(newRating: number){
         this.setState({ pricing: newRating });
-    }
-
-    onKeyPress(e: NativeSyntheticEvent<TextInputKeyPressEventData>){
-        // console.log(e.nativeEvent.key);
-        if(e.nativeEvent.key === 'Enter'){
-            e.preventDefault();
-            Keyboard.dismiss();
-        }
     }
 
     isServiceEstablishment(){
@@ -209,8 +199,9 @@ export default class WriteReview extends Component<{
             animationType={'slide'}
             transparent={true}
         >
+            <View style={styles.modalView}>
             <Root>
-            <ScrollView contentContainerStyle={styles.modalView} bounces={false}>
+                <ScrollView>
                 <View>
                     <Text style={styles.title}>{this.props.place.name}</Text>
                 </View>
@@ -249,18 +240,15 @@ export default class WriteReview extends Component<{
                             </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
                                 <Label>Comments</Label>
-                                <Label style={styles.sublabel}>up to 150 characters</Label>
-                                <Textarea 
+                                <Label style={styles.sublabel}>up to 250 characters</Label>
+                                <TextInput 
                                     returnKeyType='done'
-                                    onKeyPress={this.onKeyPress.bind(this)}
                                     value={this.state.comments}
-                                    maxLength={150}
+                                    maxLength={250}
                                     multiline={true}
+                                    blurOnSubmit={true}
                                     onChangeText={this.onEditComment.bind(this)}
-                                    style={styles.textArea} 
-                                    rowSpan={4} 
-                                    bordered={false} 
-                                    underline={false}/>
+                                    style={styles.textArea} />
                             </Item>
                             <Item stackedLabel style={styles.starItem}>
                                 <Label>Average Total</Label>
@@ -278,18 +266,15 @@ export default class WriteReview extends Component<{
                             </Item>
                             <Item stackedLabel style={styles.textAreaItem}>
                                 <Label>Comments</Label>
-                                <Label style={styles.sublabel}>up to 150 characters</Label>
-                                <Textarea 
+                                <Label style={styles.sublabel}>up to 250 characters</Label>
+                                <TextInput 
                                     returnKeyType='done'
-                                    onKeyPress={this.onKeyPress.bind(this)}
+                                    blurOnSubmit={true}
                                     value={this.state.comments}
-                                    maxLength={150}
+                                    maxLength={250}
                                     multiline={true}
                                     onChangeText={this.onEditComment.bind(this)}
-                                    style={styles.textArea} 
-                                    rowSpan={4} 
-                                    bordered={false} 
-                                    underline={false}/>
+                                    style={styles.textArea} />
                             </Item>
                         </Form>
                     }  
@@ -312,6 +297,7 @@ export default class WriteReview extends Component<{
                 </View>
             </ScrollView>
             </Root>
+            </View>
         </Modal>
         )
     }
@@ -320,20 +306,12 @@ export default class WriteReview extends Component<{
 const styles=StyleSheet.create({
     modalView: {
         paddingTop: 40,
+        paddingRight: 10,
+        paddingLeft: 10,
+        marginBottom: 20,
         height: Dimensions.get('screen').height,
         width: Dimensions.get('screen').width,
-        backgroundColor: theme.LIGHT_COLOR,
-        padding: 10,
-        alignItems: "center",
-        borderRadius: 20,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5
+        backgroundColor: theme.LIGHT_COLOR
     },
     formContainer: {
         width: '100%',
@@ -364,10 +342,13 @@ const styles=StyleSheet.create({
         borderBottomWidth: 0
     },
     textArea: {
+        height: 125,
+        padding: 5,
         marginTop: 15,
         width: '100%',
         borderWidth: 0.5,
-        borderColor: theme.DARK_COLOR
+        borderColor: theme.GRAY_COLOR,
+        fontFamily: theme.fontLight
     },
     starItem: {
         justifyContent: 'space-between',
