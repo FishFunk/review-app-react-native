@@ -51,6 +51,7 @@ export default class MapContainer extends React.Component<
     mapViewRef: MapView | null = null;
     unsubscribe1: any;
     unsubscribe2: any;
+    _reloadCurrentMarkers: boolean = false;
 
     // initial state
     state = {
@@ -79,10 +80,14 @@ export default class MapContainer extends React.Component<
             this.onFocus();
         });
 
+        FirebaseService.onUserFollowingUpdated(()=>{
+            this._reloadCurrentMarkers = true;
+        });
+
         this.load()
             .then((newState)=>{
                 this.setState({ ...newState, loadingMap: false }, ()=>{
-                    this.loadNearbyPlaceMarkers(5);
+                    this.loadNearbyPlaceMarkers(10);
                 });
             })
             .catch(error=>{
@@ -93,6 +98,7 @@ export default class MapContainer extends React.Component<
     componentWillUnmount(){
         this.unsubscribe1();
         this.unsubscribe2();
+        FirebaseService.offUserFollowingUpdated();
     }
 
     setMapRef(ref: MapView | null){
@@ -123,9 +129,10 @@ export default class MapContainer extends React.Component<
             Toast.show({
                 text: 'No reviews found in this area within your network. Try following more reviewers in the social tab!',
                 position: 'bottom',
-                duration: 3000
+                duration: 5000,
+                buttonText: 'OK'
             });
-            return this.setState({ loadingNearby: false });
+            return this.setState({ loadingNearby: false, markers: [], places: [] });
         }
 
         const markers = this.convertPlacesToMarkers(places);
@@ -140,7 +147,7 @@ export default class MapContainer extends React.Component<
 
             this.mapViewRef.fitToCoordinates(latLngs, 
                 { animated: true, 
-                    edgePadding: {top: 80, right: 80, bottom: 80, left: 80 }});
+                    edgePadding: {top: 100, right: 80, bottom: 80, left: 80 }});
         }
 
         this.setState({ markers: markers, loadingNearby: false, places: places, hideCallout: true  });
@@ -302,15 +309,20 @@ export default class MapContainer extends React.Component<
     }
 
     async onFocus(){
-        const { placeId } = this.state;
-        const { reloadMarkers } = this.props.route.params ? this.props.route.params : { reloadMarkers: false };
-
-        // Route param passed from Place Details if review was written or edited
-        if(placeId && reloadMarkers){
-            await this.loadSingleMarker(placeId);
+        if(this._reloadCurrentMarkers){
+            this._reloadCurrentMarkers = false;
+            await this.loadNearbyPlaceMarkers();
+        } else {
+            const { placeId } = this.state;
+            const { reloadMarkers } = this.props.route.params ? this.props.route.params : { reloadMarkers: false };
+    
+            // Route param passed from Place Details if review was written or edited
+            if(placeId && reloadMarkers){
+                await this.loadSingleMarker(placeId);
+            }
+    
+            this.setState({ refreshCallout: false, showListModal: this.state.reshowListModal });
         }
-
-        this.setState({ refreshCallout: false, showListModal: this.state.reshowListModal });
     }
 
     onDismissListModal(){

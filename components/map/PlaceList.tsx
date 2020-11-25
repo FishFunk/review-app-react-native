@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
         maxHeight: 100
     },
     name: {
-        fontWeight: 'bold'
+        fontFamily: theme.fontBold
     },
     info: {
         fontSize: 12

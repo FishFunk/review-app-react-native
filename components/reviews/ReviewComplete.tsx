@@ -147,7 +147,7 @@ const styles=StyleSheet.create({
         color: theme.DARK_COLOR,
         textAlign: 'center',
         fontSize: 56,
-        fontWeight: 'bold'
+        fontFamily: theme.fontBold
     },
     regularText: {
         color: theme.DARK_COLOR,

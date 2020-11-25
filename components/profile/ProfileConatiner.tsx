@@ -139,6 +139,7 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                     {
                         this.allVerifcationStepsComplete()?
                         <View style={{ position: 'absolute', top: 10 }}>
+                            <Text style={{fontSize: 12}}>verified</Text>
                             <Icon style={{
                                 fontSize: 40,
                                 color: theme.STAR_COLOR,

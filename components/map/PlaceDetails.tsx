@@ -184,13 +184,13 @@ export default class PlaceDetails extends React.Component<
     renderReviewSummaries(listItem: any){
         const { item: review } = listItem;
 
-        const disableThanks = _find(review.thanks, (t) => t.user_id === FirebaseService.getCurrentUserId());
-        const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId());
+        const disableThanks = _find(review.thanks, (t) => t.user_id === FirebaseService.getCurrentUserId()) != null;
+        const disableReport = _find(review.reports, (r) => r.reporter_id === FirebaseService.getCurrentUserId()) != null;
         return <ListItem avatar style={styles.listItem}>
             <Left>
                 <ListAvatar user_verified={review.user_verified} img={review.img} />
             </Left>
-            <Body style={{transform: [{ translateX: -5 }]}}>
+            <Body>
                 <ReviewStars rating={review.avg_rating} fontSize={18} />
                 <Text>{review.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : review.name}</Text>
                 <Text note>{review.comments}</Text>
@@ -325,11 +325,11 @@ const styles = StyleSheet.create({
     titleView: {
         flexDirection: 'row', 
         justifyContent: 'space-between',
-        marginTop: 10
+        marginTop: '10%'
     },
     title: {
         maxWidth: 250,
-        fontWeight: 'bold',
+        fontFamily: theme.fontBold,
         fontSize: 20,
         textAlign: 'center',
         flexWrap: 'wrap'

@@ -3,12 +3,9 @@ import {
     ListItem, 
     Text, 
     Left, 
-    Right, 
     Icon, 
     Button, 
-    Thumbnail,
-    Body,
-    View
+    Body
   } from 'native-base';
 import { StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
@@ -24,13 +21,16 @@ export default function UserListItem(
         && user.phone_verified;
 
     return (
-        <ListItem style={{justifyContent: 'space-evenly'}}>
-            <ListAvatar user_verified={verified} img={user.photoUrl || ''} />
-            <Body>
-                <Text style={styles.body}>{user.firstName} {user.lastName}</Text>
+        <ListItem avatar style={{justifyContent: 'space-evenly'}}>
+            <Left>
+                <ListAvatar user_verified={verified} img={user.photoUrl || ''} />
+            </Left>
+            <Body style={styles.body}>
+                <Text>{user.firstName} {user.lastName}</Text>
                 { props.children }
             </Body>
             <Button 
+                style={{alignSelf: 'center'}}
                 transparent
                 onPress={()=>onButtonPress(following)}>
                 {
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
         color: theme.SECONDARY_COLOR
     },
     body: {
-        paddingLeft: 10
+        minHeight: 80,
+        justifyContent: 'center'
     }
 });

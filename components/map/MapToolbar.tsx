@@ -1,7 +1,7 @@
 import React from 'react';
 import theme from '../../styles/theme';
 import { View, StyleSheet  } from 'react-native';
-import { Button, Icon, Label, Spinner } from 'native-base';
+import { Button, Icon, Label, Spinner, Text } from 'native-base';
 
 export default class MapToolbar extends React.Component<
     {

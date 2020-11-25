@@ -8,7 +8,7 @@ class ReviewDollars extends Component<{ rating: number, fontSize: number, style?
   styles = StyleSheet.create({
     fullDollar: {
       fontSize: this.props.fontSize,
-      color: theme.DARK_COLOR
+      color: theme.SECONDARY_COLOR
     },
     emptyDollar: {
       fontSize: this.props.fontSize,

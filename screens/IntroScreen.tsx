@@ -27,12 +27,12 @@ export default function IntroScreen(props: any) {
       slide: {
         height: '100%',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         paddingBottom: 100
       },
       title: {
         fontSize: 30,
-        fontWeight: 'bold',
+        fontFamily: theme.fontBold,
         marginTop: 50,
         marginLeft: 20, 
         marginRight: 20,
@@ -52,7 +52,7 @@ export default function IntroScreen(props: any) {
       },
       buttonGroup: {
         width: '100%',
-        justifyContent: "space-around",
+        justifyContent: "space-evenly",
         flexDirection: 'row',
         backgroundColor: 'transparent'
       },

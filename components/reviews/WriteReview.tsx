@@ -357,7 +357,8 @@ const styles=StyleSheet.create({
         alignItems: 'center'
     },
     title: {
-        fontWeight: 'bold',
+        marginTop: '10%',
+        fontFamily: theme.fontBold,
         fontSize: 20,
         textAlign: 'center',
         flexWrap: 'wrap'

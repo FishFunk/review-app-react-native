@@ -1,5 +1,10 @@
 import { dbPlace } from "../models/place";
 import { reviewSummary } from "../models/reviews";
+import { appUser } from "../models/user";
+
+export const isUserVerified = function(usr: appUser){
+    return usr.email_verified && usr.phone_verified && usr.reviews && usr.reviews.length > 0;
+}
 
 export const generateRandomString = function(){
     return Math.random().toString(20).substr(2, 8);

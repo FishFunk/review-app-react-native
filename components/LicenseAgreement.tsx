@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     },
     sectionHeader: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: theme.fontBold,
         marginTop: 10,
         marginBottom: 10,
         alignSelf: 'center'

@@ -12,7 +12,7 @@ import _uniq from 'lodash/uniq';
 import _first from 'lodash/first';
 import _last from 'lodash/last';
 import { registerForPushNotificationsAsync } from './notificationService';
-import { generateRandomString, isInRadius } from './utils';
+import { generateRandomString, isInRadius, isUserVerified } from './utils';
 import { signInWithGoogle, signInWithFacebook } from './authService';
 import { authResult } from '../models/auth';
 
@@ -36,6 +36,14 @@ class FirebaseService {
 
 	getCurrentUserId(){
 		return this.auth.currentUser?.uid;
+	}
+
+	onUserFollowingUpdated(callback: ()=>any){
+		this.db.ref(`users/${this.auth.currentUser?.uid}/following`).on('value', callback);
+	}
+
+	offUserFollowingUpdated(){
+		this.db.ref(`users/${this.auth.currentUser?.uid}/following`).off();
 	}
 
 	async registerPushNotificationToken(){
@@ -322,7 +330,7 @@ class FirebaseService {
 					review_key: key,
 					reports: review.reports,
 					thanks: review.thanks,
-					user_verified: usr.email_verified && usr.phone_verified && usr.reviews?.length > 0
+					user_verified: isUserVerified(usr)
 				}
 				
 				reviewSummaries.push(reviewSummary);
@@ -330,7 +338,7 @@ class FirebaseService {
 		}
 	}
 
-	async findSuggestedConnections(contactList: Contact[]): Promise<[appUser[], appUser[]]>{
+	async findSuggestedConnections(contactList: Contact[]): Promise<[appUser[], appUser[], appUser[]]>{
 		this._verifyInitialized();
 
 		const emails = <any>{};
@@ -347,17 +355,22 @@ class FirebaseService {
 			}
 		});
 
+		let verifiedReviewers = new Array<appUser>();
 		let topReviewers = new Array<appUser>();
 		let matches = new Array<appUser>();
 		const usersSnapshot = await this.db.ref(`users`).once('value');
 		usersSnapshot.forEach((snap)=>{
 			const user = snap.val();
-			if(this.auth.currentUser.uid !== user.id){ // Exclude self from results
+			// Exclude self from results
+			if(this.auth.currentUser.uid !== user.id){
+				// Match users to contact emails and last names
 				if((user.email && emails[user.email.toLowerCase()]) || 
 					(user.lastName && lastNames[user.lastName.toLowerCase()])){
 					matches.push(user);
 				}
-				if(user.reviews && user.reviews.length > 5){
+				
+				// Users with 5 or more reviews
+				if(user.reviews && user.reviews.length >= 5){
 					if(topReviewers.length === 0){
 						topReviewers.push(user);
 					} else {
@@ -366,12 +379,17 @@ class FirebaseService {
 						}
 					}
 				}
+
+				// Verified users
+				if(isUserVerified(user)){
+					verifiedReviewers.push(user);
+				}
 			}
 		});
 
 		const topReviewerSlice = topReviewers.length > 5 ? topReviewers.slice(topReviewers.length - 5) : topReviewers;
 
-		return [matches, topReviewerSlice];
+		return [matches, topReviewerSlice, verifiedReviewers];
 	}
 
 	async submitReview(place: fullApiPlace, review: any): Promise<any>{

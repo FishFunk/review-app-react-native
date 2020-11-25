@@ -96,7 +96,7 @@ export default class SocialContainer extends React.Component<{
             }
         }
         
-        const [allSuggestedFriends, topReviewers] = await FirebaseService.findSuggestedConnections(contacts);
+        const [allSuggestedFriends, topReviewers, verifiedUsers] = await FirebaseService.findSuggestedConnections(contacts);
         const followingIds = await FirebaseService.getUserFollowingIds();
         const followingUsers = await FirebaseService.getMultipleUsers(followingIds);
         let suggestedFriends = [];
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     },
     dividerText: {
         color: theme.DARK_COLOR,
-        fontWeight: 'bold'
+        fontFamily: theme.fontBold
     },
     svgContainer: {
         justifyContent: 'center',
@@ -281,6 +281,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     inviteText: {
-        fontWeight: 'bold'
+        fontFamily: theme.fontBold
     }
 });

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import theme from '../styles/theme';
+import theme from '../../styles/theme';
 import { Button, Content, Text, Icon } from 'native-base';
-import UndrawReviewSvg from '../svgs/undraw_reviews';
-import FirebaseService from '../services/firebaseService';
+import UndrawReviewSvg from '../../svgs/undraw_reviews';
+import FirebaseService from '../../services/firebaseService';
 import Constants, { AppOwnership } from 'expo-constants';
 
 export default function LoginSocialScreen(props: any) {
