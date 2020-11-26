@@ -1,4 +1,12 @@
 {
+  "feedback" : {
+    "-MLnNb-L7lsiIeoc8DtI" : {
+      "date" : "Tue Nov 10 2020",
+      "feedback" : "Keep up the good work! 👌\n\n\n",
+      "name" : "Daniel Fishman",
+      "userId" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1"
+    }
+  },
   "metadata" : {
     "FCM_SERVER_KEY" : "AAAAGeOmNXA:APA91bFjdj4Y_JzNjTtZB4QubmeuiBkV--c0VDeg8kIN7Qss9sb7_HSwYrADwbmpyu6ecxvJjGHqLkGteJ2w2axYS_xV2bb6QQ2Ir5wM7jJ1QUZiBVYsDwLZJrFIfq3_M4uIe-ZCXnJD",
     "GOOGLE_API_KEY" : "AIzaSyDobz23IU0wHUTYVHp3rfMCQ4mzlBWscrE",
@@ -6,407 +14,99 @@
     "iOS_APP_STORE_URL" : ""
   },
   "places" : {
-    "ChIJ-x07qOFU2YAR1CQDnslKByc" : {
-      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
-      "id" : "ChIJ-x07qOFU2YAR1CQDnslKByc",
-      "lat" : 32.7573889,
-      "lng" : -117.1464083,
-      "name" : "Pop Pie Co.",
-      "reviews" : [ {
-        "atmosphere" : 5,
-        "avg_rating" : 5,
-        "comments" : "10/10 would always recommend. Everything is great and will continue to order from here. The crust is amazing and the have a variety of different pies. Sweet and savory options!",
-        "date" : "Wed Sep 16 2020",
-        "menu" : 5,
-        "place_id" : "ChIJ-x07qOFU2YAR1CQDnslKByc",
-        "place_name" : "Pop Pie Co.",
-        "pricing" : 2,
-        "reviewer_id" : "FLa6aNsJNcczjRWmMcjm0Dht52y1",
-        "service" : 5
-      }, {
-        "atmosphere" : 5,
-        "avg_rating" : 5,
-        "comments" : "My gf and I love this place! Pies are amazing. Sides are good too but wish they had more options.",
-        "date" : "Thu Sep 17 2020",
-        "menu" : 5,
-        "place_id" : "ChIJ-x07qOFU2YAR1CQDnslKByc",
-        "place_name" : "Pop Pie Co.",
-        "pricing" : 2,
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 5
-      } ]
-    },
-    "ChIJ09tsTu123IARoLw1-4Dz0qU" : {
-      "formatted_address" : "Lombard St, Vista, CA 92084, USA",
-      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
-      "id" : "ChIJ09tsTu123IARoLw1-4Dz0qU",
-      "lat" : 33.2194756,
-      "lng" : -117.2327838,
-      "name" : "Lombard Street",
-      "reviews" : [ {
-        "atmosphere" : 5,
-        "avg_rating" : 5,
-        "comments" : "12345",
-        "date" : "Tue Oct 27 2020",
-        "menu" : 0,
-        "place_id" : "ChIJ09tsTu123IARoLw1-4Dz0qU",
-        "place_name" : "Lombard Street",
-        "pricing" : 0,
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 0
-      } ],
-      "types" : [ "route" ]
-    },
-    "ChIJ0XMmY40B3IARvLxm_1x1hBA" : {
-      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
-      "id" : "ChIJ0XMmY40B3IARvLxm_1x1hBA",
-      "lat" : 32.7988484,
-      "lng" : -117.2560483,
-      "name" : "Taco Surf PB",
-      "reviews" : [ {
-        "atmosphere" : 5,
-        "avg_rating" : 4.333333333333333,
-        "comments" : "Pretty good! Nice being by the ocean.",
-        "date" : "Wed Sep 02 2020",
-        "menu" : 4,
-        "place_id" : "ChIJ0XMmY40B3IARvLxm_1x1hBA",
-        "place_name" : "Taco Surf PB",
-        "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
-        "service" : 4
-      }, {
-        "atmosphere" : 3,
-        "avg_rating" : 3.3,
-        "comments" : "Pretty good. Not a fan of the salsas. Definitely better to be had in the area.",
-        "date" : "Thu Sep 10 2020",
-        "menu" : 4,
-        "place_id" : "ChIJ0XMmY40B3IARvLxm_1x1hBA",
-        "place_name" : "Taco Surf PB",
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 3
-      } ]
-    },
-    "ChIJ64xh0eUD3IARg7gW9skpNQc" : {
-      "id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
-      "lat" : 32.8393106,
-      "lng" : -117.2768657,
-      "name" : "The Taco Stand",
-      "reviews" : [ {
-        "atmosphere" : 5,
-        "avg_rating" : 5,
-        "comments" : "A must visit if you’re in San Diego!",
-        "date" : "Tue Sep 01 2020",
-        "menu" : 5,
-        "place_id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
-        "place_name" : "The Taco Stand",
-        "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
-        "service" : 5
-      }, {
-        "atmosphere" : 3,
-        "avg_rating" : 3,
-        "comments" : "",
-        "date" : "Thu Sep 03 2020",
-        "menu" : 2,
-        "place_id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
-        "place_name" : "The Taco Stand",
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 4
-      }, {
-        "atmosphere" : 5,
-        "avg_rating" : 5,
-        "comments" : "Mmmmmmm, SO GOOD!!",
-        "date" : "Thu Sep 03 2020",
-        "menu" : 5,
-        "place_id" : "ChIJ64xh0eUD3IARg7gW9skpNQc",
-        "place_name" : "The Taco Stand",
-        "reviewer_id" : "mockUser1",
-        "service" : 5
-      } ]
-    },
-    "ChIJ9TBxRTqq3oARfDBVt6kOMLE" : {
-      "id" : "ChIJ9TBxRTqq3oARfDBVt6kOMLE",
-      "lat" : 32.7476247,
-      "lng" : -117.252021,
-      "name" : "Mike's Taco Club",
-      "reviews" : [ {
-        "atmosphere" : 5,
-        "avg_rating" : 5,
-        "comments" : "Best Cali burrito you’ll ever have!!\n",
-        "date" : "Wed Sep 16 2020",
-        "menu" : 5,
-        "place_id" : "ChIJ9TBxRTqq3oARfDBVt6kOMLE",
-        "place_name" : "Mike's Taco Club",
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 5
-      } ]
-    },
-    "ChIJPcAkAeNV2YAR8mhB1iCl6pw" : {
-      "id" : "ChIJPcAkAeNV2YAR8mhB1iCl6pw",
-      "lat" : 32.76271690000001,
-      "lng" : -117.1304423,
-      "name" : "Fortunate Son",
-      "reviews" : [ {
-        "atmosphere" : 4,
-        "avg_rating" : 3.3,
-        "comments" : "Atmosphere was super cool. Would like to try for dine in.  Did the take out option. Was over priced in my opinion and would rather of just had normal Chinese take out. Will try again in a few months \n",
-        "date" : "Wed Sep 16 2020",
-        "menu" : 2,
-        "place_id" : "ChIJPcAkAeNV2YAR8mhB1iCl6pw",
-        "place_name" : "Fortunate Son",
-        "reviewer_id" : "FLa6aNsJNcczjRWmMcjm0Dht52y1",
-        "service" : 4
-      } ]
-    },
-    "ChIJU6bgSo0B3IARAY9lUjIuqy0" : {
-      "id" : "ChIJU6bgSo0B3IARAY9lUjIuqy0",
-      "lat" : 32.80191899999999,
-      "lng" : -117.237807,
-      "name" : "Tweety Thai Cuisine",
-      "reviews" : [ {
-        "atmosphere" : 3,
-        "avg_rating" : 4,
-        "comments" : "Solid Thai food and speedy service. My go to!",
-        "date" : "Thu Sep 17 2020",
-        "menu" : 4,
-        "place_id" : "ChIJU6bgSo0B3IARAY9lUjIuqy0",
-        "place_name" : "Tweety Thai Cuisine",
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 5
-      } ]
-    },
-    "ChIJXYzpTx5V2YARVxS3J-j1wM8" : {
-      "formatted_address" : "4646 Park Blvd, San Diego, CA 92116, USA",
+    "ChIJj-FdH-uAhYARIp6mvqK3HNM" : {
+      "formatted_address" : "1621 Polk St, San Francisco, CA 94109, USA",
       "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
-      "id" : "ChIJXYzpTx5V2YARVxS3J-j1wM8",
-      "lat" : 32.7619444,
-      "lng" : -117.1463889,
-      "name" : "Bahn Thai",
-      "reviews" : [ {
-        "atmosphere" : 4,
-        "avg_rating" : 4.7,
-        "comments" : "Some of the best Thai food in the area - one of our regular spots.\n",
-        "date" : "Tue Oct 27 2020",
-        "menu" : 5,
-        "place_id" : "ChIJXYzpTx5V2YARVxS3J-j1wM8",
-        "place_name" : "Bahn Thai",
-        "pricing" : 2,
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 5
-      } ],
+      "id" : "ChIJj-FdH-uAhYARIp6mvqK3HNM",
+      "lat" : 37.7918769,
+      "lng" : -122.4212009,
+      "name" : "Bob's Donut and Pastry Shop",
+      "reviews" : {
+        "-MN0z42Bb_YcwyQbE7Y_" : {
+          "atmosphere" : 5,
+          "avg_rating" : 5,
+          "comments" : "Who doesn’t love a fresh donut, eh?",
+          "date" : "Wed Nov 25 2020",
+          "menu" : 5,
+          "place_id" : "ChIJj-FdH-uAhYARIp6mvqK3HNM",
+          "place_name" : "Bob's Donut and Pastry Shop",
+          "pricing" : 1,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 5
+        },
+        "mockUser8" : {
+          "atmosphere" : 5,
+          "avg_rating" : 5,
+          "comments" : "So good! My personal favorite is the apple glazed.",
+          "date" : "Wed Nov 22 2020",
+          "menu" : 5,
+          "place_id" : "ChIJj-FdH-uAhYARIp6mvqK3HNM",
+          "place_name" : "Bob's Donut and Pastry Shop",
+          "pricing" : 1,
+          "reviewer_id" : "mockUser8",
+          "service" : 5
+        },
+        "mockUser2" : {
+          "atmosphere" : 4,
+          "avg_rating" : 4,
+          "comments" : "Well I'm quite an experienced donut consumer. This place is great but there is a better shop just a block down. Reminds of donuts we had at the wall.",
+          "date" : "Wed Nov 22 2020",
+          "menu" : 4,
+          "place_id" : "ChIJj-FdH-uAhYARIp6mvqK3HNM",
+          "place_name" : "Bob's Donut and Pastry Shop",
+          "pricing" : 1,
+          "reviewer_id" : "mockUser2",
+          "service" : 4
+        }
+      },
+      "types" : [ "bakery", "food", "point_of_interest", "store", "establishment" ]
+    },
+    "ChIJk8E57em3t4kRmaKt-70LtHY" : {
+      "formatted_address" : "1612 14th St NW, Washington, DC 20009, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+      "id" : "ChIJk8E57em3t4kRmaKt-70LtHY",
+      "lat" : 38.91163409999999,
+      "lng" : -77.0322039,
+      "name" : "Pearl Dive Oyster Palace",
       "types" : [ "restaurant", "food", "point_of_interest", "establishment" ]
-    },
-    "ChIJYWW1GItU2YARW1rYLaC2YBc" : {
-      "id" : "ChIJYWW1GItU2YARW1rYLaC2YBc",
-      "lat" : 32.7412096,
-      "lng" : -117.129772,
-      "name" : "The Taco Stand",
-      "reviews" : [ {
-        "atmosphere" : 4,
-        "avg_rating" : 4,
-        "comments" : "Good!",
-        "date" : "Sat Oct 24 2020",
-        "menu" : 4,
-        "place_id" : "ChIJYWW1GItU2YARW1rYLaC2YBc",
-        "place_name" : "The Taco Stand",
-        "pricing" : 2,
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 4
-      } ],
-      "types" : [ "restaurant", "food", "point_of_interest", "establishment" ]
-    },
-    "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" : {
-      "id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
-      "lat" : 32.7490528,
-      "lng" : -117.1304167,
-      "name" : "Coin-Op Game Room",
-      "reviews" : [ {
-        "atmosphere" : 5,
-        "avg_rating" : 3.665,
-        "comments" : "Pricey but fun! Free play on first Sunday of the month.",
-        "date" : "Wed Sep 02 2020",
-        "menu" : 3,
-        "place_id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
-        "place_name" : "Coin-Op Game Room",
-        "pricing" : 3,
-        "reviewer_id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
-        "service" : 3
-      }, {
-        "atmosphere" : 4,
-        "avg_rating" : 4,
-        "comments" : "Lots of fun but can be expensive!",
-        "date" : "Thu Sep 10 2020",
-        "menu" : 0,
-        "place_id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
-        "place_name" : "Coin-Op Game Room",
-        "pricing" : 2,
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 0
-      } ]
-    },
-    "ChIJgQ-3a-aAhYARmRLswQrO0xA" : {
-      "formatted_address" : "Lombard St, San Francisco, CA 94133, USA",
-      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
-      "id" : "ChIJgQ-3a-aAhYARmRLswQrO0xA",
-      "lat" : 37.802139,
-      "lng" : -122.41874,
-      "name" : "Lombard Street",
-      "reviews" : [ {
-        "atmosphere" : 3,
-        "avg_rating" : 3,
-        "comments" : "Touristy but pretty neat!",
-        "date" : "Tue Oct 27 2020",
-        "menu" : 0,
-        "place_id" : "ChIJgQ-3a-aAhYARmRLswQrO0xA",
-        "place_name" : "Lombard Street",
-        "pricing" : 0,
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 0
-      } ],
-      "types" : [ "tourist_attraction", "point_of_interest", "establishment" ]
-    },
-    "ChIJiZ1kccAB3IARHW-fwc_RaSg" : {
-      "id" : "ChIJiZ1kccAB3IARHW-fwc_RaSg",
-      "lat" : 32.79971,
-      "lng" : -117.2422246,
-      "name" : "Iron Pig Alehouse",
-      "reviews" : [ {
-        "atmosphere" : 2,
-        "avg_rating" : 3,
-        "comments" : "BBQ is ok and they have pretty good deals. Pretty much just a sports bar atmosphere.\n",
-        "date" : "Sun Oct 04 2020",
-        "menu" : 4,
-        "place_id" : "ChIJiZ1kccAB3IARHW-fwc_RaSg",
-        "place_name" : "Iron Pig Alehouse",
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 3
-      } ]
-    },
-    "ChIJv9O9yuxU2YARgTkHal-Ecqk" : {
-      "formatted_address" : "2221 Morley Field Dr, San Diego, CA 92104, USA",
-      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
-      "id" : "ChIJv9O9yuxU2YARgTkHal-Ecqk",
-      "lat" : 32.7383356,
-      "lng" : -117.1390806,
-      "name" : "Morley Field Sports Complex",
-      "reviews" : [ {
-        "atmosphere" : 4,
-        "avg_rating" : 4,
-        "comments" : "Nice play to get some sun and exercise!\n",
-        "date" : "Tue Oct 27 2020",
-        "menu" : 0,
-        "place_id" : "ChIJv9O9yuxU2YARgTkHal-Ecqk",
-        "place_name" : "Morley Field Sports Complex",
-        "pricing" : 0,
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 0
-      } ],
-      "types" : [ "tourist_attraction", "point_of_interest", "establishment" ]
-    },
-    "ChIJvU0IdVMB3IARPLazrndkTGM" : {
-      "id" : "ChIJvU0IdVMB3IARPLazrndkTGM",
-      "lat" : 32.793831,
-      "lng" : -117.2557162,
-      "name" : "Waterbar",
-      "reviews" : [ {
-        "atmosphere" : 5,
-        "avg_rating" : 5,
-        "comments" : "",
-        "date" : "Thu Sep 17 2020",
-        "menu" : 5,
-        "place_id" : "ChIJvU0IdVMB3IARPLazrndkTGM",
-        "place_name" : "Waterbar",
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 5
-      } ]
-    },
-    "ChIJvXl2weCAhYARjSxnhzrBfNc" : {
-      "id" : "ChIJvXl2weCAhYARjSxnhzrBfNc",
-      "lat" : 37.80567389999999,
-      "lng" : -122.4223763,
-      "name" : "Ghirardelli Chocolate Marketplace",
-      "reviews" : [ {
-        "atmosphere" : 1,
-        "avg_rating" : 1,
-        "comments" : "Never been here lol",
-        "date" : "Thu Sep 17 2020",
-        "menu" : 1,
-        "place_id" : "ChIJvXl2weCAhYARjSxnhzrBfNc",
-        "place_name" : "Ghirardelli Chocolate Marketplace",
-        "reviewer_id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-        "service" : 1
-      } ]
     }
   },
   "users" : {
-    "0lwPpIyUkJVsGlzbNgYfLpK0UaB2" : {
-      "dateJoined" : "Thu Sep 03 2020",
-      "email" : "fishfry62@gmail.com",
+    "HeWA9dsG9QQSpcICfCr7EWZNfzc2" : {
+      "dateJoined" : "Mon Nov 09 2020",
+      "email" : "swong0183@gmail.com",
       "email_verified" : true,
-      "firstName" : "Daniel",
-      "following" : [ "FLa6aNsJNcczjRWmMcjm0Dht52y1", "tYL1dNklovfN6IOUNSRys29FBu12", "MUAhpIzC7idmbrwuwmD360rSoNt2" ],
-      "id" : "0lwPpIyUkJVsGlzbNgYfLpK0UaB2",
-      "lastActive" : "Thu Oct 22 2020",
-      "lastName" : "Fishman",
+      "firstName" : "Steven",
+      "following" : [ "xWQgFk5jTBMJBmBrrffnHxlfj6k1", "mockUser7" ],
+      "id" : "HeWA9dsG9QQSpcICfCr7EWZNfzc2",
+      "lastActive" : "Sun Nov 22 2020",
+      "lastName" : "Wong",
       "phone_verified" : true,
-      "photoUrl" : "https://lh3.googleusercontent.com/a-/AOh14GgHSGbYcjKc9vzjgyG6CzE4oe7jh3MgZbXf--xlxw=s96-c",
-      "push_tokens" : [ "ExponentPushToken[WmkfbEGlbxAWPMNOHI3lF5]", "ExponentPushToken[9EE0MSAHHUaNG2VbmaF7jo]", "ExponentPushToken[CJB9OeLc8nDH0M1HlNsPF-]" ],
-      "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc", "ChIJ0XMmY40B3IARvLxm_1x1hBA", "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c", "ChIJ9TBxRTqq3oARfDBVt6kOMLE", "ChIJvXl2weCAhYARjSxnhzrBfNc", "ChIJU6bgSo0B3IARAY9lUjIuqy0", "ChIJvU0IdVMB3IARPLazrndkTGM", "ChIJ-x07qOFU2YAR1CQDnslKByc", "ChIJiZ1kccAB3IARHW-fwc_RaSg", "ChIJYWW1GItU2YARW1rYLaC2YBc", "ChIJgQ-3a-aAhYARmRLswQrO0xA", "ChIJv9O9yuxU2YARgTkHal-Ecqk" ]
+      "photoUrl" : "https://lh3.googleusercontent.com/a-/AOh14Gjnx2DWnWQCr8ewCzJI8PFV5aaEP577RNEOmBH56Q=s96-c",
+      "push_tokens" : [ "ExponentPushToken[FH3sXMF9qcDxoV-4_9LLGG]" ],
+      "reviews" : [ "ChIJk8E57em3t4kRmaKt-70LtHY" ]
     },
-    "7scuSNtx8bXQQwfdJUv8wJgvWrw1" : {
-      "dateJoined" : "Thu Sep 03 2020",
-      "email" : "admin@email.com",
-      "firstName" : "Admin",
-      "id" : "7scuSNtx8bXQQwfdJUv8wJgvWrw1",
-      "lastActive" : "Thu Sep 03 2020",
-      "lastName" : "Dude",
-      "mobile" : "",
-      "photoUrl" : "https://steamusercontent-a.akamaihd.net/ugc/797620606620125695/1ABBE563C02FFDDFC3200B514FECDBBFCBE7A63B/",
-      "reviews" : [ "ChIJ64xh0eUD3IARg7gW9skpNQc", "ChIJ0XMmY40B3IARvLxm_1x1hBA", "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" ]
+    "Ofr8jT3NWxOMxhBtcckqtAkVQd13" : {
+      "dateJoined" : "Fri Nov 13 2020",
+      "email" : "kevin@cwcg.io",
+      "email_verified" : true,
+      "firstName" : "Kevin",
+      "id" : "Ofr8jT3NWxOMxhBtcckqtAkVQd13",
+      "lastActive" : "Fri Nov 13 2020",
+      "lastName" : "Chang",
+      "photoUrl" : "https://lh3.googleusercontent.com/-Y5JLe3jawbQ/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclmgOgtVnadxh0BvjT9Lc1vl1NI-A/s96-c/photo.jpg"
     },
-    "8GJhaQJ0BmV6jmT31sOSTA0bvnp2" : {
-      "dateJoined" : "Tue Sep 29 2020",
-      "email" : "go@cwcg.io",
-      "firstName" : "CWCG",
-      "following" : [ "mockUser4", "mockUser7", "mockUser8" ],
-      "id" : "8GJhaQJ0BmV6jmT31sOSTA0bvnp2",
-      "lastActive" : "Tue Sep 29 2020",
-      "lastName" : "CWCG",
+    "QQ3CUgKpD8bJIcYJaSJ8F79KYr72" : {
+      "dateJoined" : "Tue Nov 24 2020",
+      "email" : "alli.bates@hotmail.com",
+      "firstName" : "Alli",
+      "following" : [ "xWQgFk5jTBMJBmBrrffnHxlfj6k1" ],
+      "id" : "QQ3CUgKpD8bJIcYJaSJ8F79KYr72",
+      "lastActive" : "Tue Nov 24 2020",
+      "lastName" : "B",
       "mobile" : "",
-      "photoUrl" : "https://lh3.googleusercontent.com/a-/AOh14Gi6agR5JoGRGxD5YF70ZnpY9pd_fCPAlRbUdZC1lw=s96-c"
-    },
-    "FLa6aNsJNcczjRWmMcjm0Dht52y1" : {
-      "dateJoined" : "Wed Sep 16 2020",
-      "email" : "hidihoneighbor.ab@gmail.com",
-      "firstName" : "Here.for.",
-      "following" : [ "0lwPpIyUkJVsGlzbNgYfLpK0UaB2" ],
-      "id" : "FLa6aNsJNcczjRWmMcjm0Dht52y1",
-      "lastActive" : "Wed Sep 16 2020",
-      "lastName" : "The.tea.",
-      "mobile" : "",
-      "photoUrl" : "https://lh3.googleusercontent.com/-jgXP3Dmk82g/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclTQNyo-BoKcYv71DTOKnEUk57huQ/s96-c/photo.jpg",
-      "push_tokens" : [ "ExponentPushToken[M6f87bPhXTAQD7URB2pq0T]" ],
-      "reviews" : [ "ChIJPcAkAeNV2YAR8mhB1iCl6pw", "ChIJ-x07qOFU2YAR1CQDnslKByc" ]
-    },
-    "MSmYBU5xrSWawZSRy9FH7QMFx0w1" : {
-      "dateJoined" : "Wed Sep 16 2020",
-      "email" : "facebook_mktfozc_user@tfbnw.net",
-      "firstName" : "Facebook",
-      "id" : "MSmYBU5xrSWawZSRy9FH7QMFx0w1",
-      "lastActive" : "Wed Sep 16 2020",
-      "lastName" : "User",
-      "mobile" : "",
-      "photoUrl" : "https://graph.facebook.com/110453847467289/picture"
-    },
-    "MUAhpIzC7idmbrwuwmD360rSoNt2" : {
-      "dateJoined" : "Thu Sep 17 2020",
-      "email" : "david.divine@gmail.com",
-      "firstName" : "David",
-      "following" : [ "0lwPpIyUkJVsGlzbNgYfLpK0UaB2" ],
-      "id" : "MUAhpIzC7idmbrwuwmD360rSoNt2",
-      "lastActive" : "Thu Sep 17 2020",
-      "lastName" : "Divine",
-      "mobile" : "",
-      "photoUrl" : "https://graph.facebook.com/10221847358190986/picture",
-      "push_tokens" : [ "ExponentPushToken[EbQYGSM3fPPSxPqtFFXQfe]" ]
+      "photoUrl" : "https://lh6.googleusercontent.com/-AGOdOId_4d8/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnVZ4H6q4t3aX3PLBPf008Sdv0I2g/s96-c/photo.jpg",
+      "push_tokens" : [ "ExponentPushToken[M6f87bPhXTAQD7URB2pq0T]" ]
     },
     "mockUser1" : {
       "dateJoined" : "",
@@ -476,7 +176,7 @@
       "lastActive" : "",
       "lastName" : "Bell",
       "mobile" : "(555) 564-8583",
-      "photoUrl" : ""
+      "photoUrl" : "https://www.pngkey.com/png/detail/446-4462649_animated-faces-my-hero-design-clip-art-woman.png"
     },
     "mockUser8" : {
       "dateJoined" : "",
@@ -484,20 +184,24 @@
       "firstName" : "Johnny",
       "id" : "mockUser8",
       "lastActive" : "",
-      "lastName" : "",
+      "lastName" : "Appleseed",
       "mobile" : "(888) 555-5512",
-      "photoUrl" : ""
+      "photoUrl" : "https://cdn.shopify.com/s/files/1/0778/2679/files/johnchapman_1024x1024.jpg?10297121571074472901"
     },
-    "tYL1dNklovfN6IOUNSRys29FBu12" : {
-      "dateJoined" : "Thu Oct 01 2020",
-      "email" : "steve@cwcg.io",
-      "firstName" : "Steve",
-      "id" : "tYL1dNklovfN6IOUNSRys29FBu12",
-      "lastActive" : "Thu Oct 01 2020",
-      "lastName" : "Wong",
-      "mobile" : "",
-      "photoUrl" : "https://lh3.googleusercontent.com/a-/AOh14GjjplhdNAEV5Uj6aaW5eRgfNbGcHnW_9l4L8J-I=s96-c",
-      "push_tokens" : [ "ExponentPushToken[VLWoE7ChuBN-itpA6IpgdL]" ]
+    "xWQgFk5jTBMJBmBrrffnHxlfj6k1" : {
+      "dateJoined" : "Sat Nov 07 2020",
+      "email" : "fishfry62@gmail.com",
+      "email_verified" : true,
+      "firstName" : "Daniel",
+      "following" : [ "QQ3CUgKpD8bJIcYJaSJ8F79KYr72", "mockUser5", "HeWA9dsG9QQSpcICfCr7EWZNfzc2" ],
+      "id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+      "lastActive" : "Wed Nov 25 2020",
+      "lastName" : "Fishman",
+      "mobile" : "+17034736358",
+      "phone_verified" : true,
+      "photoUrl" : "https://lh3.googleusercontent.com/a-/AOh14GgHSGbYcjKc9vzjgyG6CzE4oe7jh3MgZbXf--xlxw=s96-c",
+      "push_tokens" : [ "ExponentPushToken[WmkfbEGlbxAWPMNOHI3lF5]" ],
+      "reviews" : [ "ChIJvXl2weCAhYARjSxnhzrBfNc", "ChIJmfgIQ-iAhYARq5osc-JybBo", "ChIJX1oMlvKAhYARNZquwetszd8", "ChIJJ3tIspSAhYAR-Uzxpdu0DQk", "ChIJC3O0GsGAhYAR4JK4ut4xPsM", "ChIJXYzpTx5V2YARVxS3J-j1wM8", "ChIJ490io-JU2YARHN4qa378oQE", "ChIJ9TBxRTqq3oARfDBVt6kOMLE", "ChIJc7zR9MdU2YARk5MLergidlk", "ChIJ-x07qOFU2YAR1CQDnslKByc", "ChIJkceyP-i3t4kRISOyo8QO6Mo", "ChIJk8E57em3t4kRmaKt-70LtHY", "ChIJj-FdH-uAhYARIp6mvqK3HNM" ]
     }
   }
 }

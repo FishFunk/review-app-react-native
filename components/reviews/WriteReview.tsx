@@ -203,7 +203,7 @@ export default class WriteReview extends Component<{
             <Root>
                 <ScrollView>
                 <View>
-                    <Text style={styles.title}>{this.props.place.name}</Text>
+                    <Text style={styles.title}>Review {this.props.place.name}</Text>
                 </View>
                 <View style={styles.formContainer}>
                     {
