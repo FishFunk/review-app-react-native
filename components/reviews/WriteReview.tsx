@@ -6,16 +6,18 @@ import {
     Dimensions, 
     ScrollView, 
     TextInput,
-    Keyboard } from 'react-native';
+    Keyboard, 
+    KeyboardAvoidingView,
+    Platform} from 'react-native';
 import { 
     Button, 
     Text, 
-    Form, 
     Item, 
     Label, 
     Toast,
     Root,
-    Spinner
+    Spinner,
+    Form
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -56,6 +58,9 @@ export default class WriteReview extends Component<{
             editingReview: false,
         }
     }
+
+    _scrollViewRef: any;
+
 
     static getDerivedStateFromProps(nextProps: any, prevState: any) {
         if(nextProps.editReview && !prevState.editingReview){
@@ -192,7 +197,7 @@ export default class WriteReview extends Component<{
     }
 
     render(){
-        const { showModal } = this.props;
+        const { showModal } = this.props;        
         return (
         <Modal
             visible={showModal}
@@ -201,7 +206,7 @@ export default class WriteReview extends Component<{
         >
             <View style={styles.modalView}>
             <Root>
-                <ScrollView>
+                <ScrollView style={{flex: 1}} ref={ref => {this._scrollViewRef = ref}}>
                 <View>
                     <Text style={styles.title}>Review {this.props.place.name}</Text>
                 </View>
@@ -209,7 +214,7 @@ export default class WriteReview extends Component<{
                     {
                         this.isServiceEstablishment() ? 
                         // Food / Restaurant Review Form
-                        <Form style={styles.form}>
+                        <Form>
                             <Item bordered={false} style={styles.starItem}>
                                 <Label>Atmosphere</Label>
                                 <EditableStars 
@@ -238,25 +243,28 @@ export default class WriteReview extends Component<{
                                     initalRating={this.props.editReview ? this.props.editReview.pricing : this.state.pricing} 
                                     onRatingChanged={this.onUpdatePricing.bind(this)}  />
                             </Item>
-                            <Item stackedLabel style={styles.textAreaItem}>
-                                <Label>Comments</Label>
-                                <Label style={styles.sublabel}>up to 250 characters</Label>
-                                <TextInput 
-                                    returnKeyType='done'
-                                    value={this.state.comments}
-                                    maxLength={250}
-                                    multiline={true}
-                                    blurOnSubmit={true}
-                                    onChangeText={this.onEditComment.bind(this)}
-                                    style={styles.textArea} />
-                            </Item>
-                            <Item stackedLabel style={styles.starItem}>
-                                <Label>Average Total</Label>
-                                <ReviewStars rating={this.avgRating()} fontSize={30} />
-                            </Item>
+                            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                                <Item stackedLabel style={styles.textAreaItem}>
+                                    <Label>Comments</Label>
+                                    <Label style={styles.sublabel}>up to 250 characters</Label>
+                                    <TextInput 
+                                        onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
+                                        returnKeyType='done'
+                                        value={this.state.comments}
+                                        maxLength={250}
+                                        multiline={true}
+                                        blurOnSubmit={true}
+                                        onChangeText={this.onEditComment.bind(this)}
+                                        style={styles.textArea} />
+                                </Item>
+                                <Item stackedLabel style={styles.starItem}>
+                                    <Label>Average Total</Label>
+                                    <ReviewStars rating={this.avgRating()} fontSize={30} />
+                                </Item>
+                            </KeyboardAvoidingView>
                         </Form> : 
                         // Generic Place Review Form
-                        <Form>
+                        <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
                             <Item bordered={false} style={styles.starItem}>
                                 <Label>Rating</Label>
                                 <EditableStars 
@@ -268,6 +276,7 @@ export default class WriteReview extends Component<{
                                 <Label>Comments</Label>
                                 <Label style={styles.sublabel}>up to 250 characters</Label>
                                 <TextInput 
+                                    onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
                                     returnKeyType='done'
                                     blurOnSubmit={true}
                                     value={this.state.comments}
@@ -276,7 +285,7 @@ export default class WriteReview extends Component<{
                                     onChangeText={this.onEditComment.bind(this)}
                                     style={styles.textArea} />
                             </Item>
-                        </Form>
+                        </KeyboardAvoidingView>
                     }  
                 </View>
                 <View style={styles.buttonGroup}>
@@ -305,20 +314,12 @@ export default class WriteReview extends Component<{
 
 const styles=StyleSheet.create({
     modalView: {
-        paddingTop: 40,
-        paddingRight: 10,
-        paddingLeft: 10,
-        marginBottom: 20,
-        height: Dimensions.get('screen').height,
-        width: Dimensions.get('screen').width,
+        flex: 1,
+        paddingTop: 20,
         backgroundColor: theme.LIGHT_COLOR
     },
     formContainer: {
-        width: '100%',
         padding: 20
-    },
-    form: {
-        width: '100%'
     },
     header: {
         flexDirection: 'row',
@@ -328,9 +329,9 @@ const styles=StyleSheet.create({
         textAlign: "center"
     },
     buttonGroup: {
-        width: '100%',
         flexDirection: 'row',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        paddingBottom: 40
     },
     submitButton: {
         backgroundColor: theme.PRIMARY_COLOR
