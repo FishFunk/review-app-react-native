@@ -421,7 +421,7 @@ class FirebaseService {
 				icon: _get(place, 'icon', ''),
 				formatted_address: _get(place, 'formatted_address', ''),
 				types: place.types,
-				reviews: []
+				reviews: {}
 			}
 
 			await this.db.ref(`places/${place.place_id}`).set(dbPlace);
