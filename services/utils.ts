@@ -56,12 +56,14 @@ export const getPlaceAvgRating = function(
     dbPlace: dbPlace | null): number {
     let total = 0;
 
-    if(dbPlace?.reviews && dbPlace?.reviews.length > 0){
+    if(dbPlace && dbPlace.reviews){
+        let reviewKeys = Object.keys(dbPlace.reviews);
         let sum = 0;
-        for(let r of dbPlace?.reviews){
-            sum += r.avg_rating;
-        }
-        total = sum/dbPlace?.reviews.length;
+        reviewKeys.forEach((key: string)=>{
+            sum += dbPlace.reviews[key].avg_rating;
+        });
+            
+        total = sum/reviewKeys.length;
     }
 
     return total;
@@ -71,12 +73,14 @@ export const getPlaceAvgPricing = function(
     dbPlace: dbPlace | null): number {
     let total = 0;
 
-    if(dbPlace?.reviews && dbPlace?.reviews.length > 0){
+    if(dbPlace && dbPlace.reviews){
+        let reviewKeys = Object.keys(dbPlace.reviews);
         let sum = 0;
-        for(let r of dbPlace?.reviews){
-            sum += r.pricing;
-        }
-        total = sum/dbPlace?.reviews.length;
+        reviewKeys.forEach((key: string)=>{
+            sum += dbPlace.reviews[key].pricing;
+        });
+
+        total = sum/reviewKeys.length;
     }
 
     return total;

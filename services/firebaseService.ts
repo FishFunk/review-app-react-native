@@ -421,13 +421,14 @@ class FirebaseService {
 				icon: _get(place, 'icon', ''),
 				formatted_address: _get(place, 'formatted_address', ''),
 				types: place.types,
-				reviews: [newReview]
+				reviews: []
 			}
+
 			await this.db.ref(`places/${place.place_id}`).set(dbPlace);
-		} else {
-			// Update existing place review list
-			await this.db.ref(`places/${newReview.place_id}/reviews`).push(newReview);
 		}
+
+		// Push new place review onto reivews with unique key
+		await this.db.ref(`places/${newReview.place_id}/reviews`).push(newReview);
 
 		// Update user review list
 		let userReviewIds = await this.getUserReviewIdList();
@@ -450,7 +451,6 @@ class FirebaseService {
 		const targetIds = await this.getUserFollowingIds();
 
 		let places: dbPlace[] = [];
-		let promises: any[] = [];
 		placesSnapshot.forEach((snapshot: firebase.database.DataSnapshot)=>{
 			const place = snapshot.val();
 			if(this._doesPlaceHaveRelevantReviews(place, targetIds) && 
@@ -459,8 +459,6 @@ class FirebaseService {
 			}
 		});
 		
-		await Promise.all(promises);
-
 		return places;
 	}
 
@@ -546,10 +544,10 @@ class FirebaseService {
 
 		// Filter reviews if they were written by target user IDs
 		let filteredReviews = [];
-		for(let review of place.reviews){
-			if(review.reviewer_id === this.getCurrentUserId() || 
-				_indexOf(targetIds, review.reviewer_id) >= 0){
-					filteredReviews.push(review);
+		for(let key in place.reviews){
+			if(place.reviews[key].reviewer_id === this.getCurrentUserId() || 
+				_indexOf(targetIds, place.reviews[key].reviewer_id) >= 0){
+					filteredReviews.push(place.reviews[key]);
 			}
 		}
 		
@@ -561,10 +559,12 @@ class FirebaseService {
 		targetIds: string[]) {
 			
 		// Filter reviews if they were written by target user IDs
-		for(let review of place.reviews){
-			if(review.reviewer_id === this.getCurrentUserId() || 
-				_indexOf(targetIds, review.reviewer_id) >= 0){
-					return true;
+		if(place.reviews){
+			for(let key in place.reviews){
+				if(place.reviews[key].reviewer_id === this.getCurrentUserId() || 
+					_indexOf(targetIds, place.reviews[key].reviewer_id) >= 0){
+						return true;
+				}
 			}
 		}
 

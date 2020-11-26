@@ -104,7 +104,7 @@ export interface dbPlace {
   name: string,
   lat: number,
   lng: number,
-  reviews: dbReview[],
+  reviews: Object<string, dbReview>,
   formatted_address?: string,
   icon?: string,
   types?: string[]
