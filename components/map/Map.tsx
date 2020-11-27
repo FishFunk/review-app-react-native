@@ -32,7 +32,10 @@ export default class Map extends React.Component<
     markerRef: Marker | null  = null;
 
     componentDidUpdate(prevProps: any){
-        if(!_isEqual(prevProps.markers, this.props.markers) && this.props.refreshCallout){
+        if(this.props.markers && this.props.markers.length === 1){
+            this.markerRef?.hideCallout();
+            this.markerRef?.showCallout();
+        } else if(!_isEqual(prevProps.markers, this.props.markers) && this.props.refreshCallout){
             if(Platform.OS === 'ios'){
                 this.markerRef?.redrawCallout();
             } else {
