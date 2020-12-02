@@ -1,5 +1,5 @@
 import * as firebase from 'firebase/app';
-import config from './firebaseServiceConfig';
+import getConfig from './firebaseServiceConfig';
 import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';
 import { Email, Contact } from 'expo-contacts';
@@ -21,12 +21,12 @@ class FirebaseService {
     private db: firebase.database.Database;
 
 	constructor(){
-		if (Object.entries(config).length === 0) {
+		if (Object.entries(getConfig()).length === 0) {
 			throw new Error('Missing Firebase Configuration!');
 		}
 
 		if(!firebase.apps.length){
-			firebase.initializeApp(config);
+			firebase.initializeApp(getConfig());
 			console.log(`Firebase initialized successfully`);
 		}
 

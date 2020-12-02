@@ -22,7 +22,7 @@ export default class LicenseAgreement extends React.Component<
         <ScrollView style={{}}>
         <Title style={{marginTop: 15, fontSize: 18}}><Text>Software License Agreement</Text></Title>
         <Text style={styles.content}>
-{`1. Under this Software License Agreement (the "Agreement"), Wanderlust Labs, LLC (the "Vendor") grants to the user (the "Licensee") a non-exclusive and non-transferable license (the "License") to use ReVew (the "Software").
+{`1. Under this Software License Agreement (the "Agreement"), Wanderlust Labs, LLC (the "Vendor") grants to the user (the "Licensee") a non-exclusive and non-transferable license (the "License") to use NoBull (the "Software").
 2. "Software" includes the executable computer programs and any related printed, electronic and online documentation and any other files that may accompany the product.
 3. Title, copyright, intellectual property rights and distribution rights of the Software remain exclusively with the Vendor. Intellectual property rights include the look and feel of the Software. This Agreement constitutes a license for use only and is not in any way a transfer of ownership rights to the Software.
 4. The Software may be loaded onto no more than one computer. A single copy may be made for backup purposes only.

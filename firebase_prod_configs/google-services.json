@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "997182803601",
+    "firebase_url": "https://nobullreviews-prod.firebaseio.com",
+    "project_id": "nobullreviews-prod",
+    "storage_bucket": "nobullreviews-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997182803601:android:8eb27623720c97795f7930",
+        "android_client_info": {
+          "package_name": "com.wanderlustlabs.reviewers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIweP1h-WTFEA-jA6heH0mO0CbvBX829w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997182803601-3dmqpmhp1vk7465m169nb907qd1h7stb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "997182803601-h1273nbi2ocfbqmoo4cu4mck1b96ueev.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wanderlustlabs.reviewers"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

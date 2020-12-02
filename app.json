@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "ReVew",
-    "description": "Write and read reviews of places amongst only the people you trust most",
-    "slug": "ReVew",
+    "name": "NoBull",
+    "description": "Write, read, and reviews of places between only the people you choose",
+    "slug": "NoBull",
+    "releaseChannel": "dev",
     "version": "1.0.13",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -44,6 +44,6 @@
     },
     "facebookScheme": "fb3027651844010971",
     "facebookAppId": "3027651844010971",
-    "facebookDisplayName": "ReVew"
+    "facebookDisplayName": "NoBull"
   }
 }

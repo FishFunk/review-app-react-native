@@ -101,7 +101,7 @@ export default function IntroScreen(props: any) {
     const slides = [
         {
           key: 1,
-          title: 'Welcome to ReVew!',
+          title: 'Welcome to NoBull!',
           text: 'Tired of sifting through hundreds of 💩 reviews written by strangers or bots?\nWe are too...',
           image: require('../assets/svg/undraw_neighbors.svg')
         },

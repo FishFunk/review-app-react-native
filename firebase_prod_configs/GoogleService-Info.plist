@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>997182803601-h1273nbi2ocfbqmoo4cu4mck1b96ueev.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.997182803601-h1273nbi2ocfbqmoo4cu4mck1b96ueev</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAjvzhGr3R_1SyGG5iW1DkZNeRO2jjfMy0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>997182803601</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.wanderlustlabs.reviewers</string>
+	<key>PROJECT_ID</key>
+	<string>nobullreviews-prod</string>
+	<key>STORAGE_BUCKET</key>
+	<string>nobullreviews-prod.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:997182803601:ios:8259a69ef33897625f7930</string>
+	<key>DATABASE_URL</key>
+	<string>https://nobullreviews-prod.firebaseio.com</string>
+</dict>
+</plist>
