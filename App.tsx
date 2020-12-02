@@ -19,6 +19,7 @@ import IntroScreen from './screens/IntroScreen';
 // import LoginEmailScreen from './screens/LoginEmailScreen';
 import getTheme from './native-base-theme/components';
 import platform from './native-base-theme/variables/platform';
+import SpinnerContainer from './components/SpinnerContainer';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
@@ -56,7 +57,7 @@ export default function App(props: any) {
   }, []);
 
   if (!isLoadingComplete || initializing || !fontLoaded || updating) {
-    return <AppLoading/>;
+    return <SpinnerContainer />;
   }
 
   // TODO: Update all text to use loaded font

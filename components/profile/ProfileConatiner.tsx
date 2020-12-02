@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, Linking } from 'react-native';
 import { 
   Text, 
   Button, 
@@ -14,12 +14,13 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { appUser } from '../../models/user';
 import SpinnerContainer from '../SpinnerContainer';
 import PhoneVerifyRecaptcha from '../PhoneVerifyRecaptcha';
-import LicenseAgreementModal from '../LicenseAgreementModal';
+import LegalModal from '../legal/LicenseAgreementModal';
 
 export default class ProfileContainer extends React.Component<{navigation: any},{
     user: appUser, 
     emailSent: boolean, 
-    isModalOpen: boolean, 
+    isLegalModalOpen: boolean, 
+    modalType: 'license' | 'privacy',
     verificationSteps: {
         email_verified: boolean,
         phone_verified: boolean,
@@ -30,7 +31,8 @@ export default class ProfileContainer extends React.Component<{navigation: any},
     state: any = { 
         user: {}, 
         emailSent: false, 
-        isModalOpen: false,
+        isLegalModalOpen: false,
+        modalType: '',
         verificationSteps: {
             email_verified: false,
             phone_verified: false,
@@ -47,12 +49,12 @@ export default class ProfileContainer extends React.Component<{navigation: any},
         FirebaseService.signOut();
     }
 
-    showModal(){
-        this.setState({ isModalOpen: true });
+    showModal(type: 'license' | 'privacy'){
+        this.setState({ modalType: type, isLegalModalOpen: true });
     }
 
     onDismissModal(){
-        this.setState({ isModalOpen: false });
+        this.setState({ isLegalModalOpen: false });
     }
 
     async load(){
@@ -206,17 +208,20 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                     <Text style={styles.logoutText}>Logout</Text>
                 </Button>
                 <View style={styles.legalBtnGroup}>
-                    <Button transparent onPress={this.showModal.bind(this)} style={styles.legalBtn}>
+                    <Button transparent onPress={this.showModal.bind(this, 'license')} style={styles.legalBtn}>
                         <Text style={styles.legalBtnText}>License Agreement</Text>
                     </Button>
-                    <Button transparent onPress={()=>{alert("Not implemented")}} style={styles.legalBtn}>
+                    <Button transparent onPress={this.showModal.bind(this, 'privacy')} style={styles.legalBtn}>
                         <Text style={styles.legalBtnText}>Privacy Policy</Text>
                     </Button>
-                    <Button transparent onPress={()=>{alert("Not implemented")}} style={styles.legalBtn}>
+                    <Button transparent onPress={()=>{Linking.openURL(`https://nobullreviews.app/?target=contact`)}} style={styles.legalBtn}>
                         <Text style={styles.legalBtnText}>Contact Us</Text>
                     </Button>
                 </View>
-                <LicenseAgreementModal onDismissModal={this.onDismissModal.bind(this)} isOpen={this.state.isModalOpen}/>
+                <LegalModal 
+                    type={this.state.modalType}
+                    onDismissModal={this.onDismissModal.bind(this)} 
+                    isOpen={this.state.isLegalModalOpen}/>
             </ScrollView>
         )};
 };

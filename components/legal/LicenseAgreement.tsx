@@ -1,10 +1,9 @@
 import React from "react";
 import { Dimensions, StyleSheet } from 'react-native';
-import Modal from "react-native-modal";
-import theme from "../styles/theme";
+import theme from "../../styles/theme";
 import { Text, Title, View } from "native-base";
-import AppHeader from "./AppHeader";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import AppHeader from "../AppHeader";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default class LicenseAgreement extends React.Component<
     {

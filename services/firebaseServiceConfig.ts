@@ -24,7 +24,7 @@ const devConfig = {
 };
 
 const env = Constants.manifest.releaseChannel;
-const rc = appConfig.expo.releaseChannel;
+const rc = appConfig.expo.extra.releaseChannel;
 
 export default function getConfig(){
   if(rc === 'production' && env && env.indexOf('prod') > -1){

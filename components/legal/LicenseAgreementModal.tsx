@@ -1,14 +1,16 @@
 import React from "react";
 import { StyleSheet } from 'react-native';
 import Modal from "react-native-modal";
-import theme from "../styles/theme";
+import theme from "../../styles/theme";
 import { Content } from "native-base";
 import LicenseAgreement from "./LicenseAgreement";
+import PrivacyPolicy from "./PrivacyPolicy";
 
-export default class LicenseAgreementModal extends React.Component<
+export default class LegalModal extends React.Component<
     { 
         isOpen: boolean, 
-        onDismissModal: () => any
+        onDismissModal: () => any,
+        type: 'license' | 'privacy'
     }>{
 
     render(){
@@ -20,7 +22,11 @@ export default class LicenseAgreementModal extends React.Component<
                 animationIn={'slideInUp'}
                 onBackdropPress={() => this.props.onDismissModal()}>
                     <Content scrollEnabled={false}>
-                        <LicenseAgreement onDismissModal={this.props.onDismissModal}/>
+                        {
+                            this.props.type === 'license' ?
+                                <LicenseAgreement onDismissModal={this.props.onDismissModal}/> :
+                                <PrivacyPolicy onDismissModal={this.props.onDismissModal}/>
+                        }
                     </Content>
             </Modal>)
     }

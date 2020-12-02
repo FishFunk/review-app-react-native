@@ -3,8 +3,10 @@
     "name": "NoBull",
     "description": "Write, read, and reviews of places between only the people you choose",
     "slug": "NoBull",
-    "releaseChannel": "dev",
-    "version": "1.0.13",
+    "extra": {
+      "releaseChannel": "production"
+    },
+    "version": "1.0.14",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
