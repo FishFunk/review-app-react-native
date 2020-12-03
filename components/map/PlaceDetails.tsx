@@ -21,7 +21,7 @@ import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { getReviewAverages } from '../../services/utils';
+import { checkForOpenCloseHours, getReviewAverages } from '../../services/utils';
 import _find from 'lodash/find';
 import SpinnerContainer from '../SpinnerContainer';
 import ReviewComplete from '../reviews/ReviewComplete';
@@ -50,12 +50,14 @@ export default class PlaceDetails extends React.Component<
         photoUrls: Array<string>,
         rating: number,
         pricing: number,
-        reloadMarkers: boolean
+        reloadMarkers: boolean,
+        openInfo: { open_now: boolean, message: string } | null
     }> {
 
     // Initalize complex state values to remove type warnings
     initialPlace: fullApiPlace = {};
     initialReportReview: any = {};
+    initialOpenInfo: any = {};
     initialEditReview: any = null;
 
     state = {
@@ -71,7 +73,8 @@ export default class PlaceDetails extends React.Component<
         disableEdit: true,
         rating: 0,
         pricing: 0,
-        reloadMarkers: false
+        reloadMarkers: false,
+        openInfo: this.initialOpenInfo
     }
 
 
@@ -81,9 +84,11 @@ export default class PlaceDetails extends React.Component<
     }
 
     async load(){
+        
         const place = await getGooglePlaceById(this.props.apiKey, this.props.placeId);
 
-        this.setState({ place: place });
+        const openInfo = checkForOpenCloseHours(place.opening_hours);
+        this.setState({ place: place, openInfo: openInfo });
 
         let photoUrls = []
         if(place && place.photos){
@@ -262,15 +267,27 @@ export default class PlaceDetails extends React.Component<
             </View>
             {
                 this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
-                <Badge style={styles.badge}>
+                <Badge style={styles.warningBadge}>
                     <Text style={styles.badgeText}>Closed Temporarily</Text>
                 </Badge> : null
             }
             {
                 this.state.place.business_status === 'CLOSED_PERMANENTLY' ?
-                <Badge style={styles.badge}>
+                <Badge style={styles.warningBadge}>
                     <Text style={styles.badgeText}>Closed Permanently</Text>
                 </Badge> : null
+            }
+            {
+                this.state.openInfo && this.state.openInfo.open_now ?
+                    <Badge style={styles.goodBadge}>
+                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open'}</Text>
+                    </Badge> : null
+            }
+            {
+                this.state.openInfo && !this.state.openInfo.open_now ?
+                    <Badge style={styles.warningBadge}>
+                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Closed'}</Text>
+                    </Badge> : null
             }
             <View>
                 <HorizontalPhotoList photoUrls={this.state.photoUrls} />
@@ -375,7 +392,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    badge: {
+    warningBadge: {
+        backgroundColor: theme.DANGER_COLOR,
+        alignSelf: 'center',
+        marginBottom: 5
+    },
+    goodBadge: {
+        backgroundColor: theme.PRIMARY_COLOR,
         alignSelf: 'center',
         marginBottom: 5
     },

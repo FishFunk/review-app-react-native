@@ -4,6 +4,16 @@ export interface placeId {
   place_id: string
 }
 
+export interface period {
+  day: number,
+  time: number
+}
+
+export interface openClosePeriod {
+  open: period,
+  close: period
+}
+
 export interface placeByQuery {
   candidates: placeId[],
   status: string
@@ -66,7 +76,7 @@ export interface fullApiPlace {
   name? : string,
   opening_hours? : {
     open_now : boolean,
-    periods: Array<any>
+    periods: Array<openClosePeriod>
   },
   photos? : Array<placePhoto>,
   place_id? : string,

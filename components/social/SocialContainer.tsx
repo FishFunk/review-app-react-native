@@ -65,7 +65,9 @@ export default class SocialContainer extends React.Component<{
     }
 
     componentWillUnmount(){
-        this._unsubscribe();
+        if(this._unsubscribe){
+            this._unsubscribe();
+        }
     }
 
     async init(): Promise<boolean>{

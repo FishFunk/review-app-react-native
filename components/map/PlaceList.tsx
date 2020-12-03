@@ -7,7 +7,7 @@ import ReviewStars from "../reviews/ReviewStars";
 import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
 import ReviewDollars from "../reviews/ReviewDollars";
 import SpinnerContainer from "../SpinnerContainer";
-import { getPlaceAvgPricing, getPlaceAvgRating } from '../../services/utils';
+import { checkForOpenCloseHours, getPlaceAvgPricing, getPlaceAvgRating } from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
 import DropDownPicker from 'react-native-dropdown-picker';
 import theme from "../../styles/theme";
@@ -66,7 +66,7 @@ export default class PlaceList extends React.Component<
                 pricing: getPlaceAvgPricing(p),
                 address: apiPlace.formatted_address,
                 status: apiPlace.business_status,
-                open: apiPlace.opening_hours?.open_now,
+                openInfo: checkForOpenCloseHours(apiPlace.opening_hours),
                 photoUrl: photoUrl
             });
         }
@@ -114,6 +114,10 @@ export default class PlaceList extends React.Component<
                 <ReviewStars rating={item.rating} fontSize={18} />
                 <ReviewDollars rating={item.pricing} fontSize={14} />
                 <Text style={styles.info}>{item.address.split(',')[0]}</Text>
+                {
+                    item.openInfo && item.openInfo.message ? 
+                        <Text style={styles.info}>{item.openInfo.message}</Text> : null
+                }
             </Body>
         </ListItem>)
     }

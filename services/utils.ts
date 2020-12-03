@@ -1,4 +1,4 @@
-import { dbPlace } from "../models/place";
+import { dbPlace, openClosePeriod } from "../models/place";
 import { reviewSummary } from "../models/reviews";
 import { appUser } from "../models/user";
 
@@ -8,6 +8,84 @@ export const isUserVerified = function(usr: appUser){
 
 export const generateRandomString = function(){
     return Math.random().toString(20).substr(2, 8);
+}
+
+export const checkForOpenCloseHours = function(
+    opening_hours: { open_now : boolean, periods: Array<openClosePeriod>}){
+
+    if(!opening_hours){
+        return null;
+    }
+
+    const today = new Date();
+    const day = today.getDay();
+    const military = getMilitaryTime(today);
+
+    let result = {
+        open_now: opening_hours && opening_hours.open_now,
+        message: ''
+    };
+    
+    for(let p of opening_hours.periods){
+        if(p.open && p.open.day === day){
+            if(military >= p.open.time){
+                result.open_now = true;
+                result.message = `Open ${getStandardTime(p.open.time)} - ${getStandardTime(p.close?.time)}`;
+                break;
+            }
+            if((getMilitaryTime(addMinutesToDate(today, 45))) >= p.open.time){
+                result.open_now = false;
+                result.message = `Opening soon! Opens at ${getStandardTime(p.open.time)}`;
+                break;
+            }
+        } else if(p.close && p.close.day === day){
+            if(military >= p.close.time){
+                result.open_now = false;
+                result.message = `Closed. Hours are ${getStandardTime(p.open.time)} - ${getStandardTime(p.close?.time)}`;
+                break;
+            }
+            if((getMilitaryTime(addMinutesToDate(today, 45))) >= p.close.time){
+                result.open_now = true;
+                result.message = `Closing soon! Hours are ${getStandardTime(p.open.time)} - ${getStandardTime(p.close?.time)}`;
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
+const addMinutesToDate = function(now: Date, mins: number){
+    const then = new Date();
+    then.setTime(now.getTime() + (mins*60*1000));
+    return then;
+}
+
+export const getMilitaryTime = function(time: Date){
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    const convertedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const hourMinutes = +`${hours}${convertedMinutes}`;
+    return hourMinutes;
+}
+
+export const getStandardTime = function(military: number){
+    if(military == null){
+        return '???';
+    }
+
+    const str = military.toString();
+    if(str.length === 3){
+        const hours = +str.slice(0,1);
+        const mins = +str.slice(1);
+        return `${hours}:${mins} AM`;
+    } else if (str.length === 4){
+        const hours = +str.slice(0,2);
+        const amPm = hours >= 12 ? 'PM' : 'AM'
+        return `${hours > 12 ? hours - 12 : hours}:${str.slice(2)} ${amPm}`;
+    } else {
+        throw new Error(`getStandardTime invalid param: ${military}`);
+    }
 }
 
 export const isInRadius = function(
