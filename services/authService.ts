@@ -5,7 +5,6 @@ import { authResult } from '../models/auth';
 import { AsyncStorage } from 'react-native';
 import { FACEBOOK_TOKEN_KEY } from '../constants/AsyncStorage';
 import Constants, { AppOwnership } from 'expo-constants';
-import { iosClientId, androidClientId } from '../constants/Keys';
 import { Platform } from 'react-native';
 import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';
@@ -72,7 +71,7 @@ export const signInWithGoogle =
 
 const _signInWithGoogleAuth = async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
     let result: GoogleSignIn.GoogleSignInAuthResult;
-    let clientId = Platform.OS === 'android' ? androidClientId : iosClientId;
+    let clientId = Platform.OS === 'android' ? appConfig.expo.extra.androidClientId : appConfig.expo.extra.iosClientId;
     try{
         // await GoogleSignIn.initAsync({
         //     // clientId: clientId, 
@@ -105,7 +104,7 @@ const _signInWithGoogleAuth = async (failedCredential?: firebase.auth.AuthCreden
 
 const _signInWithGoogleExpo = async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
     let result: Google.LogInResult;
-    let clientId = Platform.OS === 'android' ? androidClientId : iosClientId;
+    let clientId = Platform.OS === 'android' ? appConfig.expo.extra.androidClientId : appConfig.expo.extra.iosClientId;
     try{
         result = await Google.logInAsync({
             clientId: clientId,

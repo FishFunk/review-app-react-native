@@ -4,7 +4,9 @@
     "description": "Write, read, and share reviews between only the people you choose",
     "slug": "NoBull",
     "extra": {
-      "releaseChannel": "dev"
+      "releaseChannel": "dev",
+      "iosClientId": "111193503088-2kmo6qaqvmhv9ndbi5dq9qpncph1s8dl.apps.googleusercontent.com",
+      "androidClientId": "111193503088-jkk5f9a902f6nggirjmh12cegc6q77si.apps.googleusercontent.com"
     },
     "version": "1.0.14",
     "orientation": "portrait",

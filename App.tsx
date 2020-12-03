@@ -59,7 +59,6 @@ export default function App(props: any) {
     return <SpinnerContainer />;
   }
 
-  // TODO: Update all text to use loaded font
   if(!user){
     return (
       <StyleProvider style={getTheme(platform)}>
