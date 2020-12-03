@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, StyleSheet } from 'react-native';
-import { Body, Icon, Left, ListItem, Text, Thumbnail, Title, View } from "native-base";
+import { Badge, Body, Icon, Left, ListItem, Text, Thumbnail, Title, View } from "native-base";
 import { dbPlace } from "../../models/place";
 import { FlatList } from "react-native-gesture-handler";
 import ReviewStars from "../reviews/ReviewStars";
@@ -97,6 +97,7 @@ export default class PlaceList extends React.Component<
         this.setState({ detailedPlaces: orderedList });
     }
 
+    // Render each place in flat list
     renderListItem(item: any){
         return (<ListItem 
             style={styles.listItem}
@@ -113,10 +114,21 @@ export default class PlaceList extends React.Component<
                 <Text style={styles.name}>{item.name}</Text>
                 <ReviewStars rating={item.rating} fontSize={18} />
                 <ReviewDollars rating={item.pricing} fontSize={14} />
-                <Text style={styles.info}>{item.address.split(',')[0]}</Text>
+                {
+                    item.address? 
+                        <Text style={styles.info}>{item.address.split(',')[0]}</Text> : null
+                }
                 {
                     item.openInfo && item.openInfo.message ? 
                         <Text style={styles.info}>{item.openInfo.message}</Text> : null
+                }
+                {
+                    item.status === 'CLOSED_TEMPORARILY' ?
+                        <Text style={styles.warningText}>Closed Temporarily</Text> : null
+                }
+                {
+                    item.status === 'CLOSED_PERMANENTLY' ?
+                        <Text style={styles.warningText}>Closed Permanently</Text> : null
                 }
             </Body>
         </ListItem>)
@@ -183,6 +195,10 @@ const styles = StyleSheet.create({
         fontFamily: theme.fontBold
     },
     info: {
+        fontSize: 12
+    },
+    warningText: {
+        color: theme.DANGER_COLOR,
         fontSize: 12
     }
 });

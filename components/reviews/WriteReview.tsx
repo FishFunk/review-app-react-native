@@ -358,6 +358,8 @@ const styles=StyleSheet.create({
         alignItems: 'center'
     },
     title: {
+        alignSelf: 'center',
+        maxWidth: 250,
         marginTop: '10%',
         fontFamily: theme.fontBold,
         fontSize: 20,
