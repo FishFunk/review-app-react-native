@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "NoBull",
-    "description": "Write, read, and reviews of places between only the people you choose",
+    "description": "Write, read, and share reviews between only the people you choose",
     "slug": "NoBull",
     "extra": {
-      "releaseChannel": "production"
+      "releaseChannel": "dev"
     },
     "version": "1.0.14",
     "orientation": "portrait",

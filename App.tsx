@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Container, Root, StyleProvider } from 'native-base';
 import useCachedResources from './hooks/useCachedResources';
 import * as Font from 'expo-font';
-import { AppLoading } from 'expo';
 import FirebaseService from './services/firebaseService';
 import HomeScreen from './screens/HomeScreen';
 import { NavigationContainer } from '@react-navigation/native';

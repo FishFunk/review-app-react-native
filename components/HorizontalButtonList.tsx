@@ -5,6 +5,8 @@ import { StyleSheet, Linking } from 'react-native';
 import { fullApiPlace } from '../models/place';
 import openMap from 'react-native-open-maps';
 import theme from '../styles/theme';
+import { openShareSheet } from '../services/shareService';
+import { websiteShareMessage } from '../constants/Messages';
 
 export default function HorizontalButtonList(
     props: {
@@ -58,11 +60,12 @@ export default function HorizontalButtonList(
                         </Button> : null
                 }
                 {
-                    <Button small rounded transparent style={styles.roundButton}
-                        onPress={()=>{alert("not implemented")}}>
-                        <Icon type={'FontAwesome5'} name={'share'} style={styles.buttonIcon}></Icon>
-                        <Label style={{fontSize: 12}}>Share</Label>
-                    </Button>
+                    props.place.website != null ? 
+                        <Button small rounded transparent style={styles.roundButton}
+                            onPress={()=>{openShareSheet(props.place.website, websiteShareMessage)}}>
+                            <Icon type={'FontAwesome5'} name={'share'} style={styles.buttonIcon}></Icon>
+                            <Label style={{fontSize: 12}}>Share</Label>
+                        </Button> : null
                 }
                 {/* <Button small rounded transparent style={styles.roundButton}
                     onPress={()=>{alert("not implemented")}}>
