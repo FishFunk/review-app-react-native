@@ -278,13 +278,13 @@ export default class PlaceDetails extends React.Component<
                 </Badge> : null
             }
             {
-                this.state.openInfo && this.state.openInfo.open_now ?
+                this.state.openInfo && this.state.openInfo.open_now === true ?
                     <Badge style={styles.goodBadge}>
                         <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open'}</Text>
                     </Badge> : null
             }
             {
-                this.state.openInfo && !this.state.openInfo.open_now ?
+                this.state.openInfo && this.state.openInfo.open_now === false ?
                     <Badge style={styles.warningBadge}>
                         <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Closed'}</Text>
                     </Badge> : null

@@ -338,15 +338,15 @@ export default class MapContainer extends React.Component<
             return <SpinnerContainer />
         }
         return (
-            <View style={{ width: '100%', height: '100%' }}>
-                <View style={{zIndex: 9999, marginLeft: 10, marginRight: 10}}>
+            <View style={styles.flex}>
+                <View style={styles.mapInput}>
                     <MapInput 
                         handleSelectPlace={this.handleSelectPlace.bind(this)}
                         apiKey={this.state.apiKey} />
                 </View>
                 {
                     this.state.region.latitude ?
-                        <View style={{width: '100%', height: '100%'}}>
+                        <View style={styles.flex}>
                             <Map 
                                 setMapRef={this.setMapRef.bind(this)}
                                 refreshCallout={this.state.refreshCallout}
@@ -381,30 +381,12 @@ export default class MapContainer extends React.Component<
 }
 
 const styles = StyleSheet.create({
-    mapToolButtonContainer: {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        backgroundColor: 'rgba(169,169,169, 0.7)'  
+    flex: {
+        flex: 1
     },
-    mapButton: {
-        height: 60,
-        width: 60,
-        backgroundColor: theme.LIGHT_COLOR,
-        borderRadius: 60,
-        margin: 5,
-        flexDirection: 'column',
-        justifyContent: 'center'
-    },
-    buttonIcon:{
-        padding: 2,
-        color: theme.DARK_COLOR,
-        fontSize: 20
-    },
-    buttonText: {
-        textAlign: 'center',
-        alignSelf: 'center',
-        color: theme.DARK_COLOR,
-        fontSize: 8
+    mapInput: {
+        zIndex: 9999, 
+        marginLeft: 10, 
+        marginRight: 10
     }
 });
