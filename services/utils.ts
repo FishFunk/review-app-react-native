@@ -27,18 +27,17 @@ export const checkForOpenCloseHours = function(
     };
     
     for(let p of opening_hours.periods){
-        if(p.open && p.open.day === day){
-            if(military >= p.open.time){
+        if(p.open && p.close && p.open.day === day){
+            if(military >= p.open.time && military < p.close.time){
                 result.open_now = true;
                 result.message = `Open ${getStandardTime(p.open.time)} - ${getStandardTime(p.close?.time)}`;
                 break;
             }
-            if((getMilitaryTime(addMinutesToDate(today, 45))) >= p.open.time){
+            if(military < p.close.time && (getMilitaryTime(addMinutesToDate(today, 45))) >= p.open.time){
                 result.open_now = false;
                 result.message = `Opening soon! Opens at ${getStandardTime(p.open.time)}`;
                 break;
             }
-        } else if(p.close && p.close.day === day){
             if(military >= p.close.time){
                 result.open_now = false;
                 result.message = `Closed. Hours are ${getStandardTime(p.open.time)} - ${getStandardTime(p.close?.time)}`;
