@@ -183,92 +183,93 @@ export default class SocialContainer extends React.Component<{
                 this.state.loading ? 
                 <SpinnerContainer/> : 
                 <View>
-                {
-                    this.state.followingFriends.length > 0 || this.state.suggestedFriends.length > 0?
-                        <List>
-                            {                      
-                                this.state.suggestedFriends.length > 0 ?  
-                                    <ListItem itemDivider style={styles.itemDivider}>
-                                        <Text style={styles.dividerText}>People You May Know</Text>
-                                    </ListItem> : null
-                            }
-                            {
-                                this.state.suggestedFriends.map((user: appUser)=>
-                                    <UserListItem 
-                                        key={user.id}
-                                        user={user} 
-                                        following={false} 
-                                        onButtonPress={this.onAddContact.bind(this, user)}/>)
-                            }
-                            {                      
-                                this.state.topReviewers.length > 0 ?  
-                                    <ListItem itemDivider style={styles.itemDivider}>
-                                        <Text style={styles.dividerText}>Top Reviewers</Text>
-                                    </ListItem>  : null
-                            }
-                            {
-                                this.state.topReviewers.map((user: appUser, idx)=>
-                                    <UserListItem 
-                                        key={user.id}
-                                        user={user} 
-                                        following={_indexOf(this.state.followingIds, user.id) >= 0} 
-                                        onButtonPress={()=>{
-                                            _indexOf(this.state.followingIds, user.id) >= 0 ?
-                                                this.onRemoveContact(user) :
-                                                this.onAddContact(user);
-                                        }}>
-                                        <Text style={styles.subText}>{user.reviews?.length} reviews</Text>
-                                    </UserListItem>)
-                            }
-                            {                      
-                                this.state.nearbyReviewers.length > 0 ?  
-                                    <ListItem itemDivider style={styles.itemDivider}>
-                                        <Text style={styles.dividerText}>Nearby Reviewers</Text>
-                                    </ListItem>  : null
-                            }
-                            {
-                                this.state.nearbyReviewers.map((user: appUser, idx)=>
-                                    <UserListItem 
-                                        key={user.id}
-                                        user={user} 
-                                        following={_indexOf(this.state.followingIds, user.id) >= 0} 
-                                        onButtonPress={()=>{
-                                            _indexOf(this.state.followingIds, user.id) >= 0 ?
-                                                this.onRemoveContact(user) :
-                                                this.onAddContact(user);
-                                        }}>
-                                        <Text style={styles.subText}>{user.reviews?.length} {user.reviews?.length > 1 ? 'reviews' : 'review'}</Text>
-                                    </UserListItem>)
-                            }
-                            {                      
-                                this.state.followingFriends.length > 0 ?  
-                                    <ListItem itemDivider style={styles.itemDivider}>
-                                        <Text style={styles.dividerText}>People You Follow</Text>
-                                    </ListItem>  : null
-                            }
-                            {
-                                this.state.followingFriends.map((user: appUser, idx)=>
-                                    <UserListItem 
-                                        key={user.id}
-                                        user={user} 
-                                        following={true} 
-                                        onButtonPress={this.onRemoveContact.bind(this, user)} />)
-                            }
-                        </List> : 
-                        <View style={styles.emptyListView}>
-                            <Text style={styles.emptyListText}>
-                                We can't find any of your contacts in our system. 
-                                Lucky there is an easy fix for that!
-                            </Text>
-                            <Button  
-                                style={styles.inviteButton}
-                                onPress={this.onPressInvite.bind(this)}
-                                >
-                                <Icon type={'FontAwesome5'} name={'paper-plane'}/>
-                                <Text style={styles.inviteText}>Invite Friends</Text>
-                            </Button>
-                        </View>
-                }
+                    <List>
+                        {                      
+                            this.state.suggestedFriends.length > 0 ?  
+                                <ListItem itemDivider style={styles.itemDivider}>
+                                    <Text style={styles.dividerText}>People You May Know</Text>
+                                </ListItem> : null
+                        }
+                        {
+                            this.state.suggestedFriends.map((user: appUser)=>
+                                <UserListItem 
+                                    key={user.id}
+                                    user={user} 
+                                    following={false} 
+                                    onButtonPress={this.onAddContact.bind(this, user)}/>)
+                        }
+                        {                      
+                            this.state.topReviewers.length > 0 ?  
+                                <ListItem itemDivider style={styles.itemDivider}>
+                                    <Text style={styles.dividerText}>Top Reviewers</Text>
+                                </ListItem>  : null
+                        }
+                        {
+                            this.state.topReviewers.map((user: appUser, idx)=>
+                                <UserListItem 
+                                    key={user.id}
+                                    user={user} 
+                                    following={_indexOf(this.state.followingIds, user.id) >= 0} 
+                                    onButtonPress={()=>{
+                                        _indexOf(this.state.followingIds, user.id) >= 0 ?
+                                            this.onRemoveContact(user) :
+                                            this.onAddContact(user);
+                                    }}/>)
+                        }
+                        {                      
+                            this.state.nearbyReviewers.length > 0 ?  
+                                <ListItem itemDivider style={styles.itemDivider}>
+                                    <Text style={styles.dividerText}>Reviewers Near You</Text>
+                                </ListItem>  : null
+                        }
+                        {
+                            this.state.nearbyReviewers.map((user: appUser, idx)=>
+                                <UserListItem 
+                                    key={user.id}
+                                    user={user} 
+                                    following={_indexOf(this.state.followingIds, user.id) >= 0} 
+                                    onButtonPress={()=>{
+                                        _indexOf(this.state.followingIds, user.id) >= 0 ?
+                                            this.onRemoveContact(user) :
+                                            this.onAddContact(user);
+                                    }}/>)
+                        }
+                        {                      
+                            this.state.followingFriends.length > 0 ?  
+                                <ListItem itemDivider style={styles.itemDivider}>
+                                    <Text style={styles.dividerText}>People You Follow</Text>
+                                </ListItem>  : null
+                        }
+                        {
+                            this.state.followingFriends.map((user: appUser, idx)=>
+                                <UserListItem 
+                                    key={user.id}
+                                    user={user} 
+                                    following={true} 
+                                    onButtonPress={this.onRemoveContact.bind(this, user)} />)
+                        }
+                    </List>
+                    <View style={styles.inviteView}>
+                        {
+                            this.state.suggestedFriends.length === 0 ?
+                                <Text style={styles.emptyListText}>
+                                    We can't seem to find any of your contacts in our system. 
+                                    Try inviting some of them!
+                                </Text> : 
+                                <Text style={styles.emptyListText}>
+                                    Invite friends to use NoBull reviews.
+                                    The more the merrier!
+                                </Text>
+                        }
+                        <Button  
+                            small
+                            style={styles.inviteButton}
+                            onPress={this.onPressInvite.bind(this)}
+                            >
+                            <Icon type={'FontAwesome5'} name={'paper-plane'}/>
+                            <Text style={styles.inviteText}>Invite Friends</Text>
+                        </Button>
+                    </View>
                 </View>
             }
           </ScrollView>
@@ -293,23 +294,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    emptyListView: {
+    inviteView: {
         flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        padding: 10,
+        flex: 1,
+        padding: 20,
         justifyContent: 'space-evenly'
     },
     emptyListText: {
+        maxWidth: 250,
+        alignSelf: 'center',
         color: theme.DARK_COLOR,
-        fontWeight: '300',
-        fontSize: 18,
-        width: '100%',
-        textAlign: 'center',
-        padding: 5
+        fontFamily: theme.fontLight,
+        fontSize: 14,
+        textAlign: 'center'
     },
     inviteButton: {
-        marginTop: 15,
+        margin: 12,
         backgroundColor: theme.PRIMARY_COLOR,
         alignSelf: 'center'
     },

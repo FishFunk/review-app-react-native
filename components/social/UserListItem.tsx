@@ -27,7 +27,12 @@ export default function UserListItem(
             </Left>
             <Body style={styles.body}>
                 <Text>{user.firstName} {user.lastName}</Text>
-                { props.children }
+                {
+                    user.reviews && user.reviews.length > 0 ?
+                    <Text style={styles.subText}>
+                        {user.reviews?.length} {user.reviews?.length > 1 ? 'reviews' : 'review'}
+                    </Text> : null
+                }
             </Body>
             <Button 
                 style={{top: '20%', right: '5%', position: 'absolute'}}
