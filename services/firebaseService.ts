@@ -462,6 +462,28 @@ class FirebaseService {
 		return places;
 	}
 
+	async getNearbyReviewers(lat: number, lng: number): Promise<appUser[]>{
+		this._verifyInitialized();
+	
+		const placesSnapshot = await this.db.ref(`places`).once('value');
+		let ids: string[] = [];
+		placesSnapshot.forEach((snapshot: firebase.database.DataSnapshot)=>{
+			const place = snapshot.val();
+			if(isInRadius(lat, lng, place.lat, place.lng, 25)){
+				for(let key in place.reviews){
+					if(place.reviews[key].reviewer_id !== this.getCurrentUserId()){
+						ids.push(place.reviews[key].reviewer_id);
+					}
+				}
+			}
+		});
+		
+		const uniqueIds = _uniq(ids);
+		const nearbyUsers = await this.getMultipleUsers(uniqueIds);
+
+		return nearbyUsers;
+	}
+
 	async getUserFollowingIds(): Promise<string[]> {
 		if(!firebase.apps.length || !this.auth.currentUser){
 			throw new Error("Firebase not initialized correctly!");

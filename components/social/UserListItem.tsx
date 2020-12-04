@@ -21,7 +21,7 @@ export default function UserListItem(
         && user.phone_verified;
 
     return (
-        <ListItem avatar style={{justifyContent: 'space-evenly'}}>
+        <ListItem avatar>
             <Left>
                 <ListAvatar user_verified={verified} img={user.photoUrl || ''} />
             </Left>
@@ -30,7 +30,7 @@ export default function UserListItem(
                 { props.children }
             </Body>
             <Button 
-                style={{alignSelf: 'center'}}
+                style={{top: '20%', right: '5%', position: 'absolute'}}
                 transparent
                 onPress={()=>onButtonPress(following)}>
                 {
@@ -61,5 +61,9 @@ const styles = StyleSheet.create({
     body: {
         minHeight: 80,
         justifyContent: 'center'
+    },
+    subText: {
+        fontFamily: theme.fontLight,
+        fontSize: 10
     }
 });

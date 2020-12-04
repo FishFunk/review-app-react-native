@@ -26,6 +26,7 @@ import { socialShareMessage } from '../../constants/Messages';
 import SpinnerContainer from '../SpinnerContainer';
 import UndrawFollowersSvg from '../../svgs/undraw_followers';
 import { Contact } from 'expo-contacts';
+import { getLocation } from '../../services/locationService';
 
 export default class SocialContainer extends React.Component<{
         navigation: any
@@ -34,6 +35,7 @@ export default class SocialContainer extends React.Component<{
         suggestedFriends: Array<appUser>, 
         followingFriends: Array<appUser>, 
         topReviewers: Array<appUser>, 
+        nearbyReviewers: Array<appUser>, 
         followingIds: Array<string>,
         loading: boolean,
         permissionGranted: boolean
@@ -44,6 +46,7 @@ export default class SocialContainer extends React.Component<{
         suggestedFriends: new Array<appUser>(),
         followingFriends: new Array<appUser>(),
         topReviewers: new Array<appUser>(),
+        nearbyReviewers: new Array<appUser>(),
         permissionGranted: false,
         followingIds: new Array<string>()
     };
@@ -98,7 +101,16 @@ export default class SocialContainer extends React.Component<{
             }
         }
         
+        // TODO: show verified users??
         const [allSuggestedFriends, topReviewers, verifiedUsers] = await FirebaseService.findSuggestedConnections(contacts);
+        
+        let nearbyReviewers: appUser[] = [];
+        const locData = await getLocation();
+        if(locData){
+            nearbyReviewers = await FirebaseService.getNearbyReviewers(locData.coords.latitude, locData.coords.longitude);
+        }
+        
+        
         const followingIds = await FirebaseService.getUserFollowingIds();
         const followingUsers = await FirebaseService.getMultipleUsers(followingIds);
         let suggestedFriends = [];
@@ -114,7 +126,8 @@ export default class SocialContainer extends React.Component<{
             followingIds: followingIds,
             suggestedFriends: suggestedFriends, 
             followingFriends: followingUsers,
-            topReviewers: topReviewers
+            topReviewers: topReviewers,
+            nearbyReviewers: nearbyReviewers
         });
     }
 
@@ -177,7 +190,6 @@ export default class SocialContainer extends React.Component<{
                                 this.state.suggestedFriends.length > 0 ?  
                                     <ListItem itemDivider style={styles.itemDivider}>
                                         <Text style={styles.dividerText}>People You May Know</Text>
-                                        <Text style={styles.dividerText}>Follow</Text>
                                     </ListItem> : null
                             }
                             {
@@ -205,14 +217,33 @@ export default class SocialContainer extends React.Component<{
                                                 this.onRemoveContact(user) :
                                                 this.onAddContact(user);
                                         }}>
-                                        <Text style={{paddingLeft: 10, fontSize: 14}}>{user.reviews?.length} reviews</Text>
+                                        <Text style={styles.subText}>{user.reviews?.length} reviews</Text>
+                                    </UserListItem>)
+                            }
+                            {                      
+                                this.state.nearbyReviewers.length > 0 ?  
+                                    <ListItem itemDivider style={styles.itemDivider}>
+                                        <Text style={styles.dividerText}>Nearby Reviewers</Text>
+                                    </ListItem>  : null
+                            }
+                            {
+                                this.state.nearbyReviewers.map((user: appUser, idx)=>
+                                    <UserListItem 
+                                        key={user.id}
+                                        user={user} 
+                                        following={_indexOf(this.state.followingIds, user.id) >= 0} 
+                                        onButtonPress={()=>{
+                                            _indexOf(this.state.followingIds, user.id) >= 0 ?
+                                                this.onRemoveContact(user) :
+                                                this.onAddContact(user);
+                                        }}>
+                                        <Text style={styles.subText}>{user.reviews?.length} {user.reviews?.length > 1 ? 'reviews' : 'review'}</Text>
                                     </UserListItem>)
                             }
                             {                      
                                 this.state.followingFriends.length > 0 ?  
                                     <ListItem itemDivider style={styles.itemDivider}>
                                         <Text style={styles.dividerText}>People You Follow</Text>
-                                        <Text style={styles.dividerText}>Unfollow</Text>
                                     </ListItem>  : null
                             }
                             {
@@ -250,9 +281,9 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     itemDivider: {
+        fontFamily: theme.fontBold,
         backgroundColor: theme.GRAY_COLOR,
-        justifyContent: 'space-between',
-        paddingRight: 25
+        justifyContent: 'center'
     },
     dividerText: {
         color: theme.DARK_COLOR,
@@ -284,5 +315,9 @@ const styles = StyleSheet.create({
     },
     inviteText: {
         fontFamily: theme.fontBold
+    },
+    subText: {
+        fontSize: 12, 
+        fontFamily: theme.fontLight
     }
 });

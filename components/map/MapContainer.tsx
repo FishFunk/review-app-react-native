@@ -13,7 +13,6 @@ import {
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
-import theme from '../../styles/theme';
 import { getPlaceAvgRating } from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
 
@@ -127,9 +126,9 @@ export default class MapContainer extends React.Component<
 
         if(!places || places.length === 0){
             Toast.show({
-                text: 'No reviews found in this area within your network. Try following more reviewers in the social tab!',
+                text: "Darn... we couldn't any reviews by the people you follow in this area. Try zooming out and searching again or find more reviewers to follow in the social tab!",
                 position: 'bottom',
-                duration: 5000,
+                duration: 10000,
                 buttonText: 'OK'
             });
             return this.setState({ loadingNearby: false, markers: [], places: [] });
