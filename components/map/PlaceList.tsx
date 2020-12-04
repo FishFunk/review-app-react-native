@@ -119,8 +119,11 @@ export default class PlaceList extends React.Component<
                         <Text style={styles.info}>{item.address.split(',')[0]}</Text> : null
                 }
                 {
-                    item.openInfo && item.openInfo.message ? 
-                        <Text style={styles.info}>{item.openInfo.message}</Text> : null
+                    item.openInfo ? 
+                        item.openInfo.open_now ? 
+                            <Text style={styles.importantText}>{item.openInfo.message ? item.openInfo.message : 'Open' }</Text> : 
+                            <Text style={styles.warningText}>{item.openInfo.message ? item.openInfo.message : 'Closed' }</Text>
+                        : null
                 }
                 {
                     item.status === 'CLOSED_TEMPORARILY' ?
@@ -195,6 +198,10 @@ const styles = StyleSheet.create({
         fontFamily: theme.fontBold
     },
     info: {
+        fontSize: 12
+    },
+    importantText: {
+        color: theme.PRIMARY_COLOR,
         fontSize: 12
     },
     warningText: {
