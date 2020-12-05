@@ -70,7 +70,31 @@ describe('utils checkForOpenCloseHours', ()=>{
         }]
     };
 
-    test('checkForOpenCloseHours closed', () => {
+    test('checkForOpenCloseHours closed early', () => {
+        const spy = jest.spyOn(global, 'Date').mockImplementation(() => {
+            return {
+                getDay: ()=>0,
+                getHours: ()=>8,
+                getMinutes: ()=>0
+            }
+        });
+
+        const spy1 = jest.spyOn(Utils, 'addMinutesToDate').mockImplementation(()=>{
+            return {
+                getDay: ()=>0,
+                getHours: ()=>8,
+                getMinutes: ()=>45,
+                getTime: ()=>{},
+                setTime: ()=>{}
+            }
+        });
+
+        const result = Utils.checkForOpenCloseHours(timePeriods);
+        expect(result.message).toContain('Closed.');
+        expect(result.open_now).toBe(false);
+    });
+
+    test('checkForOpenCloseHours closed late', () => {
         const spy = jest.spyOn(global, 'Date').mockImplementation(() => {
             return {
                 getDay: ()=>0,
@@ -80,7 +104,7 @@ describe('utils checkForOpenCloseHours', ()=>{
         });
 
         const result = Utils.checkForOpenCloseHours(timePeriods);
-        expect(result.message).toContain('Closed');
+        expect(result.message).toContain('Closed.');
         expect(result.open_now).toBe(false);
     });
 
