@@ -1,5 +1,6 @@
 {
   "projects": {
-    "reviewers-dev": "reviewers-dev"
+    "reviewers-dev": "reviewers-dev",
+    "production": "nobullreviews-prod"
   }
 }
