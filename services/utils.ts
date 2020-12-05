@@ -40,7 +40,7 @@ export default class Utils {
                         result.open_now = false;
                         result.message = `Opening soon! Opens at ${this.getStandardTime(p.open.time)}`;
                     }
-                    else if(military >= p.close.time){
+                    else if(military < p.open.time || military >= p.close.time){
                         result.open_now = false;
                         result.message = `Closed. Hours are ${this.getStandardTime(p.open.time)} - ${this.getStandardTime(p.close?.time)}`;
                     }
