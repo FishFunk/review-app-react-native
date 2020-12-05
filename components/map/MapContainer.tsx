@@ -13,7 +13,7 @@ import {
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
-import { getPlaceAvgRating } from '../../services/utils';
+import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
 
 export default class MapContainer extends React.Component<
@@ -197,7 +197,7 @@ export default class MapContainer extends React.Component<
                     longitude: place.lng
                 },
                 title: place.name,
-                rating: getPlaceAvgRating(place),
+                rating: Utils.getPlaceAvgRating(place),
                 placeId: place.id,
                 icon: place.icon
             }
@@ -217,7 +217,7 @@ export default class MapContainer extends React.Component<
         const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
         const dbPlace = await FirebaseService.getPlace(place_id);
 
-        const rating = getPlaceAvgRating(dbPlace);
+        const rating = Utils.getPlaceAvgRating(dbPlace);
 
         const marker: markerData = {
             latlng: region,
@@ -277,7 +277,7 @@ export default class MapContainer extends React.Component<
             marker = {
                 latlng: { latitude: geometry?.location.lat, longitude: geometry?.location.lng },
                 title: name,
-                rating: getPlaceAvgRating(dbPlace),
+                rating: Utils.getPlaceAvgRating(dbPlace),
                 placeId: placeId
             }
 

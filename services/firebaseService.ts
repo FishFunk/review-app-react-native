@@ -12,7 +12,7 @@ import _uniq from 'lodash/uniq';
 import _first from 'lodash/first';
 import _last from 'lodash/last';
 import { registerForPushNotificationsAsync } from './notificationService';
-import { generateRandomString, isInRadius, isUserVerified } from './utils';
+import Utils from './utils';
 import { signInWithGoogle, signInWithFacebook } from './authService';
 import { authResult } from '../models/auth';
 
@@ -330,7 +330,7 @@ class FirebaseService {
 					review_key: key,
 					reports: review.reports,
 					thanks: review.thanks,
-					user_verified: isUserVerified(usr)
+					user_verified: Utils.isUserVerified(usr)
 				}
 				
 				reviewSummaries.push(reviewSummary);
@@ -381,7 +381,7 @@ class FirebaseService {
 				}
 
 				// Verified users
-				if(isUserVerified(user)){
+				if(Utils.isUserVerified(user)){
 					verifiedReviewers.push(user);
 				}
 			}
@@ -454,7 +454,7 @@ class FirebaseService {
 		placesSnapshot.forEach((snapshot: firebase.database.DataSnapshot)=>{
 			const place = snapshot.val();
 			if(this._doesPlaceHaveRelevantReviews(place, targetIds) && 
-				isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
+				Utils.isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
 				places.push(place);
 			}
 		});
@@ -469,7 +469,7 @@ class FirebaseService {
 		let ids: string[] = [];
 		placesSnapshot.forEach((snapshot: firebase.database.DataSnapshot)=>{
 			const place = snapshot.val();
-			if(isInRadius(lat, lng, place.lat, place.lng, 25)){
+			if(Utils.isInRadius(lat, lng, place.lat, place.lng, 25)){
 				for(let key in place.reviews){
 					if(place.reviews[key].reviewer_id !== this.getCurrentUserId()){
 						ids.push(place.reviews[key].reviewer_id);
@@ -528,7 +528,7 @@ class FirebaseService {
 
 		console.error(log);
 
-		const key = generateRandomString();
+		const key = Utils.generateRandomString();
 		const data = {
 			data: log,
 			timeStamp: new Date().toISOString()

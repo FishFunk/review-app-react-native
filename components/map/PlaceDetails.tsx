@@ -21,7 +21,7 @@ import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { checkForOpenCloseHours, getReviewAverages } from '../../services/utils';
+import Utils from '../../services/utils';
 import _find from 'lodash/find';
 import SpinnerContainer from '../SpinnerContainer';
 import ReviewComplete from '../reviews/ReviewComplete';
@@ -87,7 +87,7 @@ export default class PlaceDetails extends React.Component<
         
         const place = await getGooglePlaceById(this.props.apiKey, this.props.placeId);
 
-        const openInfo = checkForOpenCloseHours(place.opening_hours);
+        const openInfo = Utils.checkForOpenCloseHours(place.opening_hours);
         this.setState({ place: place, openInfo: openInfo });
 
         let photoUrls = []
@@ -114,7 +114,7 @@ export default class PlaceDetails extends React.Component<
     async getReviewState(){
         const userId = FirebaseService.getCurrentUserId();
         const reviews = await FirebaseService.getReviewSummaries(this.props.placeId);
-        const averages = getReviewAverages(reviews);
+        const averages = Utils.getReviewAverages(reviews);
 
         let disableEditing = _find(reviews, (r) => r.reviewer_id === userId) != null;
 
@@ -258,7 +258,10 @@ export default class PlaceDetails extends React.Component<
                     </TouchableOpacity>
                     {
                         this.state.pricing ?
-                        <ReviewDollars style={{alignSelf: 'center', marginBottom: 10}} rating={this.state.pricing} fontSize={14}/> : null
+                            <ReviewDollars 
+                                style={{alignSelf: 'center', marginBottom: 10}} 
+                                rating={this.state.pricing}
+                                fontSize={14}/> : null
                     }
                 </View>
                 <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>

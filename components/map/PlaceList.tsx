@@ -7,7 +7,7 @@ import ReviewStars from "../reviews/ReviewStars";
 import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
 import ReviewDollars from "../reviews/ReviewDollars";
 import SpinnerContainer from "../SpinnerContainer";
-import { checkForOpenCloseHours, getPlaceAvgPricing, getPlaceAvgRating } from '../../services/utils';
+import Utils from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
 import DropDownPicker from 'react-native-dropdown-picker';
 import theme from "../../styles/theme";
@@ -62,11 +62,11 @@ export default class PlaceList extends React.Component<
             detailedPlaces.push({
                 id: p.id,
                 name: p.name,
-                rating: getPlaceAvgRating(p),
-                pricing: getPlaceAvgPricing(p),
+                rating: Utils.getPlaceAvgRating(p),
+                pricing: Utils.getPlaceAvgPricing(p),
                 address: apiPlace.formatted_address,
                 status: apiPlace.business_status,
-                openInfo: checkForOpenCloseHours(apiPlace.opening_hours),
+                openInfo: Utils.checkForOpenCloseHours(apiPlace.opening_hours),
                 photoUrl: photoUrl
             });
         }
