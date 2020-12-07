@@ -8,6 +8,7 @@ import ReviewStars from '../reviews/ReviewStars';
 import { markerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';
 import MapToolbar from './MapToolbar';
+import YelpReviewStars from '../reviews/YelpReviewStars';
 
 export default class Map extends React.Component<
     {
@@ -137,8 +138,24 @@ export default class Map extends React.Component<
                                 <Text style={styles.title}>{marker.title}</Text>
                                 {
                                     marker.rating ?
-                                    <View style={styles.stars}><ReviewStars rating={marker.rating} fontSize={12}/></View> :
-                                    <Text style={styles.subtext}>No Reviews</Text>
+                                    <View style={styles.stars}>
+                                        <Text style={{fontSize: 8}}>NoBull</Text>
+                                        <ReviewStars rating={marker.rating} fontSize={18} style={{ marginTop: -4 }}/>
+                                    </View> : null
+                                }
+                                {
+                                    marker.googleRating ?
+                                        <View style={styles.stars}>
+                                            <Text style={{fontSize: 8}}>Google</Text>
+                                            <ReviewStars rating={marker.googleRating} fontSize={18} color={theme.googleRed} style={{ marginTop: -4 }}/>
+                                        </View> : null
+                                }
+                                {
+                                    marker.yelpRating ?
+                                        <View style={styles.stars}>
+                                            <Text style={{fontSize: 8}}>Yelp</Text>
+                                            <YelpReviewStars rating={marker.yelpRating} />
+                                        </View> : null
                                 }
                                 {
                                     marker.description ?
@@ -173,7 +190,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         padding: 10,
         minWidth: 150,
-        maxWidth: 280
+        maxWidth: 300
     },
     title: {
         textAlign: 'center',
@@ -182,7 +199,9 @@ const styles = StyleSheet.create({
         color: theme.DARK_COLOR
     },
     stars: {
-        alignSelf: 'center'
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        padding: 4
     },
     arrow: {
         backgroundColor: 'transparent',
