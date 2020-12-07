@@ -15,6 +15,7 @@ import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
+import { getAllReviews, getApiPlaceSummary } from '../../services/combinedApiService';
 
 export default class MapContainer extends React.Component<
     {
@@ -134,7 +135,7 @@ export default class MapContainer extends React.Component<
             return this.setState({ loadingNearby: false, markers: [], places: [] });
         }
 
-        const markers = this.convertPlacesToMarkers(places);
+        const markers = await this.convertPlacesToMarkers(places);
 
         if(this.mapViewRef){
             const latLngs = markers.map(m=>m.latlng);
@@ -189,8 +190,10 @@ export default class MapContainer extends React.Component<
         this.setState({ loadingLocation: false });
     }
 
-    convertPlacesToMarkers(places: dbPlace[]){
-        return places.map((place)=>{
+    async convertPlacesToMarkers(places: dbPlace[]){
+        let markers  = [];
+        for(let place of places){
+            let outsideRatings = await getApiPlaceSummary(this.state.apiKey, place.id);
             var m: markerData = {
                 latlng: {
                     latitude: place.lat,
@@ -199,36 +202,21 @@ export default class MapContainer extends React.Component<
                 title: place.name,
                 rating: Utils.getPlaceAvgRating(place),
                 placeId: place.id,
-                icon: place.icon
+                icon: place.icon,
+                googleRating: outsideRatings?.googleRating,
+                yelpRating: outsideRatings?.yelpRating
             }
-            return m;
-        });
+
+            markers.push(m);
+        }
+
+        return markers;
     }
 
     async handleSelectPlace(place: searchPlace){
         Keyboard.dismiss();
-        const region = {
-            latitude: get(place, 'result.geometry.location.lat'),
-            longitude: get(place, 'result.geometry.location.lng'),
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02
-        };
-
         const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
-        const dbPlace = await FirebaseService.getPlace(place_id);
-
-        const rating = Utils.getPlaceAvgRating(dbPlace);
-
-        const marker: markerData = {
-            latlng: region,
-            title: place.result.name,
-            rating: rating,
-            placeId: place_id
-        }
-
-        this.setState({ markers: [marker], placeId: place_id, places: [], hideCallout: false });
-
-        this.mapViewRef?.animateToRegion(region);
+        this.loadSingleMarker(place_id);
     }
 
     onHandleRegionChange(region: Region, marker: Marker | null){
@@ -257,30 +245,41 @@ export default class MapContainer extends React.Component<
     }
 
     async loadSingleMarker(placeId: string){
+        if(!placeId){
+            return;
+        }
+
         let marker: markerData;
-        let geometry, name;
         
         this.setState({ refreshCallout: false });
 
         const dbPlace = await FirebaseService.getPlace(placeId);
+        const placeSummary = await getApiPlaceSummary(this.state.apiKey, placeId);
 
-        if(!dbPlace){
-            const apiPlace = await getGooglePlaceById(this.state.apiKey, placeId, ['geometry', 'name']);
-            geometry = apiPlace.geometry;
-            name = apiPlace.name;
-        } else {
-            geometry = { location: { lat: dbPlace.lat, lng: dbPlace.lng }};
-            name = dbPlace.name;
-        }
-        
-        if(geometry && name){
+        if(dbPlace){
             marker = {
-                latlng: { latitude: geometry?.location.lat, longitude: geometry?.location.lng },
-                title: name,
+                latlng: {
+                    latitude: dbPlace.lat,
+                    longitude: dbPlace.lng
+                },
+                title: dbPlace.name,
                 rating: Utils.getPlaceAvgRating(dbPlace),
-                placeId: placeId
+                placeId: placeId,
+                yelpRating: placeSummary?.yelpRating,
+                googleRating: placeSummary?.googleRating
             }
+        } else if (placeSummary){
+            marker = {
+                latlng: placeSummary.latlng,
+                title: placeSummary.name,
+                rating: null,
+                placeId: placeId,
+                yelpRating: placeSummary.yelpRating,
+                googleRating: placeSummary.googleRating
+            }
+        }
 
+        if(marker){
             let region = {
                 latitude: marker.latlng.latitude,
                 longitude: marker.latlng.longitude,
@@ -289,7 +288,7 @@ export default class MapContainer extends React.Component<
             }
             
             this.setState({ markers: [marker], placeId: placeId, places: [], refreshCallout: true });
-
+    
             this.mapViewRef?.animateToRegion(region);
         }
     }

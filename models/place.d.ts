@@ -70,8 +70,10 @@ export interface fullApiPlace {
         }
     }
   },
+  address_components: any[],
   formatted_address?: string,
   formatted_phone_number? : string,
+  international_phone_number?: string,
   icon? : string,
   name? : string,
   opening_hours? : {
@@ -99,7 +101,9 @@ export interface markerData {
   description?: string,
   rating?: number,
   icon?: string,
-  placeId: string
+  placeId: string,
+  googleRating?: number,
+  yelpRating?: number
 }
 
 export interface placePhoto {

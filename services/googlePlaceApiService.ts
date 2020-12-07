@@ -39,17 +39,17 @@ const _findPlacesByTextUrl = (
     return  `${baseUrl}${urlExt}${location}${radius}&query=${query}&key=${apiKey}`;
 }
 
-const _fetchNextPage = async (pageToken: string, apiKey: string) => {
-    const url = `${baseUrl}/nearbysearch/json?pagetoken=${pageToken}&key=${apiKey}`;
-    const response = await fetch(url);
-    const json = await response.json();
+// const _fetchNextPage = async (pageToken: string, apiKey: string) => {
+//     const url = `${baseUrl}/nearbysearch/json?pagetoken=${pageToken}&key=${apiKey}`;
+//     const response = await fetch(url);
+//     const json = await response.json();
 
-    if(json.status === "OK" && json.results && json.results.length > 0){
-        return json.results;
-    } else {
-        return Promise.reject("No matching places found");
-    }
-}
+//     if(json.status === "OK" && json.results && json.results.length > 0){
+//         return json.results;
+//     } else {
+//         return Promise.reject("No matching places found");
+//     }
+// }
 
 export const getPhotoUrl = (apiKey: string,photoRef: string)=>{
     const url = 
