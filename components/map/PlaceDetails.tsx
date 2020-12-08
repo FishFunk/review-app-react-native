@@ -255,11 +255,20 @@ export default class PlaceDetails extends React.Component<
                         style={styles.starsView} 
                         onPress={this.onPressWriteReview.bind(this)}
                         disabled={this.state.disableEdit}>
-                        <ReviewStars rating={this.state.rating} fontSize={18} style={styles.stars}/>
-                        <ReviewStars rating={this.state.place.googleRating} fontSize={18} color={theme.googleRed}  style={styles.stars}/>
-                        <YelpReviewStars 
-                            rating={this.state.place.yelpRating} 
-                            style={styles.yelpStars}/>
+                        <ReviewStars rating={this.state.rating} fontSize={18} style={styles.stars}/>    
+                        { 
+                            this.state.place.googleRating ?
+                                <ReviewStars rating={this.state.place.googleRating} 
+                                    fontSize={18} 
+                                    color={theme.googleRed}  
+                                    style={styles.stars}/> : null
+                        }
+                        {
+                            this.state.place.yelpRating ? 
+                                <YelpReviewStars 
+                                    rating={this.state.place.yelpRating} 
+                                    style={styles.yelpStars}/> : null
+                        }
                     </TouchableOpacity>
                     {
                         this.state.pricing ?

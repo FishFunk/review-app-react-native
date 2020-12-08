@@ -64,7 +64,9 @@ export default class PlaceList extends React.Component<
                 name: p.name,
                 rating: Utils.getPlaceAvgRating(p),
                 yelpRating: placeSummary?.yelpRating,
+                yelpCount: placeSummary?.yelpCount,
                 googleRating: placeSummary?.googleRating,
+                googleCount: placeSummary?.googleCount,
                 pricing: Utils.getPlaceAvgPricing(p),
                 address: placeSummary?.formatted_address,
                 status: placeSummary?.business_status,
@@ -116,11 +118,14 @@ export default class PlaceList extends React.Component<
             <Body>
                 <Text style={styles.name}>{item.name}</Text>
                 <StarRatingListItem 
-                    width={120}
+                    width={180}
                     pricing={item.pricing}
                     noBullRating={item.rating} 
                     googleRating={item.googleRating}
-                    yelpRating={item.yelpRating} />
+                    googleCount={item.googleCount}
+                    yelpRating={item.yelpRating} 
+                    yelpCount={item.yelpCount}/>
+                <View style={{height: 5}}></View>
                 {/* {
                     item.address? 
                         <Text style={styles.info}>{item.address.split(',')[0]}</Text> : null

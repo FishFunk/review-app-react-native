@@ -15,7 +15,8 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string)=
         'business_status',
         'opening_hours', 
         'website',
-        'photos']);
+        'photos',
+        'user_ratings_total']);
 
     let yelpPlace;
 
@@ -44,9 +45,11 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string)=
             opening_hours: googlePlace.opening_hours,
             photos: googlePlace.photos,
             latlng: { latitude: googlePlace.geometry?.location.lat, longitude: googlePlace.geometry?.location.lng },
-            name: googlePlace?.name, 
-            googleRating: googlePlace?.rating, 
-            yelpRating: yelpPlace?.rating 
+            name: googlePlace.name, 
+            googleRating: googlePlace.rating, 
+            googleCount: googlePlace.user_ratings_total,
+            yelpRating: yelpPlace?.rating,
+            yelpCount: yelpPlace?.review_count
         };
 
         return result;

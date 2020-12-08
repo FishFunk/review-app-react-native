@@ -52,6 +52,7 @@ export default class Map extends React.Component<
     }
 
     onPoiClick(event: MapEvent<{ placeId: string; name: string }>){
+        if(this.markerRef) this.markerRef.hideCallout();
         event.preventDefault();
         this.props.onPoiSelect(event.nativeEvent.placeId);
     }
@@ -136,7 +137,6 @@ export default class Map extends React.Component<
                             <View style={styles.bubble}>
                                 <Text style={styles.title}>{marker.title}</Text>
                                 <StarRatingListItem 
-
                                     noBullRating={marker.rating}
                                     googleRating={marker.googleRating}
                                     yelpRating={marker.yelpRating} />
