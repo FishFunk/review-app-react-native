@@ -1,7 +1,9 @@
 import _first from 'lodash/first';
+import appConfig from '../app.json';
+
 const baseUrl = 'https://api.yelp.com/v3/businesses/';
 const headers = new Headers();
-headers.set('Authorization', 'Bearer en2ZVirgzxSZUqzj4aBO1Rj1bvAdXnNuul3LW6cFdTHXe6pjn2Mu8LJAVUQnDMqVq0u3MFth4QpVyS-1X5gA2rCkajArCO-S79Er7gvsn7HjD6k32wZKgx7QlNPLX3Yx');
+headers.set('Authorization', appConfig.expo.extra.yelpApiBearerToken);
 
 // Phone format +14159083801
 export const yelpApiSearchByPhone = async (phone: string)=>{

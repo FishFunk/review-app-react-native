@@ -29,6 +29,8 @@ import ReviewDollars from '../reviews/ReviewDollars';
 import ReportModal from '../ReportModal';
 import HorizontalButtonList from '../HorizontalButtonList';
 import ListAvatar from '../profile/ListAvatar';
+import YelpReviewStars from '../reviews/YelpReviewStars';
+import { getApiPlaceSummary } from '../../services/combinedApiService';
 
 export default class PlaceDetails extends React.Component<
     { 
@@ -45,7 +47,7 @@ export default class PlaceDetails extends React.Component<
         editReview: reviewSummary,
         reportReview: reviewSummary,
         isLoading: boolean,
-        place: fullApiPlace,
+        place: any,
         disableEdit: boolean,
         photoUrls: Array<string>,
         rating: number,
@@ -55,7 +57,6 @@ export default class PlaceDetails extends React.Component<
     }> {
 
     // Initalize complex state values to remove type warnings
-    initialPlace: fullApiPlace = {};
     initialReportReview: any = {};
     initialOpenInfo: any = {};
     initialEditReview: any = null;
@@ -68,7 +69,7 @@ export default class PlaceDetails extends React.Component<
         editReview: this.initialEditReview,
         reportReview: this.initialReportReview,
         items: new Array<reviewSummary>(),
-        place: this.initialPlace,
+        place: {},
         photoUrls: new Array<string>(),
         disableEdit: true,
         rating: 0,
@@ -85,7 +86,7 @@ export default class PlaceDetails extends React.Component<
 
     async load(){
         
-        const place = await getGooglePlaceById(this.props.apiKey, this.props.placeId);
+        const place = await getApiPlaceSummary(this.props.apiKey, this.props.placeId);
 
         const openInfo = Utils.checkForOpenCloseHours(place.opening_hours);
         this.setState({ place: place, openInfo: openInfo });
@@ -247,21 +248,25 @@ export default class PlaceDetails extends React.Component<
                             type={'FontAwesome5'}/>
                     </Button>
                 </View>
-                <View>
+                <View style={{alignItems: 'center'}}>
                     <Text style={styles.title}>{this.state.place.name}</Text>
                     <TouchableOpacity 
                         containerStyle={styles.starTouchable}
                         style={styles.starsView} 
                         onPress={this.onPressWriteReview.bind(this)}
                         disabled={this.state.disableEdit}>
-                        <ReviewStars rating={this.state.rating} fontSize={22}/>
+                        <ReviewStars rating={this.state.rating} fontSize={18} style={styles.stars}/>
+                        <ReviewStars rating={this.state.place.googleRating} fontSize={18} color={theme.googleRed}  style={styles.stars}/>
+                        <YelpReviewStars 
+                            rating={this.state.place.yelpRating} 
+                            style={styles.yelpStars}/>
                     </TouchableOpacity>
                     {
                         this.state.pricing ?
                             <ReviewDollars 
                                 style={{alignSelf: 'center', marginBottom: 10}} 
                                 rating={this.state.pricing}
-                                fontSize={14}/> : null
+                                fontSize={16}/> : null
                     }
                 </View>
                 <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>
@@ -350,18 +355,23 @@ const styles = StyleSheet.create({
     title: {
         maxWidth: 250,
         fontFamily: theme.fontBold,
-        fontSize: 20,
+        fontSize: 18,
         textAlign: 'center',
         flexWrap: 'wrap'
     },
     starTouchable: {
-        width: 120, 
-        alignSelf: 'center'
+        marginBottom: 4
     },
     starsView: {
-        marginTop: 5,
-        marginBottom: 10,
-        alignSelf: 'center'
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
+    },
+    stars: {
+        padding: 5
+    },
+    yelpStars:  {
+        padding: 5,
+        justifyContent: 'center'
     },
     listItem: {
         minHeight: 100,

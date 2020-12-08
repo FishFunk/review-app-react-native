@@ -8,8 +8,8 @@ class ReviewStars extends Component<{ rating: number, fontSize: number, color?: 
   styles = StyleSheet.create({
     star: {
       fontSize: this.props.fontSize,
-      paddingLeft: 1,
-      paddingRight: 1,
+      // paddingLeft: 1,
+      // paddingRight: 1,
       color: this.props.color ? this.props.color : theme.STAR_COLOR
     }
   });

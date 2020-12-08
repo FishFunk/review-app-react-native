@@ -3,8 +3,20 @@ import { yelpApiSearchByPhone, yelpApiBusinessMatch } from './yelpApiService';
 import { getGooglePlaceById } from './googlePlaceApiService';
 
 export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string)=> {
+    
     const googlePlace = await getGooglePlaceById(apiKey, googlePlaceId, 
-        ['name', 'international_phone_number', 'geometry', 'rating', 'address_components']);
+        ['name', 
+        'international_phone_number', 
+        'formatted_phone_number',
+        'address_components', 
+        'geometry', 
+        'rating', 
+        'formatted_address',
+        'business_status',
+        'opening_hours', 
+        'website',
+        'photos']);
+
     let yelpPlace;
 
     if(googlePlace){
@@ -25,12 +37,18 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string)=
 
         const result = { 
             placeId: googlePlaceId,
+            formatted_address: googlePlace.formatted_address,
+            formatted_phone_number: googlePlace.formatted_phone_number,
+            website: googlePlace.website,
+            business_status: googlePlace.business_status,
+            opening_hours: googlePlace.opening_hours,
+            photos: googlePlace.photos,
             latlng: { latitude: googlePlace.geometry?.location.lat, longitude: googlePlace.geometry?.location.lng },
             name: googlePlace?.name, 
             googleRating: googlePlace?.rating, 
-            yelpRating: yelpPlace?.rating };
+            yelpRating: yelpPlace?.rating 
+        };
 
-        console.log(result);
         return result;
     }
 }

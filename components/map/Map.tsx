@@ -4,11 +4,10 @@ import theme from '../../styles/theme';
 // import mapJson from '../../constants/MapJson';
 import { View, StyleSheet, Platform, Image } from 'react-native';
 import { Text } from 'native-base';
-import ReviewStars from '../reviews/ReviewStars';
 import { markerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';
 import MapToolbar from './MapToolbar';
-import YelpReviewStars from '../reviews/YelpReviewStars';
+import StarRatingListItem from '../reviews/StarRatingListItem';
 
 export default class Map extends React.Component<
     {
@@ -136,27 +135,11 @@ export default class Map extends React.Component<
                             onPress={(event)=>this.onPressCallout(event, marker)}>
                             <View style={styles.bubble}>
                                 <Text style={styles.title}>{marker.title}</Text>
-                                {
-                                    marker.rating ?
-                                    <View style={styles.stars}>
-                                        <Text style={{fontSize: 8}}>NoBull</Text>
-                                        <ReviewStars rating={marker.rating} fontSize={18} style={{ marginTop: -4 }}/>
-                                    </View> : null
-                                }
-                                {
-                                    marker.googleRating ?
-                                        <View style={styles.stars}>
-                                            <Text style={{fontSize: 8}}>Google</Text>
-                                            <ReviewStars rating={marker.googleRating} fontSize={18} color={theme.googleRed} style={{ marginTop: -4 }}/>
-                                        </View> : null
-                                }
-                                {
-                                    marker.yelpRating ?
-                                        <View style={styles.stars}>
-                                            <Text style={{fontSize: 8}}>Yelp</Text>
-                                            <YelpReviewStars rating={marker.yelpRating} />
-                                        </View> : null
-                                }
+                                <StarRatingListItem 
+
+                                    noBullRating={marker.rating}
+                                    googleRating={marker.googleRating}
+                                    yelpRating={marker.yelpRating} />
                                 {
                                     marker.description ?
                                     <Text style={styles.subtext}>{marker.description}</Text> : null
@@ -189,13 +172,12 @@ const styles = StyleSheet.create({
         borderColor: theme.PRIMARY_COLOR,
         borderWidth: 0.5,
         padding: 10,
-        minWidth: 150,
-        maxWidth: 300
+        width: 160
     },
     title: {
         textAlign: 'center',
         fontFamily: theme.fontBold,
-        fontSize: 16,
+        fontSize: 14,
         color: theme.DARK_COLOR
     },
     stars: {

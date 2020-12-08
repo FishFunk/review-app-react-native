@@ -1,17 +1,17 @@
 import React from "react";
 import { Dimensions, StyleSheet } from 'react-native';
-import { Badge, Body, Icon, Left, ListItem, Text, Thumbnail, Title, View } from "native-base";
+import { Body, Icon, Left, ListItem, Text, Thumbnail, Title, View } from "native-base";
 import { dbPlace } from "../../models/place";
 import { FlatList } from "react-native-gesture-handler";
-import ReviewStars from "../reviews/ReviewStars";
-import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
-import ReviewDollars from "../reviews/ReviewDollars";
+import { getPhotoUrl } from '../../services/googlePlaceApiService';
 import SpinnerContainer from "../SpinnerContainer";
 import Utils from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
 import DropDownPicker from 'react-native-dropdown-picker';
 import theme from "../../styles/theme";
 import _orderBy from 'lodash/orderBy';
+import { getApiPlaceSummary } from "../../services/combinedApiService";
+import StarRatingListItem from "../reviews/StarRatingListItem";
 
 export default class PlaceList extends React.Component<
     { 
@@ -47,14 +47,14 @@ export default class PlaceList extends React.Component<
 
         let detailedPlaces = []
         for(let p of places){
-            const apiPlace = await getGooglePlaceById(apiKey, p.id, [
-                'business_status', 'name', 'opening_hours', 'photos', 'formatted_address']);
+
+            const placeSummary = await getApiPlaceSummary(apiKey, p.id);
 
             let photoUrl;
-            if(apiPlace.photos){
+            if(placeSummary?.photos){
                 // prefetch first photo
-                if(apiPlace.photos[0]){
-                    photoUrl = getPhotoUrl(apiKey, apiPlace.photos[0].photo_reference);
+                if(placeSummary.photos[0]){
+                    photoUrl = getPhotoUrl(apiKey, placeSummary.photos[0].photo_reference);
                     // await Image.prefetch(photoUrl);
                 }
             }
@@ -63,10 +63,12 @@ export default class PlaceList extends React.Component<
                 id: p.id,
                 name: p.name,
                 rating: Utils.getPlaceAvgRating(p),
+                yelpRating: placeSummary?.yelpRating,
+                googleRating: placeSummary?.googleRating,
                 pricing: Utils.getPlaceAvgPricing(p),
-                address: apiPlace.formatted_address,
-                status: apiPlace.business_status,
-                openInfo: Utils.checkForOpenCloseHours(apiPlace.opening_hours),
+                address: placeSummary?.formatted_address,
+                status: placeSummary?.business_status,
+                openInfo: Utils.checkForOpenCloseHours(placeSummary?.opening_hours),
                 photoUrl: photoUrl
             });
         }
@@ -104,20 +106,25 @@ export default class PlaceList extends React.Component<
             avatar
             onPress={this.props.onShowPlaceDetails.bind(this, item.id)}>
             <Left>
-                <Thumbnail 
+                <Thumbnail
                     square
+                    style={{ width: 130, height: 105, justifyContent: 'center' }}
                     source={{ uri: item.photoUrl }} 
                     // TODO: Add default image
                     />
             </Left>
             <Body>
                 <Text style={styles.name}>{item.name}</Text>
-                <ReviewStars rating={item.rating} fontSize={18} />
-                <ReviewDollars rating={item.pricing} fontSize={14} />
-                {
+                <StarRatingListItem 
+                    width={120}
+                    pricing={item.pricing}
+                    noBullRating={item.rating} 
+                    googleRating={item.googleRating}
+                    yelpRating={item.yelpRating} />
+                {/* {
                     item.address? 
                         <Text style={styles.info}>{item.address.split(',')[0]}</Text> : null
-                }
+                } */}
                 {
                     item.openInfo ? 
                         item.openInfo.open_now ? 
@@ -192,19 +199,23 @@ const styles = StyleSheet.create({
         paddingRight: 5
     },
     listItem: {
-        maxHeight: 100
+        maxHeight: 200
     },
     name: {
+        maxWidth: 200,
         fontFamily: theme.fontBold
     },
     info: {
+        marginTop: 4,
         fontSize: 12
     },
     importantText: {
+        marginTop: 4,
         color: theme.PRIMARY_COLOR,
         fontSize: 12
     },
     warningText: {
+        marginTop: 4,
         color: theme.DANGER_COLOR,
         fontSize: 12
     }
