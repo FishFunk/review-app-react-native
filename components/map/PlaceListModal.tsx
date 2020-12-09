@@ -3,17 +3,17 @@ import { StyleSheet } from 'react-native';
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";
 import { Content } from "native-base";
-import { dbPlace } from "../../models/place";
+import { dbPlace, placeMarkerData } from "../../models/place";
 import PlaceList from "./PlaceList";
 
 export default class PlaceListModal extends React.Component<
     { 
         apiKey: string,
         isOpen: boolean, 
-        places: dbPlace[], 
+        places: placeMarkerData[], 
         onDismissModal: () => any,
         onUpdateSortOrder: (orderBy: string) => any,
-        onShowPlaceDetails: (placeId: string) => any,
+        onShowPlaceDetails: (placeSummary: placeMarkerData) => any,
         orderBy: string
     }>{
 

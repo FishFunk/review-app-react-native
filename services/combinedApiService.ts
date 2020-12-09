@@ -1,8 +1,9 @@
 import _indexOf from 'lodash/indexOf';
 import { yelpApiSearchByPhone, yelpApiBusinessMatch } from './yelpApiService';
 import { getGooglePlaceById } from './googlePlaceApiService';
+import { placeMarkerData } from '../models/place';
 
-export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string)=> {
+export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string): Promise<placeMarkerData | undefined>=> {
     
     const googlePlace = await getGooglePlaceById(apiKey, googlePlaceId, 
         ['name', 
@@ -16,7 +17,9 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string)=
         'opening_hours', 
         'website',
         'photos',
-        'user_ratings_total']);
+        'user_ratings_total',
+        'icon'
+    ]);
 
     let yelpPlace;
 
@@ -44,8 +47,9 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string)=
             business_status: googlePlace.business_status,
             opening_hours: googlePlace.opening_hours,
             photos: googlePlace.photos,
+            icon: googlePlace.icon,
             latlng: { latitude: googlePlace.geometry?.location.lat, longitude: googlePlace.geometry?.location.lng },
-            name: googlePlace.name, 
+            title: googlePlace.name, 
             googleRating: googlePlace.rating, 
             googleCount: googlePlace.user_ratings_total,
             yelpRating: yelpPlace?.rating,

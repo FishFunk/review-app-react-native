@@ -3,19 +3,15 @@ import { View, Keyboard, StyleSheet, Dimensions } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
-import { get } from 'lodash';
-import { searchPlace, markerData, dbPlace } from '../../models/place';
+import { searchPlace, placeMarkerData, dbPlace } from '../../models/place';
 import PlaceListModal from './PlaceListModal';
-import { 
-    getGooglePlaceIdBySearch, 
-    getGooglePlaceById
-} from '../../services/googlePlaceApiService';
+import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
-import { getAllReviews, getApiPlaceSummary } from '../../services/combinedApiService';
+import { getApiPlaceSummary } from '../../services/combinedApiService';
 
 export default class MapContainer extends React.Component<
     {
@@ -28,8 +24,7 @@ export default class MapContainer extends React.Component<
         loadingNearby: boolean,
         region: Region, 
         zoomLevel: number,
-        markers: markerData[], 
-        places: dbPlace[],
+        markers: placeMarkerData[], 
         showListModal: boolean,
         reshowListModal: boolean,
         placeId: string,
@@ -62,7 +57,6 @@ export default class MapContainer extends React.Component<
         region: this.defaultRegion,
         zoomLevel: 14,
         markers: [],
-        places: [],
         showListModal: false,
         reshowListModal: false,
         apiKey: '',
@@ -132,7 +126,7 @@ export default class MapContainer extends React.Component<
                 duration: 10000,
                 buttonText: 'OK'
             });
-            return this.setState({ loadingNearby: false, markers: [], places: [] });
+            return this.setState({ loadingNearby: false, markers: [] });
         }
 
         const markers = await this.convertPlacesToMarkers(places);
@@ -150,7 +144,7 @@ export default class MapContainer extends React.Component<
                     edgePadding: {top: 100, right: 80, bottom: 80, left: 80 }});
         }
 
-        this.setState({ markers: markers, loadingNearby: false, places: places, hideCallout: true  });
+        this.setState({ markers: markers, loadingNearby: false, hideCallout: true  });
     }
 
     async load(){
@@ -193,21 +187,13 @@ export default class MapContainer extends React.Component<
     async convertPlacesToMarkers(places: dbPlace[]){
         let markers  = [];
         for(let place of places){
-            let outsideRatings = await getApiPlaceSummary(this.state.apiKey, place.id);
-            var m: markerData = {
-                latlng: {
-                    latitude: place.lat,
-                    longitude: place.lng
-                },
-                title: place.name,
-                rating: Utils.getPlaceAvgRating(place),
-                placeId: place.id,
-                icon: place.icon,
-                googleRating: outsideRatings?.googleRating,
-                yelpRating: outsideRatings?.yelpRating
+            let placeDetails = await getApiPlaceSummary(this.state.apiKey, place.id);
+            if(placeDetails){
+                placeDetails.rating = Utils.getPlaceAvgRating(place);    
+                placeDetails.pricing = Utils.getPlaceAvgPricing(place);
+                markers.push(placeDetails);
             }
-
-            markers.push(m);
+           
         }
 
         return markers;
@@ -230,7 +216,7 @@ export default class MapContainer extends React.Component<
         this.setState({ region:  { ...region }, zoomLevel: zoom, hideCallout: false });
     }
 
-    async onMarkerSelect(marker: markerData){
+    async onMarkerSelect(marker: placeMarkerData){
         Keyboard.dismiss();
         const region = { 
             latitude: marker.latlng.latitude, 
@@ -248,46 +234,24 @@ export default class MapContainer extends React.Component<
         if(!placeId){
             return;
         }
-
-        let marker: markerData;
         
         this.setState({ refreshCallout: false });
 
         const dbPlace = await FirebaseService.getPlace(placeId);
         const placeSummary = await getApiPlaceSummary(this.state.apiKey, placeId);
 
-        if(dbPlace){
-            marker = {
-                latlng: {
-                    latitude: dbPlace.lat,
-                    longitude: dbPlace.lng
-                },
-                title: dbPlace.name,
-                rating: Utils.getPlaceAvgRating(dbPlace),
-                placeId: placeId,
-                yelpRating: placeSummary?.yelpRating,
-                googleRating: placeSummary?.googleRating
-            }
-        } else if (placeSummary){
-            marker = {
-                latlng: placeSummary.latlng,
-                title: placeSummary.name,
-                rating: null,
-                placeId: placeId,
-                yelpRating: placeSummary.yelpRating,
-                googleRating: placeSummary.googleRating
-            }
-        }
+        if(placeSummary){
+            placeSummary.rating = Utils.getPlaceAvgRating(dbPlace);
+            placeSummary.pricing = Utils.getPlaceAvgPricing(dbPlace);
 
-        if(marker){
             let region = {
-                latitude: marker.latlng.latitude,
-                longitude: marker.latlng.longitude,
+                latitude: placeSummary.latlng.latitude,
+                longitude: placeSummary.latlng.longitude,
                 latitudeDelta: this.state.region.latitudeDelta,
                 longitudeDelta: this.state.region.longitudeDelta
             }
             
-            this.setState({ markers: [marker], placeId: placeId, places: [], refreshCallout: true });
+            this.setState({ markers: [placeSummary], placeId: placeId, refreshCallout: true });
     
             this.mapViewRef?.animateToRegion(region);
         }
@@ -297,9 +261,9 @@ export default class MapContainer extends React.Component<
         Keyboard.dismiss();
     }
 
-    async onShowDetails(placeId: string){
+    async onShowDetails(placeSummary: placeMarkerData){
         this.props.navigation.navigate(
-            'PlaceDetails', { apiKey: this.state.apiKey, placeId: placeId });
+            'PlaceDetails', { apiKey: this.state.apiKey, placeSummary: placeSummary });
     }
 
     showListModal(){
@@ -368,7 +332,7 @@ export default class MapContainer extends React.Component<
                 <PlaceListModal 
                     apiKey={this.state.apiKey}
                     isOpen={this.state.showListModal}
-                    places={this.state.places}
+                    places={this.state.markers}
                     onDismissModal={this.onDismissListModal.bind(this)}
                     onShowPlaceDetails={this.onShowDetails.bind(this)}
                     onUpdateSortOrder={this.onUpdateListOrder.bind(this)}

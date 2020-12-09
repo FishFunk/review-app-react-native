@@ -17,7 +17,7 @@ export default function PlaceDetailsScreen(props: any) {
         <PlaceDetails 
             navigation={props.navigation}
             apiKey={props.route.params.apiKey}
-            placeId={props.route.params.placeId} 
+            placeSummary={props.route.params.placeSummary} 
             toggleSummaryModal={props.navigation.goBack}/>
       </View>
     );

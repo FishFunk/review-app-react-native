@@ -92,18 +92,26 @@ export interface fullApiPlace {
   vicinity? : string
 }
 
-export interface markerData {
+export interface placeMarkerData {
+  placeId: string,
   latlng: {
     latitude: number,
     longitude: number
   },
   title: string,
   description?: string,
+  formatted_address?: string,
+  business_status?: string,
+  opening_hours?: { open_now : boolean, periods: Array<openClosePeriod> },
+  photos?: any[],
   rating?: number,
+  pricing?: number,
   icon?: string,
-  placeId: string,
   googleRating?: number,
-  yelpRating?: number
+  googleCount?: number,
+  yelpRating?: number,
+  yelpCount?: number,
+  website?: string
 }
 
 export interface placePhoto {

@@ -4,7 +4,7 @@ import theme from '../../styles/theme';
 // import mapJson from '../../constants/MapJson';
 import { View, StyleSheet, Platform, Image } from 'react-native';
 import { Text } from 'native-base';
-import { markerData } from '../../models/place';
+import { placeMarkerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';
 import MapToolbar from './MapToolbar';
 import StarRatingListItem from '../reviews/StarRatingListItem';
@@ -12,14 +12,14 @@ import StarRatingListItem from '../reviews/StarRatingListItem';
 export default class Map extends React.Component<
     {
         region: Region,
-        markers: Array<markerData>,
+        markers: Array<placeMarkerData>,
         refreshCallout: boolean,
         setMapRef: (ref: MapView | null) => void,
         onPress: () => void,
-        onMarkerSelect: (marker: markerData) => void,
+        onMarkerSelect: (marker: placeMarkerData) => void,
         onPoiSelect: (placeId: string) => void,
         onRegionChange: (region: Region, markerRef: Marker | null) => void,
-        onShowDetails: (placeId: string) => void,
+        onShowDetails: (placeSummary: placeMarkerData) => void,
         loadingLocation: boolean,
         loadingNearby: boolean,
         onPressCurrentLocation: () => any,
@@ -46,7 +46,7 @@ export default class Map extends React.Component<
         }
     }
 
-    onPressMarker(event: MapEvent<{}>, marker: markerData){
+    onPressMarker(event: MapEvent<{}>, marker: placeMarkerData){
         event.preventDefault();
         this.props.onMarkerSelect(marker);
     }
@@ -66,9 +66,9 @@ export default class Map extends React.Component<
         this.props.onPress();
     }
 
-    onPressCallout(event: MapEvent<{}>, marker: markerData){
+    onPressCallout(event: MapEvent<{}>, data: placeMarkerData){
         event.preventDefault();
-        this.props.onShowDetails(marker.placeId);
+        this.props.onShowDetails(data);
     }
 
     setMapViewRef(ref: MapView | null){
@@ -106,7 +106,7 @@ export default class Map extends React.Component<
                 onPress={this.onMapPress.bind(this)}
                 // customMapStyle={mapJson}
             >
-                {this.props.markers.map((marker: markerData, idx: number) => (
+                {this.props.markers.map((marker: placeMarkerData, idx: number) => (
                     <Marker
                         ref={ (ref) => this.markerRef = ref }
                         key={idx}

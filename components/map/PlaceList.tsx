@@ -1,7 +1,7 @@
 import React from "react";
 import { Dimensions, StyleSheet } from 'react-native';
 import { Body, Icon, Left, ListItem, Text, Thumbnail, Title, View } from "native-base";
-import { dbPlace } from "../../models/place";
+import { placeMarkerData } from "../../models/place";
 import { FlatList } from "react-native-gesture-handler";
 import { getPhotoUrl } from '../../services/googlePlaceApiService';
 import SpinnerContainer from "../SpinnerContainer";
@@ -10,14 +10,13 @@ import _isEqual from 'lodash/isEqual';
 import DropDownPicker from 'react-native-dropdown-picker';
 import theme from "../../styles/theme";
 import _orderBy from 'lodash/orderBy';
-import { getApiPlaceSummary } from "../../services/combinedApiService";
 import StarRatingListItem from "../reviews/StarRatingListItem";
 
 export default class PlaceList extends React.Component<
     { 
         apiKey: string,
-        places: dbPlace[], 
-        onShowPlaceDetails: (placeId: string) => any,
+        places: placeMarkerData[], 
+        onShowPlaceDetails: (placeSummary: placeMarkerData) => any,
         onUpdateSortOrder: (orderBy: string) => any,
         orderBy: string
     }, 
@@ -46,12 +45,10 @@ export default class PlaceList extends React.Component<
         const { apiKey, places } = this.props;
 
         let detailedPlaces = []
-        for(let p of places){
-
-            const placeSummary = await getApiPlaceSummary(apiKey, p.id);
+        for(let placeSummary of places){
 
             let photoUrl;
-            if(placeSummary?.photos){
+            if(placeSummary.photos){
                 // prefetch first photo
                 if(placeSummary.photos[0]){
                     photoUrl = getPhotoUrl(apiKey, placeSummary.photos[0].photo_reference);
@@ -60,17 +57,8 @@ export default class PlaceList extends React.Component<
             }
 
             detailedPlaces.push({
-                id: p.id,
-                name: p.name,
-                rating: Utils.getPlaceAvgRating(p),
-                yelpRating: placeSummary?.yelpRating,
-                yelpCount: placeSummary?.yelpCount,
-                googleRating: placeSummary?.googleRating,
-                googleCount: placeSummary?.googleCount,
-                pricing: Utils.getPlaceAvgPricing(p),
-                address: placeSummary?.formatted_address,
-                status: placeSummary?.business_status,
-                openInfo: Utils.checkForOpenCloseHours(placeSummary?.opening_hours),
+                ...placeSummary,
+                openInfo: Utils.checkForOpenCloseHours(placeSummary.opening_hours),
                 photoUrl: photoUrl
             });
         }
@@ -106,7 +94,7 @@ export default class PlaceList extends React.Component<
         return (<ListItem 
             style={styles.listItem}
             avatar
-            onPress={this.props.onShowPlaceDetails.bind(this, item.id)}>
+            onPress={this.props.onShowPlaceDetails.bind(this, item)}>
             <Left>
                 <Thumbnail
                     square
@@ -116,7 +104,7 @@ export default class PlaceList extends React.Component<
                     />
             </Left>
             <Body>
-                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.title}>{item.title}</Text>
                 <StarRatingListItem 
                     width={180}
                     pricing={item.pricing}
@@ -171,7 +159,7 @@ export default class PlaceList extends React.Component<
                         position: 'absolute' }}
                     onChangeItem={item => this.onChangeDropdownItem(item.value)}/>
                 <View style={styles.header}>
-                    <Title style={styles.title}>Nearby Places</Title>
+                    <Title style={styles.headerText}>Nearby Places</Title>
                 </View>
                 <FlatList 
                     contentContainerStyle={styles.list} 
@@ -197,7 +185,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         borderBottomColor: theme.GRAY_COLOR
     },
-    title: {
+    headerText: {
         alignSelf: 'center'
     },
     list: {
@@ -206,7 +194,7 @@ const styles = StyleSheet.create({
     listItem: {
         maxHeight: 200
     },
-    name: {
+    title: {
         maxWidth: 200,
         fontFamily: theme.fontBold
     },

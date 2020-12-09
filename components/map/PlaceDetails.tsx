@@ -15,8 +15,7 @@ import FirebaseService from '../../services/firebaseService';
 import { reviewSummary } from '../../models/reviews';
 import theme from '../../styles/theme';
 import WriteReview from '../reviews/WriteReview';
-import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
-import { fullApiPlace } from '../../models/place';
+import { getPhotoUrl } from '../../services/googlePlaceApiService';
 import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
@@ -30,13 +29,13 @@ import ReportModal from '../ReportModal';
 import HorizontalButtonList from '../HorizontalButtonList';
 import ListAvatar from '../profile/ListAvatar';
 import YelpReviewStars from '../reviews/YelpReviewStars';
-import { getApiPlaceSummary } from '../../services/combinedApiService';
+import { placeMarkerData } from '../../models/place';
 
 export default class PlaceDetails extends React.Component<
     { 
         navigation: any,
         apiKey: string, 
-        placeId: string, 
+        placeSummary: placeMarkerData, 
         toggleSummaryModal: Function
     },
     { 
@@ -47,11 +46,8 @@ export default class PlaceDetails extends React.Component<
         editReview: reviewSummary,
         reportReview: reviewSummary,
         isLoading: boolean,
-        place: any,
         disableEdit: boolean,
         photoUrls: Array<string>,
-        rating: number,
-        pricing: number,
         reloadMarkers: boolean,
         openInfo: { open_now: boolean, message: string } | null
     }> {
@@ -72,8 +68,6 @@ export default class PlaceDetails extends React.Component<
         place: {},
         photoUrls: new Array<string>(),
         disableEdit: true,
-        rating: 0,
-        pricing: 0,
         reloadMarkers: false,
         openInfo: this.initialOpenInfo
     }
@@ -85,18 +79,16 @@ export default class PlaceDetails extends React.Component<
     }
 
     async load(){
-        
-        const place = await getApiPlaceSummary(this.props.apiKey, this.props.placeId);
-
-        const openInfo = Utils.checkForOpenCloseHours(place.opening_hours);
-        this.setState({ place: place, openInfo: openInfo });
+        const { apiKey, placeSummary } = this.props;
+        const openInfo = Utils.checkForOpenCloseHours(placeSummary.opening_hours);
+        this.setState({ openInfo: openInfo });
 
         let photoUrls = []
-        if(place && place.photos){
+        if(placeSummary.photos){
             // prefetch up to 3 photos
             for(let i=0; i<3; i++){
-                if(place.photos[i]){
-                    const url = getPhotoUrl(this.props.apiKey, place.photos[i].photo_reference);
+                if(placeSummary.photos[i]){
+                    const url = getPhotoUrl(apiKey, placeSummary.photos[i].photo_reference);
                     // await Image.prefetch(url);
                     photoUrls.push(url);
                     this.setState({ photoUrls: photoUrls });
@@ -114,15 +106,13 @@ export default class PlaceDetails extends React.Component<
 
     async getReviewState(){
         const userId = FirebaseService.getCurrentUserId();
-        const reviews = await FirebaseService.getReviewSummaries(this.props.placeId);
-        const averages = Utils.getReviewAverages(reviews);
+        const reviews = await FirebaseService.getReviewSummaries(this.props.placeSummary.placeId);
+        // const averages = Utils.getReviewAverages(reviews);
 
         let disableEditing = _find(reviews, (r) => r.reviewer_id === userId) != null;
 
         return { 
             items: reviews, 
-            rating: averages.avgRating, 
-            pricing: averages.avgPrice, 
             disableEdit: disableEditing };
     }
 
@@ -153,12 +143,12 @@ export default class PlaceDetails extends React.Component<
     }
 
     onOpenMaps(){
-        const { formatted_address, name } = this.state.place;
+        const { formatted_address, title } = this.props.placeSummary;
         
         openMap({ 
             // latitude: lat,
             // longitude: lng, 
-            query: name, 
+            query: title, 
             end: formatted_address });
     }
 
@@ -234,6 +224,8 @@ export default class PlaceDetails extends React.Component<
     }
 
     render() {
+        const { placeSummary } = this.props;
+
         return (
         <View style={styles.container}>
             <View style={styles.titleView}>
@@ -249,7 +241,7 @@ export default class PlaceDetails extends React.Component<
                     </Button>
                 </View>
                 <View style={{alignItems: 'center'}}>
-                    <Text style={styles.title}>{this.state.place.name}</Text>
+                    <Text style={styles.title}>{placeSummary.title}</Text>
                     <TouchableOpacity 
                         containerStyle={styles.starTouchable}
                         style={styles.starsView} 
@@ -257,24 +249,24 @@ export default class PlaceDetails extends React.Component<
                         disabled={this.state.disableEdit}>
                         <ReviewStars rating={this.state.rating} fontSize={18} style={styles.stars}/>    
                         { 
-                            this.state.place.googleRating ?
-                                <ReviewStars rating={this.state.place.googleRating} 
+                            placeSummary.googleRating ?
+                                <ReviewStars rating={placeSummary.googleRating} 
                                     fontSize={18} 
                                     color={theme.googleRed}  
                                     style={styles.stars}/> : null
                         }
                         {
-                            this.state.place.yelpRating ? 
+                            placeSummary.yelpRating ? 
                                 <YelpReviewStars 
-                                    rating={this.state.place.yelpRating} 
+                                    rating={placeSummary.yelpRating} 
                                     style={styles.yelpStars}/> : null
                         }
                     </TouchableOpacity>
                     {
-                        this.state.pricing ?
+                        placeSummary.pricing ?
                             <ReviewDollars 
                                 style={{alignSelf: 'center', marginBottom: 10}} 
-                                rating={this.state.pricing}
+                                rating={placeSummary.pricing}
                                 fontSize={16}/> : null
                     }
                 </View>
@@ -311,7 +303,7 @@ export default class PlaceDetails extends React.Component<
             </View>
             <HorizontalButtonList 
                 disableEdit={this.state.disableEdit}
-                place={this.state.place}
+                placeSummary={this.props.placeSummary}
                 onPressWriteReview={this.onPressWriteReview.bind(this)}/>
             {
                 this.state.items.length > 0 ?
