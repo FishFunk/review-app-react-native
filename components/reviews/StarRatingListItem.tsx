@@ -2,7 +2,7 @@ import { Text, View } from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
-// import ReviewDollars from './ReviewDollars';
+import ReviewDollars from './ReviewDollars';
 import ReviewStars from './ReviewStars';
 import YelpReviewStars from './YelpReviewStars';
 
@@ -44,10 +44,6 @@ export default class StarRatingListItem extends Component<{
             alignSelf: 'center',
             fontFamily: theme.fontLight,
             fontSize: 10
-        },
-        paren: {
-            fontFamily: theme.fontLight,
-            fontSize: 14
         }
     });
 
@@ -62,33 +58,25 @@ export default class StarRatingListItem extends Component<{
             pricing } = this.props;
 
         return <View style={this.props.width ? { width: this.props.width } : {}}>
-            { noBullRating != null ? 
-                <View style={this.styles.starRow}>
-                    <View style={this.styles.flexRow}>
-                        <Text style={this.styles.label}>NoBull</Text>
-                        <ReviewStars rating={noBullRating} fontSize={18} />
-                    </View>   
-                    {
-                        noBullCount ?
-                            <View style={this.styles.subTextView}>
-                                <Text style={this.styles.subText}>({noBullCount})</Text>
-                            </View>: null
-                    }
-                    {/* {
-                        pricing ?
-                            <View style={this.styles.subTextView}>
-                                <Text style={this.styles.paren}>(</Text>
-                                    <ReviewDollars rating={pricing} fontSize={14} style={{alignSelf: 'center'}}/>
-                                <Text style={this.styles.paren}>)</Text>
-                            </View>: null
-                    } */}
-                </View> : null }
-
+            <View style={{height: 5}}></View>
+            <View style={this.styles.starRow}>
+                <View style={this.styles.flexRow}>
+                    <Text style={this.styles.label}>NoBull</Text>
+                    <View>
+                        <ReviewDollars rating={pricing || 0} fontSize={12} style={{marginLeft: 2}}/>
+                        <ReviewStars rating={noBullRating || 0} fontSize={16} />
+                    </View>
+                </View> 
+                <View style={this.styles.subTextView}>
+                    <Text style={this.styles.subText}>({noBullCount || 0})</Text>
+                </View>
+            </View>
+            <View style={{height: 5}}></View>
             { googleRating != null ? 
                 <View style={this.styles.starRow}>
                     <View style={this.styles.flexRow}>
                         <Text style={this.styles.label}>Google</Text>
-                        <ReviewStars rating={googleRating} fontSize={18} color={theme.googleRed} />
+                        <ReviewStars rating={googleRating} fontSize={16} color={theme.googleRed} />
                     </View>
                     {
                         googleCount ? 

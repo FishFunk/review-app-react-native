@@ -106,10 +106,10 @@ export default class PlaceList extends React.Component<
             </Left>
             <Body>
                 <Text style={styles.title}>{item.title}</Text>
-                <ReviewDollars rating={item.pricing} fontSize={15} style={{ marginTop: 4, marginBottom: 4 }}/>
                 <StarRatingListItem 
                     width={180}
                     noBullCount={item.reviewCount}
+                    pricing={item.pricing}
                     noBullRating={item.rating} 
                     googleRating={item.googleRating}
                     googleCount={item.googleCount}

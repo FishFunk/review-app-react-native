@@ -246,31 +246,41 @@ export default class PlaceDetails extends React.Component<
                     <Text style={styles.title}>{placeSummary.title}</Text>
                     <TouchableOpacity 
                         containerStyle={styles.starTouchable}
-                        style={styles.starsView} 
                         onPress={this.onPressWriteReview.bind(this)}
                         disabled={this.state.disableEdit}>
-                        <ReviewStars rating={this.state.rating} fontSize={18} style={styles.stars}/>    
+                        <View style={{alignItems: 'center'}}>
+                            <View style={styles.flexRow}>
+                                <ReviewStars rating={this.state.rating || 0} fontSize={20} /> 
+                                <Text style={styles.reviewCountLabel}>({this.state.items ? this.state.items.length : 0})</Text>
+                            </View>
+                            <ReviewDollars rating={this.state.pricing || 0} fontSize={16} style={{marginTop: 5}}/>
+                        </View>
+                    </TouchableOpacity>
+                    <View style={styles.externalReviews}>
                         { 
                             placeSummary.googleRating ?
+                            <View>
+                                <View style={styles.flexRow}>
+                                    <Text style={styles.brandLabel}>Google</Text>
+                                    <Text style={styles.reviewCountLabel}>({placeSummary.googleCount})</Text>
+                                </View>
                                 <ReviewStars rating={placeSummary.googleRating} 
-                                    fontSize={18} 
-                                    color={theme.googleRed}  
-                                    style={styles.stars}/> : null
+                                    fontSize={16} 
+                                    color={theme.googleRed} />
+                            </View> : null
+                                
                         }
                         {
                             placeSummary.yelpRating ? 
-                                <YelpReviewStars 
-                                    rating={placeSummary.yelpRating} 
-                                    style={styles.yelpStars}/> : null
+                            <View>
+                                <View style={styles.flexRow}>
+                                    <Text style={styles.brandLabel}>Yelp</Text>
+                                    <Text style={styles.reviewCountLabel}>({placeSummary.yelpCount})</Text>
+                                </View>
+                                <YelpReviewStars rating={placeSummary.yelpRating} />
+                            </View> : null
                         }
-                    </TouchableOpacity>
-                    {
-                        this.state.pricing ?
-                            <ReviewDollars 
-                                style={{alignSelf: 'center', marginBottom: 10}} 
-                                rating={this.state.pricing}
-                                fontSize={16}/> : null
-                    }
+                    </View>
                 </View>
                 <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>
                     {this.state.isLoading ? <SpinnerContainer /> : null }
@@ -350,6 +360,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
+    flexRow: {
+        flexDirection: 'row'
+    },
     titleView: {
         flexDirection: 'row', 
         justifyContent: 'space-between',
@@ -364,17 +377,6 @@ const styles = StyleSheet.create({
     },
     starTouchable: {
         marginBottom: 4
-    },
-    starsView: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly'
-    },
-    stars: {
-        padding: 5
-    },
-    yelpStars:  {
-        padding: 5,
-        justifyContent: 'center'
     },
     listItem: {
         minHeight: 100,
@@ -428,5 +430,21 @@ const styles = StyleSheet.create({
         marginTop: 10,
         backgroundColor: theme.PRIMARY_COLOR,
         alignSelf: 'center'
+    },
+    externalReviews: {
+        width: 220,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 4,
+        marginBottom: 4
+    },
+    brandLabel: {
+        fontSize: 10
+    },
+    reviewCountLabel: {
+        fontSize: 10,
+        fontFamily: theme.fontLight,
+        alignSelf: 'center',
+        marginLeft: 4
     }
   });

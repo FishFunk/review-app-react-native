@@ -138,6 +138,7 @@ export default class Map extends React.Component<
                                 <Text style={styles.title}>{marker.title}</Text>
                                 <StarRatingListItem 
                                     noBullCount={marker.reviewCount}
+                                    pricing={marker.pricing}
                                     noBullRating={marker.rating}
                                     googleRating={marker.googleRating}
                                     googleCount={marker.googleCount}
