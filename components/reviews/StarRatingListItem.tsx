@@ -2,12 +2,13 @@ import { Text, View } from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
-import ReviewDollars from './ReviewDollars';
+// import ReviewDollars from './ReviewDollars';
 import ReviewStars from './ReviewStars';
 import YelpReviewStars from './YelpReviewStars';
 
 export default class StarRatingListItem extends Component<{
     pricing?: number,
+    noBullCount?: number,
     noBullRating?: number,
     googleRating?: number,
     googleCount?: number,
@@ -18,8 +19,8 @@ export default class StarRatingListItem extends Component<{
 
     styles = StyleSheet.create({
         label: {
-            fontSize: 8,
-            width: 40,
+            fontSize: 10,
+            width: 42,
             alignSelf: 'center'
         },
         flexRow: {
@@ -51,7 +52,14 @@ export default class StarRatingListItem extends Component<{
     });
 
     render(){
-        const { noBullRating, googleRating, googleCount, yelpRating, yelpCount, pricing } = this.props;
+        const { 
+            noBullRating, 
+            noBullCount, 
+            googleRating, 
+            googleCount, 
+            yelpRating, 
+            yelpCount, 
+            pricing } = this.props;
 
         return <View style={this.props.width ? { width: this.props.width } : {}}>
             { noBullRating != null ? 
@@ -61,13 +69,19 @@ export default class StarRatingListItem extends Component<{
                         <ReviewStars rating={noBullRating} fontSize={18} />
                     </View>   
                     {
+                        noBullCount ?
+                            <View style={this.styles.subTextView}>
+                                <Text style={this.styles.subText}>({noBullCount})</Text>
+                            </View>: null
+                    }
+                    {/* {
                         pricing ?
                             <View style={this.styles.subTextView}>
                                 <Text style={this.styles.paren}>(</Text>
                                     <ReviewDollars rating={pricing} fontSize={14} style={{alignSelf: 'center'}}/>
                                 <Text style={this.styles.paren}>)</Text>
                             </View>: null
-                    }
+                    } */}
                 </View> : null }
 
             { googleRating != null ? 

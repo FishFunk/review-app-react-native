@@ -137,9 +137,12 @@ export default class Map extends React.Component<
                             <View style={styles.bubble}>
                                 <Text style={styles.title}>{marker.title}</Text>
                                 <StarRatingListItem 
+                                    noBullCount={marker.reviewCount}
                                     noBullRating={marker.rating}
                                     googleRating={marker.googleRating}
-                                    yelpRating={marker.yelpRating} />
+                                    googleCount={marker.googleCount}
+                                    yelpRating={marker.yelpRating}
+                                    yelpCount={marker.yelpCount} />
                                 {
                                     marker.description ?
                                     <Text style={styles.subtext}>{marker.description}</Text> : null
@@ -172,7 +175,7 @@ const styles = StyleSheet.create({
         borderColor: theme.PRIMARY_COLOR,
         borderWidth: 0.5,
         padding: 10,
-        width: 160
+        width: 180
     },
     title: {
         textAlign: 'center',

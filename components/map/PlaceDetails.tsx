@@ -49,7 +49,9 @@ export default class PlaceDetails extends React.Component<
         disableEdit: boolean,
         photoUrls: Array<string>,
         reloadMarkers: boolean,
-        openInfo: { open_now: boolean, message: string } | null
+        openInfo: { open_now: boolean, message: string } | null,
+        pricing: number,
+        rating: number
     }> {
 
     // Initalize complex state values to remove type warnings
@@ -65,7 +67,8 @@ export default class PlaceDetails extends React.Component<
         editReview: this.initialEditReview,
         reportReview: this.initialReportReview,
         items: new Array<reviewSummary>(),
-        place: {},
+        pricing: 0,
+        rating: 0,
         photoUrls: new Array<string>(),
         disableEdit: true,
         reloadMarkers: false,
@@ -107,13 +110,11 @@ export default class PlaceDetails extends React.Component<
     async getReviewState(){
         const userId = FirebaseService.getCurrentUserId();
         const reviews = await FirebaseService.getReviewSummaries(this.props.placeSummary.placeId);
-        // const averages = Utils.getReviewAverages(reviews);
+        const averages = Utils.getReviewAverages(reviews);
 
         let disableEditing = _find(reviews, (r) => r.reviewer_id === userId) != null;
 
-        return { 
-            items: reviews, 
-            disableEdit: disableEditing };
+        return { items: reviews, disableEdit: disableEditing, pricing: averages.avgPrice, rating: averages.avgRating };
     }
 
     onPressWriteReview(){
@@ -132,6 +133,7 @@ export default class PlaceDetails extends React.Component<
                 showReviewModal: false, 
                 showReviewCompleteModal: true });
             const newReviewState = await this.getReviewState();
+
             this.setState({ ...newReviewState, isLoading: false, reloadMarkers: true });
         } else {
             this.setState({ showReviewModal: false });
@@ -263,10 +265,10 @@ export default class PlaceDetails extends React.Component<
                         }
                     </TouchableOpacity>
                     {
-                        placeSummary.pricing ?
+                        this.state.pricing ?
                             <ReviewDollars 
                                 style={{alignSelf: 'center', marginBottom: 10}} 
-                                rating={placeSummary.pricing}
+                                rating={this.state.pricing}
                                 fontSize={16}/> : null
                     }
                 </View>
@@ -275,13 +277,13 @@ export default class PlaceDetails extends React.Component<
                 </View>
             </View>
             {
-                this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
+                placeSummary.business_status === 'CLOSED_TEMPORARILY' ?
                 <Badge style={styles.warningBadge}>
                     <Text style={styles.badgeText}>Closed Temporarily</Text>
                 </Badge> : null
             }
             {
-                this.state.place.business_status === 'CLOSED_PERMANENTLY' ?
+                placeSummary.business_status === 'CLOSED_PERMANENTLY' ?
                 <Badge style={styles.warningBadge}>
                     <Text style={styles.badgeText}>Closed Permanently</Text>
                 </Badge> : null
@@ -289,7 +291,7 @@ export default class PlaceDetails extends React.Component<
             {
                 this.state.openInfo && this.state.openInfo.open_now === true ?
                     <Badge style={styles.goodBadge}>
-                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open'}</Text>
+                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open Now'}</Text>
                     </Badge> : null
             }
             {

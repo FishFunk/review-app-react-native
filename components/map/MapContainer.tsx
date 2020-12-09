@@ -190,6 +190,7 @@ export default class MapContainer extends React.Component<
         for(let place of places){
             let placeDetails = await getApiPlaceSummary(this.state.apiKey, place.id);
             if(placeDetails){
+                placeDetails.reviewCount = place.reviews ? Object.keys(place.reviews).length : 0;
                 placeDetails.rating = Utils.getPlaceAvgRating(place);    
                 placeDetails.pricing = Utils.getPlaceAvgPricing(place);
                 markers.push(placeDetails);
@@ -242,6 +243,7 @@ export default class MapContainer extends React.Component<
         const placeSummary = await getApiPlaceSummary(this.state.apiKey, placeId);
 
         if(placeSummary){
+            placeSummary.reviewCount = dbPlace ? Object.keys(dbPlace.reviews).length : 0;
             placeSummary.rating = Utils.getPlaceAvgRating(dbPlace);
             placeSummary.pricing = Utils.getPlaceAvgPricing(dbPlace);
 

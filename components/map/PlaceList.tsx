@@ -11,6 +11,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import theme from "../../styles/theme";
 import _orderBy from 'lodash/orderBy';
 import StarRatingListItem from "../reviews/StarRatingListItem";
+import ReviewDollars from "../reviews/ReviewDollars";
 
 export default class PlaceList extends React.Component<
     { 
@@ -105,9 +106,10 @@ export default class PlaceList extends React.Component<
             </Left>
             <Body>
                 <Text style={styles.title}>{item.title}</Text>
+                <ReviewDollars rating={item.pricing} fontSize={15} style={{ marginTop: 4, marginBottom: 4 }}/>
                 <StarRatingListItem 
                     width={180}
-                    pricing={item.pricing}
+                    noBullCount={item.reviewCount}
                     noBullRating={item.rating} 
                     googleRating={item.googleRating}
                     googleCount={item.googleCount}
@@ -186,6 +188,7 @@ const styles = StyleSheet.create({
         borderBottomColor: theme.GRAY_COLOR
     },
     headerText: {
+        fontSize: 15,
         alignSelf: 'center'
     },
     list: {
@@ -195,6 +198,7 @@ const styles = StyleSheet.create({
         maxHeight: 200
     },
     title: {
+        fontSize: 14,
         maxWidth: 200,
         fontFamily: theme.fontBold
     },
@@ -205,11 +209,11 @@ const styles = StyleSheet.create({
     importantText: {
         marginTop: 4,
         color: theme.PRIMARY_COLOR,
-        fontSize: 12
+        fontSize: 11
     },
     warningText: {
         marginTop: 4,
         color: theme.DANGER_COLOR,
-        fontSize: 12
+        fontSize: 11
     }
 });
