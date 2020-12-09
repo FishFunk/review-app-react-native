@@ -3,7 +3,7 @@ import getConfig from './firebaseServiceConfig';
 import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';
 import { Email, Contact } from 'expo-contacts';
-import { fullApiPlace, dbPlace } from '../models/place';
+import { fullApiPlace, dbPlace, placeMarkerData } from '../models/place';
 import _get from 'lodash/get';
 import _filter from 'lodash/filter';
 import _indexOf from 'lodash/indexOf';
@@ -39,7 +39,7 @@ class FirebaseService {
 	}
 
 	onUserFollowingUpdated(callback: ()=>any){
-		this.db.ref(`users/${this.auth.currentUser?.uid}/following`).on('value', callback);
+		this.db.ref(`users/${this.auth.currentUser?.uid}/following`).on('child_changed', callback);
 	}
 
 	offUserFollowingUpdated(){
@@ -392,7 +392,7 @@ class FirebaseService {
 		return [matches, topReviewerSlice, verifiedReviewers];
 	}
 
-	async submitReview(place: fullApiPlace, review: any): Promise<any>{
+	async submitReview(place: placeMarkerData, review: any): Promise<any>{
 		this._verifyInitialized();
 
 		const newReview: dbReview = {
@@ -410,17 +410,17 @@ class FirebaseService {
 			thanks: []
 		}
 
-		const dbPlaceSnapshot = await this.db.ref(`places/${place.place_id}`).once('value');
+		const dbPlaceSnapshot = await this.db.ref(`places/${place.placeId}`).once('value');
 		if(!dbPlaceSnapshot.exists()){
 			// Create new place in DB
 			const dbPlace: dbPlace = {
-				id: _get(place, 'place_id', ''),
-				name: _get(place, 'name', ''),
-				lat: _get(place, 'geometry.location.lat', ''),
-				lng: _get(place, 'geometry.location.lng', ''),
-				icon: _get(place, 'icon', ''),
-				formatted_address: _get(place, 'formatted_address', ''),
-				types: place.types,
+				id: place.placeId,
+				name: place.title || '',
+				lat: place.latlng?.latitude,
+				lng: place.latlng?.longitude,
+				icon: place.icon || '',
+				formatted_address: place.formatted_address || '',
+				types: place.types || [],
 				reviews: {}
 			}
 

@@ -18,7 +18,8 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string):
         'website',
         'photos',
         'user_ratings_total',
-        'icon'
+        'icon',
+        'types'
     ]);
 
     let yelpPlace;
@@ -45,6 +46,7 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string):
             formatted_phone_number: googlePlace.formatted_phone_number,
             website: googlePlace.website,
             business_status: googlePlace.business_status,
+            types: googlePlace.types,
             opening_hours: googlePlace.opening_hours,
             photos: googlePlace.photos,
             icon: googlePlace.icon,

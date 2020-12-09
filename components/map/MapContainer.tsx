@@ -75,6 +75,7 @@ export default class MapContainer extends React.Component<
         });
 
         FirebaseService.onUserFollowingUpdated(()=>{
+            console.log("setting reload markers to TRUE");
             this._reloadCurrentMarkers = true;
         });
 

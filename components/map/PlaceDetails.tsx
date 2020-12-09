@@ -328,7 +328,7 @@ export default class PlaceDetails extends React.Component<
             }
             <WriteReview 
                 editReview={this.state.editReview}
-                place={this.state.place}
+                placeSummary={this.props.placeSummary}
                 showModal={this.state.showReviewModal} 
                 onDismissModal={this.onDismissReviewModal.bind(this)}/>
 

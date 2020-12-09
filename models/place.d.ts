@@ -102,6 +102,7 @@ export interface placeMarkerData {
   description?: string,
   formatted_address?: string,
   business_status?: string,
+  types?: string[],
   opening_hours?: { open_now : boolean, periods: Array<openClosePeriod> },
   photos?: any[],
   rating?: number,
