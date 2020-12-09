@@ -424,7 +424,7 @@ class FirebaseService {
 				reviews: {}
 			}
 
-			await this.db.ref(`places/${place.place_id}`).set(dbPlace);
+			await this.db.ref(`places/${place.placeId}`).set(dbPlace);
 		}
 
 		// Push new place review onto reivews with unique key

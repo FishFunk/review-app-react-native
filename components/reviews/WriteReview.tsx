@@ -208,7 +208,7 @@ export default class WriteReview extends Component<{
             <Root>
                 <ScrollView style={{flex: 1}} ref={ref => {this._scrollViewRef = ref}}>
                 <View>
-                    <Text style={styles.title}>Review {this.props.placeSummary.name}</Text>
+                    <Text style={styles.title}>Review {this.props.placeSummary.title}</Text>
                 </View>
                 <View style={styles.formContainer}>
                     {
