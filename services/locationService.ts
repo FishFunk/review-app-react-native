@@ -1,7 +1,6 @@
 import * as Location from 'expo-location';
 import { LocationAccuracy } from 'expo-location';
 import * as Permissions from 'expo-permissions';
-// import FirebaseService from '../services/firebaseService';
 
 export const getLocation = async (): Promise<Location.LocationObject | null> => {
   try{
@@ -16,14 +15,7 @@ export const getLocation = async (): Promise<Location.LocationObject | null> => 
     if(finalStatus !== 'granted') {
       return null;
     } else {
-      // const t0 = performance.now();
       const location = await Location.getCurrentPositionAsync({accuracy: LocationAccuracy.Balanced});
-      // const t1 = performance.now();
-
-      // let log = ` Get current position took ${t1-t0} milliseconds.`;
-
-      // await FirebaseService.logError(log);
-
       return location;
     }
   } catch (ex){

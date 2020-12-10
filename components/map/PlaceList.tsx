@@ -105,13 +105,12 @@ export default class PlaceList extends React.Component<
                     />
             </Left>
             <Body>
-                <View style={{ width: 200 }}>
-                    <View style={{flexDirection: 'row' }}>
+                <View style={{ width: '100%' }}>
+                    <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.title}>{item.title}</Text>
                         <ReviewDollars 
                             rating={item.pricing} 
-                            fontSize={16} 
-                            style={{marginTop: 4}}/>
+                            fontSize={16} style={{}}/>
                     </View>
                     <StarRatingListItem 
                         noBullCount={item.reviewCount}
@@ -133,11 +132,11 @@ export default class PlaceList extends React.Component<
                             : null
                     }
                     {
-                        item.status === 'CLOSED_TEMPORARILY' ?
+                        item.business_status === 'CLOSED_TEMPORARILY' ?
                             <Text style={styles.warningText}>Closed Temporarily</Text> : null
                     }
                     {
-                        item.status === 'CLOSED_PERMANENTLY' ?
+                        item.business_status === 'CLOSED_PERMANENTLY' ?
                             <Text style={styles.warningText}>Closed Permanently</Text> : null
                     }
                 </View>
@@ -205,7 +204,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 12,
-        width: 160,
+        width: '80%',
         fontFamily: theme.fontBold
     },
     info: {
@@ -213,11 +212,13 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     importantText: {
+        textAlign: 'center',
         marginTop: 4,
         color: theme.PRIMARY_COLOR,
         fontSize: 11
     },
     warningText: {
+        textAlign: 'center',
         marginTop: 4,
         color: theme.DANGER_COLOR,
         fontSize: 11
