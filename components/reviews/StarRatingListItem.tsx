@@ -52,14 +52,11 @@ export default class StarRatingListItem extends Component<{
             yelpRating, 
             yelpCount } = this.props;
 
-        return <View style={this.props.width ? { width: this.props.width } : {}}>
-            <View style={{height: 5}}></View>
+        return <View>
             <View style={this.styles.starRow}>
                 <View style={this.styles.flexRow}>
                     <Text style={this.styles.label}>NoBull</Text>
-                    <View>
-                        <ReviewStars rating={noBullRating || 0} fontSize={16} />
-                    </View>
+                    <ReviewStars rating={noBullRating || 0} fontSize={16} />
                 </View> 
                 <View style={this.styles.subTextView}>
                     <Text style={this.styles.subText}>({noBullCount || 0})</Text>

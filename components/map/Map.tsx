@@ -136,7 +136,7 @@ export default class Map extends React.Component<
                             tooltip 
                             onPress={(event)=>this.onPressCallout(event, marker)}>
                             <View style={styles.bubble}>
-                                <View style={{ flexDirection: 'row' }}>
+                                <View style={styles.bubbleHeader}>
                                     <Text style={styles.title}>{marker.title}</Text>
                                     <ReviewDollars 
                                         rating={marker.pricing || 0} 
@@ -184,8 +184,13 @@ const styles = StyleSheet.create({
         padding: 10,
         width: 180
     },
+    bubbleHeader: {
+        flexDirection: 'row', 
+        justifyContent: 'space-evenly',
+        marginBottom: 5
+    },
     title: {
-        width: '80%',
+        width: '70%',
         textAlign: 'center',
         fontFamily: theme.fontBold,
         fontSize: 12,
@@ -200,7 +205,7 @@ const styles = StyleSheet.create({
         marginTop: -0.5
     },
     actionText: {
-        marginTop: 8,
+        marginTop: 10,
         fontSize: 12,
         color: theme.PRIMARY_COLOR,
         alignSelf: 'center'
