@@ -8,6 +8,7 @@ import { placeMarkerData } from '../../models/place';
 import _isEqual from 'lodash/isEqual';
 import MapToolbar from './MapToolbar';
 import StarRatingListItem from '../reviews/StarRatingListItem';
+import ReviewDollars from '../reviews/ReviewDollars';
 
 export default class Map extends React.Component<
     {
@@ -135,10 +136,15 @@ export default class Map extends React.Component<
                             tooltip 
                             onPress={(event)=>this.onPressCallout(event, marker)}>
                             <View style={styles.bubble}>
-                                <Text style={styles.title}>{marker.title}</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={styles.title}>{marker.title}</Text>
+                                    <ReviewDollars 
+                                        rating={marker.pricing || 0} 
+                                        fontSize={16} 
+                                        style={{marginTop: 4}}/>
+                                </View>
                                 <StarRatingListItem 
                                     noBullCount={marker.reviewCount}
-                                    pricing={marker.pricing}
                                     noBullRating={marker.rating}
                                     googleRating={marker.googleRating}
                                     googleCount={marker.googleCount}
@@ -179,15 +185,11 @@ const styles = StyleSheet.create({
         width: 180
     },
     title: {
+        width: '80%',
         textAlign: 'center',
         fontFamily: theme.fontBold,
-        fontSize: 14,
+        fontSize: 12,
         color: theme.DARK_COLOR
-    },
-    stars: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        padding: 4
     },
     arrow: {
         backgroundColor: 'transparent',
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
         marginTop: -0.5
     },
     actionText: {
-        marginTop: 5,
+        marginTop: 8,
         fontSize: 12,
         color: theme.PRIMARY_COLOR,
         alignSelf: 'center'

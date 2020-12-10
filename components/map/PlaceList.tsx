@@ -105,36 +105,42 @@ export default class PlaceList extends React.Component<
                     />
             </Left>
             <Body>
-                <Text style={styles.title}>{item.title}</Text>
-                <StarRatingListItem 
-                    width={180}
-                    noBullCount={item.reviewCount}
-                    pricing={item.pricing}
-                    noBullRating={item.rating} 
-                    googleRating={item.googleRating}
-                    googleCount={item.googleCount}
-                    yelpRating={item.yelpRating} 
-                    yelpCount={item.yelpCount}/>
-                <View style={{height: 5}}></View>
-                {/* {
+                <View style={{ width: 200 }}>
+                    <View style={{flexDirection: 'row' }}>
+                        <Text style={styles.title}>{item.title}</Text>
+                        <ReviewDollars 
+                            rating={item.pricing} 
+                            fontSize={16} 
+                            style={{marginTop: 4}}/>
+                    </View>
+                    <StarRatingListItem 
+                        noBullCount={item.reviewCount}
+                        noBullRating={item.rating} 
+                        googleRating={item.googleRating}
+                        googleCount={item.googleCount}
+                        yelpRating={item.yelpRating} 
+                        yelpCount={item.yelpCount}/>
+                    <View style={{height: 5}}></View>
+                    {/* {
                     item.address? 
                         <Text style={styles.info}>{item.address.split(',')[0]}</Text> : null
-                } */}
-                {
-                    item.openInfo ? 
-                        item.openInfo.open_now ? 
-                            <Text style={styles.importantText}>{item.openInfo.message ? item.openInfo.message : 'Open' }</Text> : 
-                            <Text style={styles.warningText}>{item.openInfo.message ? item.openInfo.message : 'Closed' }</Text>
-                        : null
-                }
-                {
-                    item.status === 'CLOSED_TEMPORARILY' ?
-                        <Text style={styles.warningText}>Closed Temporarily</Text> : null
-                }
-                {
-                    item.status === 'CLOSED_PERMANENTLY' ?
-                        <Text style={styles.warningText}>Closed Permanently</Text> : null
-                }
+                    } */}
+                    {
+                        item.openInfo ? 
+                            item.openInfo.open_now ? 
+                                <Text style={styles.importantText}>{item.openInfo.message ? item.openInfo.message : 'Open' }</Text> : 
+                                <Text style={styles.warningText}>{item.openInfo.message ? item.openInfo.message : 'Closed' }</Text>
+                            : null
+                    }
+                    {
+                        item.status === 'CLOSED_TEMPORARILY' ?
+                            <Text style={styles.warningText}>Closed Temporarily</Text> : null
+                    }
+                    {
+                        item.status === 'CLOSED_PERMANENTLY' ?
+                            <Text style={styles.warningText}>Closed Permanently</Text> : null
+                    }
+                </View>
             </Body>
         </ListItem>)
     }
@@ -198,8 +204,8 @@ const styles = StyleSheet.create({
         maxHeight: 200
     },
     title: {
-        fontSize: 14,
-        maxWidth: 200,
+        fontSize: 12,
+        width: 160,
         fontFamily: theme.fontBold
     },
     info: {

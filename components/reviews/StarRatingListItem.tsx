@@ -2,7 +2,6 @@ import { Text, View } from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
-import ReviewDollars from './ReviewDollars';
 import ReviewStars from './ReviewStars';
 import YelpReviewStars from './YelpReviewStars';
 
@@ -13,8 +12,7 @@ export default class StarRatingListItem extends Component<{
     googleRating?: number,
     googleCount?: number,
     yelpRating?: number,
-    yelpCount?: number,
-    width?: number | string
+    yelpCount?: number
 },{}>{
 
     styles = StyleSheet.create({
@@ -24,21 +22,19 @@ export default class StarRatingListItem extends Component<{
             alignSelf: 'center'
         },
         flexRow: {
-            flexDirection: 'row'
+            flexDirection: 'row',
+            width: '80%'
         },
         starRow: {
-            marginTop: 2,
-            flexDirection: 'row',
-            justifyContent: 'space-between'
+            marginTop: 4,
+            flexDirection: 'row'
         },
         yelpRow: {
             flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 4
+            marginTop: 6
         },
         subTextView: {
-            alignSelf: 'center',
-            flexDirection: 'row'
+            alignSelf: 'center'
         },
         subText: {
             alignSelf: 'center',
@@ -54,8 +50,7 @@ export default class StarRatingListItem extends Component<{
             googleRating, 
             googleCount, 
             yelpRating, 
-            yelpCount, 
-            pricing } = this.props;
+            yelpCount } = this.props;
 
         return <View style={this.props.width ? { width: this.props.width } : {}}>
             <View style={{height: 5}}></View>
@@ -63,7 +58,6 @@ export default class StarRatingListItem extends Component<{
                 <View style={this.styles.flexRow}>
                     <Text style={this.styles.label}>NoBull</Text>
                     <View>
-                        <ReviewDollars rating={pricing || 0} fontSize={12} style={{marginLeft: 2}}/>
                         <ReviewStars rating={noBullRating || 0} fontSize={16} />
                     </View>
                 </View> 
@@ -71,7 +65,6 @@ export default class StarRatingListItem extends Component<{
                     <Text style={this.styles.subText}>({noBullCount || 0})</Text>
                 </View>
             </View>
-            <View style={{height: 5}}></View>
             { googleRating != null ? 
                 <View style={this.styles.starRow}>
                     <View style={this.styles.flexRow}>

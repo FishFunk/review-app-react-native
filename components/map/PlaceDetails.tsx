@@ -234,7 +234,7 @@ export default class PlaceDetails extends React.Component<
                 <View>
                     <Button 
                         transparent
-                        style={{ width: 50, height: 50}}
+                        style={{ width: 50, height: 50 }}
                         onPress={this.onNavigateBack.bind(this)}>
                         <Icon 
                             style={{color: theme.PRIMARY_COLOR}}
