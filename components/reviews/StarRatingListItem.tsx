@@ -1,6 +1,6 @@
 import { Text, View } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
 import YelpReviewStars from './YelpReviewStars';
@@ -79,7 +79,13 @@ export default class StarRatingListItem extends Component<{
             { yelpRating != null ? 
                 <View style={this.styles.yelpRow}>
                     <View style={this.styles.flexRow}>
-                        <Text style={this.styles.label}>Yelp</Text>
+                        <View style={{width: 42}}>
+                            <Image
+                                style={{ width: 30, height: 15 }}
+                                source={require('../../assets/images/yelp_logo/yelp_logo_transparent.png')}
+                            />
+                        </View>
+                        {/* <Text style={this.styles.label}>Yelp</Text> */}
                         <YelpReviewStars rating={yelpRating} />
                     </View>
                     { 

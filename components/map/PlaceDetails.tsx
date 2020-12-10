@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Image } from 'react-native';
 import { 
     ListItem, 
     Text, 
@@ -243,6 +243,30 @@ export default class PlaceDetails extends React.Component<
                     </Button>
                 </View>
                 <View style={{alignItems: 'center'}}>
+                    {
+                        placeSummary.business_status === 'CLOSED_TEMPORARILY' ?
+                        <Badge style={styles.warningBadge}>
+                            <Text style={styles.badgeText}>Closed Temporarily</Text>
+                        </Badge> : null
+                    }
+                    {
+                        placeSummary.business_status === 'CLOSED_PERMANENTLY' ?
+                        <Badge style={styles.warningBadge}>
+                            <Text style={styles.badgeText}>Closed Permanently</Text>
+                        </Badge> : null
+                    }
+                    {
+                        this.state.openInfo && this.state.openInfo.open_now === true ?
+                            <Badge style={styles.goodBadge}>
+                                <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open Now'}</Text>
+                            </Badge> : null
+                    }
+                    {
+                        this.state.openInfo && this.state.openInfo.open_now === false ?
+                            <Badge style={styles.warningBadge}>
+                                <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Closed'}</Text>
+                            </Badge> : null
+                    }
                     <Text style={styles.title}>{placeSummary.title}</Text>
                     <TouchableOpacity 
                         containerStyle={styles.starTouchable}
@@ -273,8 +297,11 @@ export default class PlaceDetails extends React.Component<
                         {
                             placeSummary.yelpRating ? 
                             <View>
-                                <View style={styles.flexRow}>
-                                    <Text style={styles.brandLabel}>Yelp</Text>
+                                <View style={{...styles.flexRow, marginBottom: 1}}>
+                                    <Image
+                                        style={{ width: 30, height: 12 }}
+                                        source={require('../../assets/images/yelp_logo/yelp_logo_transparent.png')}
+                                    />
                                     <Text style={styles.reviewCountLabel}>({placeSummary.yelpCount})</Text>
                                 </View>
                                 <YelpReviewStars rating={placeSummary.yelpRating} />
@@ -286,30 +313,6 @@ export default class PlaceDetails extends React.Component<
                     {this.state.isLoading ? <SpinnerContainer /> : null }
                 </View>
             </View>
-            {
-                placeSummary.business_status === 'CLOSED_TEMPORARILY' ?
-                <Badge style={styles.warningBadge}>
-                    <Text style={styles.badgeText}>Closed Temporarily</Text>
-                </Badge> : null
-            }
-            {
-                placeSummary.business_status === 'CLOSED_PERMANENTLY' ?
-                <Badge style={styles.warningBadge}>
-                    <Text style={styles.badgeText}>Closed Permanently</Text>
-                </Badge> : null
-            }
-            {
-                this.state.openInfo && this.state.openInfo.open_now === true ?
-                    <Badge style={styles.goodBadge}>
-                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open Now'}</Text>
-                    </Badge> : null
-            }
-            {
-                this.state.openInfo && this.state.openInfo.open_now === false ?
-                    <Badge style={styles.warningBadge}>
-                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Closed'}</Text>
-                    </Badge> : null
-            }
             <View>
                 <HorizontalPhotoList photoUrls={this.state.photoUrls} />
             </View>
@@ -366,7 +369,7 @@ const styles = StyleSheet.create({
     titleView: {
         flexDirection: 'row', 
         justifyContent: 'space-between',
-        marginTop: '10%'
+        marginTop: '8%'
     },
     title: {
         maxWidth: 250,
@@ -413,15 +416,19 @@ const styles = StyleSheet.create({
     warningBadge: {
         backgroundColor: theme.DANGER_COLOR,
         alignSelf: 'center',
+        marginTop: 5,
         marginBottom: 5
     },
     goodBadge: {
         backgroundColor: theme.PRIMARY_COLOR,
         alignSelf: 'center',
+        marginTop: 5,
         marginBottom: 5
     },
     badgeText: {
-        fontSize: 14
+        fontFamily: theme.fontBold,
+        color: theme.LIGHT_COLOR,
+        fontSize: 12
     },
     noReviewText: {
         color: theme.DARK_COLOR
@@ -439,6 +446,7 @@ const styles = StyleSheet.create({
         marginBottom: 4
     },
     brandLabel: {
+        fontFamily: theme.fontBold,
         fontSize: 10
     },
     reviewCountLabel: {
