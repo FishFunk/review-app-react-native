@@ -281,32 +281,25 @@ export default class PlaceDetails extends React.Component<
                         </View>
                     </TouchableOpacity>
                     <View style={styles.externalReviews}>
-                        { 
-                            placeSummary.googleRating ?
-                            <View>
-                                <View style={styles.flexRow}>
-                                    <Text style={styles.brandLabel}>Google</Text>
-                                    <Text style={styles.reviewCountLabel}>({placeSummary.googleCount})</Text>
-                                </View>
-                                <ReviewStars rating={placeSummary.googleRating} 
+                        <View>
+                            <View style={styles.flexRow}>
+                                <Text style={styles.brandLabel}>Google</Text>
+                                <Text style={styles.reviewCountLabel}>({placeSummary.googleCount || 'No data'})</Text>
+                            </View>
+                            <ReviewStars rating={placeSummary.googleRating || 0} 
                                     fontSize={16} 
                                     color={theme.googleRed} />
-                            </View> : null
-                                
-                        }
-                        {
-                            placeSummary.yelpRating ? 
-                            <View>
-                                <View style={{...styles.flexRow, marginBottom: 1}}>
-                                    <Image
-                                        style={{ width: 30, height: 12 }}
-                                        source={require('../../assets/images/yelp_logo/yelp_logo_transparent.png')}
-                                    />
-                                    <Text style={styles.reviewCountLabel}>({placeSummary.yelpCount})</Text>
-                                </View>
-                                <YelpReviewStars rating={placeSummary.yelpRating} />
-                            </View> : null
-                        }
+                        </View>
+                        <View>
+                            <View style={{...styles.flexRow, marginBottom: 1}}>
+                                <Image
+                                    style={{ width: 30, height: 12 }}
+                                    source={require('../../assets/images/yelp_logo/yelp_logo_transparent.png')}
+                                />
+                                <Text style={styles.reviewCountLabel}>({placeSummary.yelpCount || 'No data'})</Text>
+                            </View>
+                            <YelpReviewStars rating={placeSummary.yelpRating || 0} />
+                        </View>
                     </View>
                 </View>
                 <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>

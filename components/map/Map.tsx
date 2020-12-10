@@ -140,7 +140,8 @@ export default class Map extends React.Component<
                                     <Text style={styles.title}>{marker.title}</Text>
                                     <ReviewDollars 
                                         rating={marker.pricing || 0} 
-                                        fontSize={16} />
+                                        fontSize={16} 
+                                        style={{ alignSelf: 'center' }}/>
                                 </View>
                                 <StarRatingListItem 
                                     noBullCount={marker.reviewCount}
