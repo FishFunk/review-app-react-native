@@ -78,7 +78,7 @@ export default class PlaceDetails extends React.Component<
 
     componentDidMount(){
         this.load()
-            .catch(error => FirebaseService.logError(error));
+            .catch(error => FirebaseService.logError(error, 'PlaceDetails - componentDidMount'));
     }
 
     async load(){

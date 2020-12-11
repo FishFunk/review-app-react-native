@@ -8,7 +8,7 @@ import PlaceListModal from './PlaceListModal';
 import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
-import { Toast } from 'native-base';
+import { Spinner, Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
 import { getApiPlaceSummary } from '../../services/combinedApiService';
@@ -22,6 +22,7 @@ export default class MapContainer extends React.Component<
         loadingMap: boolean,
         loadingLocation: boolean,
         loadingNearby: boolean,
+        loadingSingleMarker: boolean,
         region: Region, 
         zoomLevel: number,
         markers: placeMarkerData[], 
@@ -54,6 +55,7 @@ export default class MapContainer extends React.Component<
         loadingMap: true,
         loadingLocation: false,
         loadingNearby: false,
+        loadingSingleMarker: false,
         region: this.defaultRegion,
         zoomLevel: 14,
         markers: [],
@@ -86,7 +88,7 @@ export default class MapContainer extends React.Component<
                 });
             })
             .catch(error=>{
-                FirebaseService.logError(JSON.stringify(error));
+                FirebaseService.logError(JSON.stringify(error), 'MapContainer - componentDidMount');
             });
     }
 
@@ -237,27 +239,33 @@ export default class MapContainer extends React.Component<
             return;
         }
         
-        this.setState({ refreshCallout: false });
+        this.setState({ refreshCallout: false, loadingSingleMarker: true });
 
-        const dbPlace = await FirebaseService.getPlace(placeId);
-        const placeSummary = await getApiPlaceSummary(this.state.apiKey, placeId);
-
-        if(placeSummary){
-            placeSummary.reviewCount = dbPlace ? Object.keys(dbPlace.reviews).length : 0;
-            placeSummary.rating = Utils.getPlaceAvgRating(dbPlace);
-            placeSummary.pricing = Utils.getPlaceAvgPricing(dbPlace);
-
-            let region = {
-                latitude: placeSummary.latlng.latitude,
-                longitude: placeSummary.latlng.longitude,
-                latitudeDelta: this.state.region.latitudeDelta,
-                longitudeDelta: this.state.region.longitudeDelta
-            }
-            
-            this.setState({ markers: [placeSummary], placeId: placeId, refreshCallout: true });
+        try{
+            const dbPlace = await FirebaseService.getPlace(placeId);
+            const placeSummary = await getApiPlaceSummary(this.state.apiKey, placeId);
     
-            this.mapViewRef?.animateToRegion(region);
+            if(placeSummary){
+                placeSummary.reviewCount = dbPlace ? Object.keys(dbPlace.reviews).length : 0;
+                placeSummary.rating = Utils.getPlaceAvgRating(dbPlace);
+                placeSummary.pricing = Utils.getPlaceAvgPricing(dbPlace);
+    
+                let region = {
+                    latitude: placeSummary.latlng.latitude,
+                    longitude: placeSummary.latlng.longitude,
+                    latitudeDelta: this.state.region.latitudeDelta,
+                    longitudeDelta: this.state.region.longitudeDelta
+                }
+                
+                this.setState({ markers: [placeSummary], placeId: placeId, refreshCallout: true });
+        
+                this.mapViewRef?.animateToRegion(region);
+            }
+        } catch (ex){
+            FirebaseService.logError(ex, 'MapContainer - loadSingleMarker');
         }
+
+        this.setState({ loadingSingleMarker: false });
     }
 
     onPressMapArea(){
@@ -308,6 +316,10 @@ export default class MapContainer extends React.Component<
                     <MapInput 
                         handleSelectPlace={this.handleSelectPlace.bind(this)}
                         apiKey={this.state.apiKey} />
+                    {
+                        this.state.loadingSingleMarker ? 
+                            <SpinnerContainer transparent={true} /> : null
+                    }
                 </View>
                 {
                     this.state.region.latitude ?

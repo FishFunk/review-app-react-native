@@ -521,17 +521,18 @@ class FirebaseService {
 		await this.db.ref(`feedback`).push(data);
 	}
 
-	logError(log: string | Object | Error){
+	logError(log: string | Object | Error, context: string){
 		if(!firebase.apps.length){
 			throw new Error("Firebase not initialized correctly!");
 		}
 
-		console.error(log);
+		console.error(log, context);
 
 		const key = Utils.generateRandomString();
 		const data = {
 			data: log,
-			timeStamp: new Date().toISOString()
+			timeStamp: new Date().toISOString(),
+			context: context
 		}
 		
 		return this.db.ref(`logs/${key}`).set(data);

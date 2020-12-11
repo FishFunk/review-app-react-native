@@ -19,7 +19,7 @@ export default function LoginSocialScreen(props: any) {
         .catch(error =>{
           setError(true);
           console.error(error);
-          FirebaseService.logError(error);
+          FirebaseService.logError(error, 'LoginSocialScreen - onFacebookLogin');
         });
       } else {
         alert("Facebook login does not work in Expo");
@@ -34,7 +34,7 @@ export default function LoginSocialScreen(props: any) {
         .catch(error =>{
           setError(true);
           console.error(error);
-          FirebaseService.logError(error);
+          FirebaseService.logError(error, 'LoginSocialScreen - onGoogleLogin');
         });
     }
 

@@ -151,14 +151,16 @@ export default class PlaceList extends React.Component<
                 <DropDownPicker 
                     searchable={false}
                     items={[
-                        {label: 'Rating', value: 'rating', 
-                            icon: () => <Icon name="star" type={'FontAwesome5'} style={{fontSize: 14, color: theme.STAR_COLOR}} />},
-                        {label: 'Price', value: 'pricing', 
-                            icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR}} /> }
+                        {label: 'NoBull', value: 'rating', 
+                            icon: () => <Icon name="star" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.STAR_COLOR }} />},
+                        {label: 'Pricing', value: 'pricing', 
+                            icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR, marginLeft: 4, marginRight: 4, alignSelf: 'center' }} /> }
                     ]}
                     defaultValue={this.props.orderBy}
-                    style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0}}
+                    style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0 }}
+                    labelStyle={{ fontSize: 12, fontFamily: theme.fontLight }}
                     placeholder="Order by"
+                    itemStyle={{ justifyContent: 'flex-start' }}
                     containerStyle={{
                         height: 40,
                         width: 100, 
