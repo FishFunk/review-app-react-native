@@ -27,9 +27,11 @@ class MapInput extends React.Component<
                 this.setState({ submitting: true });
                 this.props.handleGenericSearch(this.placesInputRef.state.query);
                 this.placesInputRef.setState({ places: [], showList: false });
+
                 setTimeout(()=>{
+                    this.placesInputRef.setState({ places: [], showList: false });
                     this.setState({ submitting: false });
-                }, 250)
+                }, 1000)
             }
         }
     }
@@ -58,6 +60,7 @@ class MapInput extends React.Component<
                 }}
                 clearQueryOnSelect={true}
                 requiredCharactersBeforeSearch={2}
+                requiredTimeBeforeSearch={500}
                 stylesItemText={{color: theme.DARK_COLOR}}
                 onChangeText={this.onChangeText.bind(this)}
                 textInputProps={{

@@ -313,7 +313,9 @@ export default class MapContainer extends React.Component<
     }
 
     async onQuickSearch(query: string){
-        this.setState({ showGeneralLoadingSpinner: true });
+        Keyboard.dismiss();
+        
+        this.setState({ showGeneralLoadingSpinner: true, hideCallout: true });
         let possibleType: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
             'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
             'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy' | 'hair_care';
@@ -382,7 +384,6 @@ export default class MapContainer extends React.Component<
         } else {
             this.fitMapToMarkers(placeMarkers)
         }
-        
 
         this.setState({ markers: placeMarkers, showGeneralLoadingSpinner: false });
     }

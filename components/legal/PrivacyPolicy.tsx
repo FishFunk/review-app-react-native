@@ -53,6 +53,34 @@ device name, operating system version, the configuration of the app when utilizi
 the time and date of your use of the Service, and other statistics.`}
 </Text>
 
+<Text style={styles.sectionHeader}>DATA DELETION RIGHTS</Text>
+<Text style={styles.content}>
+{`You have the right to request that we delete any of personal data related to you that we have 
+collected from you. Upon confirmation of your request, we will delete – and direct our service 
+providers to delete – personal data related to you from our records, unless retaining the 
+information is necessary for us or for our service providers to complete the transaction with 
+you, detect security incidents, identify and repair errors, exercise free speech or another 
+right provided by law, comply with specific laws or legal obligations or any other internal and 
+lawful use.`}
+</Text>
+
+<Text style={styles.sectionHeader}>EXERCISING DATA ACCESS AND DELETION RIGHTS</Text>
+<Text style={styles.content}>
+{`In order to exercise your access, data portability and deletion privacy rights, as described above, 
+please submit a request here: https://nobullreviews.app/?target=contact or email us at: dev.wanderlustlabs@gmail.com. \n\n
+
+Only you or a person authorized to act on your behalf, can make a request related to personal data related to you. 
+You can also submit a request on behalf of your minor child. Please note that a request for access can be made by 
+you only twice within a 12-month period. We will need to ask you to provide us with credentials to verify your 
+identity or authority, address your request, and confirm the personal data relates to you. Note that we will only 
+use the personal data provided in your request to verify your identity or authority and address your request.
+We will do our best to respond to your request within 45 days of its receipt. If we require more time 
+(up to additional 45 days), we will inform you of the reason and extension period. The response we provide will also 
+explain the reasons we cannot comply with a request, where applicable. We do not charge a fee to process or respond 
+to your request unless it is excessive, repetitive or manifestly unfounded. If we determine that the request warrants 
+a fee, we will inform you of the reasons for such decision and provide you with a cost estimate before completing your request.`}
+</Text>
+
 <Text style={styles.sectionHeader}>COOKIES</Text>
 <Text style={styles.content}>
 {`Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. 
