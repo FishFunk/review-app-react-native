@@ -8,10 +8,11 @@ import PlaceListModal from './PlaceListModal';
 import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
-import { Spinner, Toast } from 'native-base';
+import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
-import { getApiPlaceSummary } from '../../services/combinedApiService';
+import { getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType } from '../../services/combinedApiService';
+import MapQuickSearchButtons from '../unused/MapQuickSearchButtons';
 
 export default class MapContainer extends React.Component<
     {
@@ -22,7 +23,7 @@ export default class MapContainer extends React.Component<
         loadingMap: boolean,
         loadingLocation: boolean,
         loadingNearby: boolean,
-        loadingSingleMarker: boolean,
+        showGeneralLoadingSpinner: boolean,
         region: Region, 
         zoomLevel: number,
         markers: placeMarkerData[], 
@@ -55,7 +56,7 @@ export default class MapContainer extends React.Component<
         loadingMap: true,
         loadingLocation: false,
         loadingNearby: false,
-        loadingSingleMarker: false,
+        showGeneralLoadingSpinner: false,
         region: this.defaultRegion,
         zoomLevel: 14,
         markers: [],
@@ -134,18 +135,7 @@ export default class MapContainer extends React.Component<
 
         const markers = await this.convertPlacesToMarkers(places);
 
-        if(this.mapViewRef){
-            const latLngs = markers.map(m=>m.latlng);
-
-            // include current region within scope
-            latLngs.push({ 
-                latitude: lat, 
-                longitude: lng });
-
-            this.mapViewRef.fitToCoordinates(latLngs, 
-                { animated: true, 
-                    edgePadding: {top: 100, right: 80, bottom: 80, left: 80 }});
-        }
+        this.fitMapToMarkers(markers);
 
         this.setState({ markers: markers, loadingNearby: false, hideCallout: true  });
     }
@@ -220,6 +210,22 @@ export default class MapContainer extends React.Component<
         this.setState({ region:  { ...region }, zoomLevel: zoom, hideCallout: false });
     }
 
+    fitMapToMarkers(markers: placeMarkerData[]){
+        if(this.mapViewRef && markers){
+            const { latitude: lat, longitude: lng }  = this.state.region;
+            const latLngs = markers.map(m=>m.latlng);
+
+            // include current region within scope
+            latLngs.push({ 
+                latitude: lat, 
+                longitude: lng });
+
+            this.mapViewRef.fitToCoordinates(latLngs, 
+                { animated: true, 
+                    edgePadding: {top: 100, right: 80, bottom: 80, left: 80 }});
+        }
+    }
+
     async onMarkerSelect(marker: placeMarkerData){
         Keyboard.dismiss();
         const region = { 
@@ -239,7 +245,7 @@ export default class MapContainer extends React.Component<
             return;
         }
         
-        this.setState({ refreshCallout: false, loadingSingleMarker: true });
+        this.setState({ refreshCallout: false, showGeneralLoadingSpinner: true });
 
         try{
             const dbPlace = await FirebaseService.getPlace(placeId);
@@ -265,7 +271,7 @@ export default class MapContainer extends React.Component<
             FirebaseService.logError(ex, 'MapContainer - loadSingleMarker');
         }
 
-        this.setState({ loadingSingleMarker: false });
+        this.setState({ showGeneralLoadingSpinner: false });
     }
 
     onPressMapArea(){
@@ -306,6 +312,81 @@ export default class MapContainer extends React.Component<
         this.setState({ listOrderedBy: orderBy });
     }
 
+    async onQuickSearch(query: string){
+        this.setState({ showGeneralLoadingSpinner: true });
+        let possibleType: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
+            'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
+            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy' | 'hair_care';
+
+        switch(query){
+            case('bar'):
+                possibleType = 'bar';
+                break;    
+            case('restaurant'):
+                possibleType = 'restaurant';
+                break;
+            case('meal_delivery'):
+                possibleType = 'meal_delivery';
+                break;
+            case('cafe'):
+                possibleType = 'cafe';
+                break;   
+            case('hair_care'):
+                possibleType = 'hair_care';
+                break; 
+            default:
+                // use generic query instead of pre-defined type search
+        }
+
+        let placeMarkers: placeMarkerData[] = [];
+
+        try{
+            // const t0 = performance.now();
+            const { apiKey } = this.state;
+            const { latitude, longitude } = this.state.region;
+            
+            if(possibleType != null){
+                placeMarkers = await getNearbyPlaceSummariesByType(
+                    apiKey, latitude, longitude, possibleType);
+            } else {
+                placeMarkers = await getNearbyPlaceSummariesByQuery(
+                    apiKey,  latitude, longitude, query);
+            }
+
+            for(let place of placeMarkers){
+                // let t1 = performance.now();
+                const match = await FirebaseService.getPlace(place.placeId);
+                if(match){
+                    place.reviewCount = match.reviews ? Object.keys(match.reviews).length : 0;
+                    place.rating = Utils.getPlaceAvgRating(match);    
+                    place.pricing = Utils.getPlaceAvgPricing(match);
+                }
+                // let t2 = performance.now();
+                // console.log(`getPlace took ${t2 - t1} milliseconds`);
+            }
+
+            // const t3 = performance.now();
+            // console.log(`Entire quick search took ${t3-t0} milliseconds`)
+
+        } catch (ex){
+            console.error(ex);
+        }
+
+        if(!placeMarkers || placeMarkers.length === 0){
+            Toast.show({
+                text: "Shoot! We didn't find any relevant places nearby. Try a different search!",
+                position: 'bottom',
+                duration: 10000,
+                buttonText: 'OK'
+            });
+        } else {
+            this.fitMapToMarkers(placeMarkers)
+        }
+        
+
+        this.setState({ markers: placeMarkers, showGeneralLoadingSpinner: false });
+    }
+
     render() {
         if(this.state.loadingMap){
             return <SpinnerContainer />
@@ -315,12 +396,14 @@ export default class MapContainer extends React.Component<
                 <View style={styles.mapInput}>
                     <MapInput 
                         handleSelectPlace={this.handleSelectPlace.bind(this)}
+                        handleGenericSearch={this.onQuickSearch.bind(this)}
                         apiKey={this.state.apiKey} />
                     {
-                        this.state.loadingSingleMarker ? 
+                        this.state.showGeneralLoadingSpinner ? 
                             <SpinnerContainer transparent={true} /> : null
                     }
                 </View>
+                <MapQuickSearchButtons onQuickSearch={this.onQuickSearch.bind(this)} />
                 {
                     this.state.region.latitude ?
                         <View style={styles.flex}>

@@ -101,7 +101,7 @@ export default class PlaceList extends React.Component<
                     square
                     style={{ width: 130, height: 105, justifyContent: 'center' }}
                     source={{ uri: item.photoUrl }} 
-                    // TODO: Add default image
+                    defaultSource={require('../../assets/images/no-image-default.png')}
                     />
             </Left>
             <Body>

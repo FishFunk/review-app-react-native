@@ -1,9 +1,12 @@
 import _first from 'lodash/first';
-import appConfig from '../app.json';
+
+// TODO: Make new app build to use app config value
+// import appConfig from '../app.json';
+//appConfig.expo.extra.yelpApiBearerToken
 
 const baseUrl = 'https://api.yelp.com/v3/businesses/';
 const headers = new Headers();
-headers.set('Authorization', appConfig.expo.extra.yelpApiBearerToken);
+headers.set('Authorization', 'Bearer en2ZVirgzxSZUqzj4aBO1Rj1bvAdXnNuul3LW6cFdTHXe6pjn2Mu8LJAVUQnDMqVq0u3MFth4QpVyS-1X5gA2rCkajArCO-S79Er7gvsn7HjD6k32wZKgx7QlNPLX3Yx');
 
 // Phone format +14159083801
 export const yelpApiSearchByPhone = async (phone: string)=>{
