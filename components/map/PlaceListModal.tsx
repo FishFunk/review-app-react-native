@@ -2,8 +2,7 @@ import React from "react";
 import { StyleSheet } from 'react-native';
 import Modal from "react-native-modal";
 import theme from "../../styles/theme";
-import { Content } from "native-base";
-import { dbPlace, placeMarkerData } from "../../models/place";
+import { placeMarkerData } from "../../models/place";
 import PlaceList from "./PlaceList";
 
 export default class PlaceListModal extends React.Component<
@@ -14,7 +13,9 @@ export default class PlaceListModal extends React.Component<
         onDismissModal: () => any,
         onUpdateSortOrder: (orderBy: string) => any,
         onShowPlaceDetails: (placeSummary: placeMarkerData) => any,
-        orderBy: string
+        onLoadMoreResults: ()=> any,
+        orderBy: string,
+        showLoadMoreOption: boolean
     }>{
 
     render(){
@@ -32,7 +33,9 @@ export default class PlaceListModal extends React.Component<
                         places={this.props.places}
                         onShowPlaceDetails={this.props.onShowPlaceDetails.bind(this)}
                         onUpdateSortOrder={this.props.onUpdateSortOrder.bind(this)} 
-                        orderBy={this.props.orderBy}/>
+                        onLoadMoreResults={this.props.onLoadMoreResults.bind(this)}
+                        orderBy={this.props.orderBy}
+                        showLoadMoreOption={this.props.showLoadMoreOption}/>
             </Modal>
         )
     }

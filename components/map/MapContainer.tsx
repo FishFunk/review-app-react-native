@@ -11,7 +11,7 @@ import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
-import { getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType } from '../../services/combinedApiService';
+import { getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType, loadMoreResults } from '../../services/combinedApiService';
 import MapQuickSearchButtons from '../unused/MapQuickSearchButtons';
 
 export default class MapContainer extends React.Component<
@@ -24,6 +24,7 @@ export default class MapContainer extends React.Component<
         loadingLocation: boolean,
         loadingNearby: boolean,
         showGeneralLoadingSpinner: boolean,
+        showLoadMoreOption: boolean,
         region: Region, 
         zoomLevel: number,
         markers: placeMarkerData[], 
@@ -57,6 +58,7 @@ export default class MapContainer extends React.Component<
         loadingLocation: false,
         loadingNearby: false,
         showGeneralLoadingSpinner: false,
+        showLoadMoreOption: false,
         region: this.defaultRegion,
         zoomLevel: 14,
         markers: [],
@@ -315,7 +317,7 @@ export default class MapContainer extends React.Component<
     async onQuickSearch(query: string){
         Keyboard.dismiss();
         
-        this.setState({ showGeneralLoadingSpinner: true, hideCallout: true });
+        this.setState({ showGeneralLoadingSpinner: true, hideCallout: true, showLoadMoreOption: true });
         let possibleType: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
             'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
             'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy' | 'hair_care';
@@ -388,6 +390,18 @@ export default class MapContainer extends React.Component<
         this.setState({ markers: placeMarkers, showGeneralLoadingSpinner: false });
     }
 
+    async onLoadMoreResults(){
+        const currentPlaces = this.state.markers;
+        this.setState({ showGeneralLoadingSpinner: true });
+        const morePlaces = await loadMoreResults(this.state.apiKey);
+        const allPlaces = currentPlaces.concat(morePlaces);
+        
+        this.setState({ 
+            showLoadMoreOption: allPlaces.length <= 15,
+            markers: allPlaces, 
+            showGeneralLoadingSpinner: false });
+    }
+
     render() {
         if(this.state.loadingMap){
             return <SpinnerContainer />
@@ -435,6 +449,8 @@ export default class MapContainer extends React.Component<
                     onDismissModal={this.onDismissListModal.bind(this)}
                     onShowPlaceDetails={this.onShowDetails.bind(this)}
                     onUpdateSortOrder={this.onUpdateListOrder.bind(this)}
+                    onLoadMoreResults={this.onLoadMoreResults.bind(this)}
+                    showLoadMoreOption={this.state.showLoadMoreOption}
                     orderBy={this.state.listOrderedBy}/>
             </View>
         )

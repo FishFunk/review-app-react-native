@@ -2,6 +2,7 @@ import _indexOf from 'lodash/indexOf';
 import { yelpApiSearchByPhone, yelpApiBusinessMatch } from './yelpApiService';
 import { getGooglePlaceById, getGooglePlaceListByQuery, getGooglePlaceListByType } from './googlePlaceApiService';
 import { fullApiPlace, placeMarkerData } from '../models/place';
+import LocalStorageService from '../services/localStorageService';
 
 const defaultFields = ['name', 
 'international_phone_number', 
@@ -22,8 +23,8 @@ export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string):
     const googlePlace = await getGooglePlaceById(apiKey, googlePlaceId, defaultFields);
 
     if(googlePlace){
-        const yelpPlace = getYelpInfoFromGoogleResult(googlePlace);
-        return createPlaceMarkerObject(googlePlace, yelpPlace);
+        const yelpPlace = _getYelpInfoFromGoogleResult(googlePlace);
+        return _createPlaceMarkerObject(googlePlace, yelpPlace);
     }
 }
 
@@ -32,53 +33,43 @@ export const getNearbyPlaceSummariesByType = async (
     type: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
         'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
         'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy'): Promise<placeMarkerData[]>=> {
-    
-    let places = [];
-
-    // const t0 = performance.now();
     const nearbyGooglePlaces = await getGooglePlaceListByType(apiKey, lat, lng, type, ['place_id']);
-    // const t1 = performance.now();
-    // console.log(`getGooglePlaceListByType took ${t1-t0} milliseconds`);
-
-    if(nearbyGooglePlaces && nearbyGooglePlaces.length > 0){
-        // Limit # of results for performance
-        for(let i = 0; i < 6; i++){
-            let googlePlace = nearbyGooglePlaces[i];
-            if(googlePlace && googlePlace.place_id){
-                
-                // let t2 = performance.now();
-                const fullGooglePlace = await getGooglePlaceById(apiKey, googlePlace.place_id, defaultFields);   
-                // let t3 = performance.now();
-                // console.log(`getGooglePlaceById took ${t3 - t2}`);
-
-                const yelpData = await getYelpInfoFromGoogleResult(fullGooglePlace);
-                // let t4 = performance.now();
-                // console.log(`getYelpInfoFromGoogleResult took ${t4 - t3}`);
-
-                const placeMarker = createPlaceMarkerObject(fullGooglePlace, yelpData);
-
-                places.push(placeMarker);
-            }
-        }
-        
-        return places;
-    } else {
-        return [];
-    }
+    await LocalStorageService.setItem('google_results', nearbyGooglePlaces);
+    await LocalStorageService.setItem('google_results_next_index', 4);
+    return _iterateAndConvertNearbyPlaceResults(apiKey, nearbyGooglePlaces, 5);
 }
 
 export const getNearbyPlaceSummariesByQuery = async (apiKey: string, lat: number, lng: number, query: string): Promise<placeMarkerData[]>=> {
-    let places = [];
     const nearbyGooglePlaces = await getGooglePlaceListByQuery(apiKey, lat, lng, query, defaultFields);
+    await LocalStorageService.setItem('google_results', nearbyGooglePlaces);
+    await LocalStorageService.setItem('google_results_next_index', 4);
+    return _iterateAndConvertNearbyPlaceResults(apiKey, nearbyGooglePlaces, 5);
+}
 
-    if(nearbyGooglePlaces && nearbyGooglePlaces.length > 0){
+export const loadMoreResults = async (apiKey: string) => {
+    const nearbyGooglePlaces = await LocalStorageService.getItem('google_results');
+    const idx = await LocalStorageService.getItem('google_results_next_index');
+    return _iterateAndConvertNearbyPlaceResults(apiKey, nearbyGooglePlaces, 5, idx);
+}
+
+const _iterateAndConvertNearbyPlaceResults = 
+    async (apiKey: string, nearbyGooglePlaceResults: fullApiPlace[], count: number, startIndex: number = 0)=>{
+    let places = [];
+
+    if(startIndex > 20 || count < 1 || count > 10){
+        throw new Error('iterateAndConvertNearbyPlaceResults - count param is outside acceptable range (1-10)');
+    }
+
+    await LocalStorageService.setItem('google_results_next_index', startIndex + count);
+
+    if(nearbyGooglePlaceResults && nearbyGooglePlaceResults.length > 0){
         // Limit # of results for performance
-        for(let i = 0; i < 6; i++){
-            let googlePlace = nearbyGooglePlaces[i];
+        for(let i = startIndex; i < (startIndex + count); i++){
+            let googlePlace = nearbyGooglePlaceResults[i];
             if(googlePlace && googlePlace.place_id){
                 const fullGooglePlace = await getGooglePlaceById(apiKey, googlePlace.place_id, defaultFields);
-                const yelpData = await getYelpInfoFromGoogleResult(fullGooglePlace);
-                const placeMarker = createPlaceMarkerObject(fullGooglePlace, yelpData);
+                const yelpData = await _getYelpInfoFromGoogleResult(fullGooglePlace);
+                const placeMarker = _createPlaceMarkerObject(fullGooglePlace, yelpData);
                 places.push(placeMarker);
             }
         }
@@ -89,7 +80,7 @@ export const getNearbyPlaceSummariesByQuery = async (apiKey: string, lat: number
     }
 }
 
-const createPlaceMarkerObject = (googlePlace: fullApiPlace, yelpData: any): placeMarkerData => {
+const _createPlaceMarkerObject = (googlePlace: fullApiPlace, yelpData: any): placeMarkerData => {
     const result = { 
         placeId: googlePlace.place_id,
         formatted_address: googlePlace.formatted_address,
@@ -111,13 +102,13 @@ const createPlaceMarkerObject = (googlePlace: fullApiPlace, yelpData: any): plac
     return result;
 }
 
-const getYelpInfoFromGoogleResult = async (googlePlace: fullApiPlace) => {
+const _getYelpInfoFromGoogleResult = async (googlePlace: fullApiPlace) => {
     if(googlePlace.international_phone_number){
         const targetPhone = googlePlace.international_phone_number.replaceAll(' ', '').replaceAll('-', '');
         return await yelpApiSearchByPhone(targetPhone);
     } else if(googlePlace.address_components){
         // Search yelp by address components
-        const components = getAddressComponents(googlePlace.address_components);
+        const components = _getAddressComponents(googlePlace.address_components);
         if(googlePlace.name && 
             components.addr1 && 
             components.city && 
@@ -128,7 +119,7 @@ const getYelpInfoFromGoogleResult = async (googlePlace: fullApiPlace) => {
     }
 }
 
-const getAddressComponents = (addressComponents: any[]) => {
+const _getAddressComponents = (addressComponents: any[]) => {
     let countryCode, city, stateCode, streetNumber, street;
 
     for(let item of addressComponents){

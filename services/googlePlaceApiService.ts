@@ -1,6 +1,7 @@
 import { fullApiPlace, placeId } from '../models/place';
 
 const baseUrl = 'https://maps.googleapis.com/maps/api/place';
+const searchRadius = '1600'; // Search radius in meters
 
 const _getPlaceUrl = (apiKey: string, place_id: string, fields?: Array<string>)=> {
     const urlExt = '/details/json?';
@@ -23,7 +24,7 @@ const _findNearbyUrl = (
 
     const urlExt = '/nearbysearch/json?';
     const location = `&location=${lat},${lng}`;
-    const radius = `&radius=2000`; // Radius in meters
+    const radius = `&radius=${searchRadius}`;
     const fieldStr = fields ? `&fields=${fields.join(',')}` : '';
 
     return `${baseUrl}${urlExt}${location}${radius}${fieldStr}&type=${type}&key=${apiKey}`;
@@ -38,7 +39,7 @@ const _findPlacesByTextUrl = (
     
     const urlExt = `/textsearch/json?`;
     const location = `&location=${lat},${lng}`;
-    const radius = `&radius=2000`; // Radius in meters
+    const radius = `&radius=${searchRadius}`;
     const fieldStr = fields ? `&fields=${fields.join(',')}` : '';
 
     return  `${baseUrl}${urlExt}${location}${radius}${fieldStr}&query=${query}&key=${apiKey}`;

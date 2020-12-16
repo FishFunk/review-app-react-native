@@ -1,12 +1,12 @@
 import React from "react";
 import { Dimensions, StyleSheet } from 'react-native';
-import { Body, Icon, Left, ListItem, Text, Thumbnail, Title, View } from "native-base";
+import { Body, Button, Icon, Left, ListItem, Spinner, Text, Thumbnail, Title, View } from "native-base";
 import { placeMarkerData } from "../../models/place";
 import { FlatList } from "react-native-gesture-handler";
 import { getPhotoUrl } from '../../services/googlePlaceApiService';
-import SpinnerContainer from "../SpinnerContainer";
 import Utils from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
+import _uniq from 'lodash/uniq';
 import DropDownPicker from 'react-native-dropdown-picker';
 import theme from "../../styles/theme";
 import _orderBy from 'lodash/orderBy';
@@ -19,7 +19,9 @@ export default class PlaceList extends React.Component<
         places: placeMarkerData[], 
         onShowPlaceDetails: (placeSummary: placeMarkerData) => any,
         onUpdateSortOrder: (orderBy: string) => any,
-        orderBy: string
+        onLoadMoreResults:()=> any,
+        orderBy: string,
+        showLoadMoreOption: boolean
     }, 
     {
         loading: boolean,
@@ -32,17 +34,16 @@ export default class PlaceList extends React.Component<
     }
 
     componentDidMount(){
-        this.load()
-            .then(()=> {
-                this.setState({ loading: false });
-            })
-            .catch(error =>{
-                console.error(error);
-                this.setState({ loading: false });
-            })
+        this.load();
     }
 
-    async load(){
+    componentDidUpdate(prevProps: any){
+        if(!_isEqual(prevProps.places, this.props.places)){
+            this.load();
+        }
+    }
+
+    load(){
         const { apiKey, places } = this.props;
 
         let detailedPlaces = []
@@ -65,6 +66,7 @@ export default class PlaceList extends React.Component<
         }
 
         this.sortPlaces(detailedPlaces, this.props.orderBy);
+        this.setState({ loading: false });
     }
 
     onChangeDropdownItem(orderBy: string){
@@ -83,11 +85,22 @@ export default class PlaceList extends React.Component<
             case('pricing'):
                 orderedList = _orderBy(places, (p) => p.pricing, 'asc');
                 break;
+            case('yelp'):
+                orderedList = _orderBy(places, (p) => p.yelpRating, 'desc');
+                break;
+            case('google'):
+                orderedList = _orderBy(places, (p) => p.googleRating, 'desc');
+                break;
             default:
                 orderedList = places;
         }
 
         this.setState({ detailedPlaces: orderedList });
+    }
+
+    onPressLoadMore(){
+        this.setState({ loading: true });
+        this.props.onLoadMoreResults();
     }
 
     // Render each place in flat list
@@ -154,7 +167,11 @@ export default class PlaceList extends React.Component<
                         {label: 'NoBull', value: 'rating', 
                             icon: () => <Icon name="star" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.STAR_COLOR }} />},
                         {label: 'Pricing', value: 'pricing', 
-                            icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR, marginLeft: 4, marginRight: 4, alignSelf: 'center' }} /> }
+                            icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR, marginLeft: 4, marginRight: 4, alignSelf: 'center' }} /> },
+                        {label: 'Google', value: 'google', 
+                            icon: () => <Icon name="google" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.googleRed, marginLeft: 2, alignSelf: 'center' }} />},
+                        {label: 'Yelp', value: 'yelp', 
+                            icon: () => <Icon name="yelp" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.yelpRed, marginLeft: 4, marginRight: 2, alignSelf: 'center' }} />}
                     ]}
                     defaultValue={this.props.orderBy}
                     style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0 }}
@@ -169,15 +186,28 @@ export default class PlaceList extends React.Component<
                         position: 'absolute' }}
                     onChangeItem={item => this.onChangeDropdownItem(item.value)}/>
                 <View style={styles.header}>
+                    {
+                        this.state.loading ?
+                            <Spinner size={'small'} color={theme.PRIMARY_COLOR} style={{width: 50}} />
+                            : <View style={{width: 50}}></View>
+                    }
                     <Title style={styles.headerText}>Nearby Places</Title>
+                    <View style={{width: 50}}></View>
                 </View>
-                <FlatList 
+                <FlatList
                     contentContainerStyle={styles.list} 
                     data={this.state.detailedPlaces} 
                     keyExtractor={(x, i) => i.toString()}
                     renderItem={({item}) => this.renderListItem(item)}/>
-                { this.state.loading ? 
-                        <SpinnerContainer /> : null }
+                
+                {
+                    this.props.showLoadMoreOption && !this.state.loading ?
+                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            <Button transparent onPress={this.onPressLoadMore.bind(this)}>
+                                <Text>Load More</Text>
+                            </Button>
+                        </View> : null
+                }
             </View>
         )
     }
@@ -188,19 +218,20 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').height - 100 // offset plus header height
     },
     header: {
-        flexDirection: 'column',
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-evenly',
+        // marginRight: '20%',
         height: 50,
-        width: '100%',
         borderBottomWidth: 0.5,
         borderBottomColor: theme.GRAY_COLOR
     },
     headerText: {
-        fontSize: 15,
-        alignSelf: 'center'
+        fontSize: 15
     },
     list: {
-        paddingRight: 5
+        paddingRight: 5,
+        paddingBottom: 10
     },
     listItem: {
         maxHeight: 200
@@ -215,15 +246,13 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     importantText: {
-        textAlign: 'center',
         marginTop: 4,
         color: theme.PRIMARY_COLOR,
-        fontSize: 11
+        fontSize: 10
     },
     warningText: {
-        textAlign: 'center',
         marginTop: 4,
         color: theme.DANGER_COLOR,
-        fontSize: 11
+        fontSize: 10
     }
 });
