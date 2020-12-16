@@ -108,7 +108,7 @@ export const getGooglePlaceListByType = async (
         lng: number,
         type: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
             'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
-            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy' | 'hair_care',
+            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy',
         fields?: string[]): Promise<fullApiPlace[]> => {
 
     try{

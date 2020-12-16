@@ -115,7 +115,6 @@ export default class WriteReview extends Component<{
                 'bakery',
                 'spa',
                 'beauty_salon',
-                'hair_care',
                 'lodging',
                 'night_club'];
             

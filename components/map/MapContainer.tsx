@@ -320,7 +320,7 @@ export default class MapContainer extends React.Component<
         this.setState({ showGeneralLoadingSpinner: true, hideCallout: true, showLoadMoreOption: true });
         let possibleType: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
             'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
-            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy' | 'hair_care';
+            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy';
 
         switch(query){
             case('bar'):
@@ -335,9 +335,6 @@ export default class MapContainer extends React.Component<
             case('cafe'):
                 possibleType = 'cafe';
                 break;   
-            case('hair_care'):
-                possibleType = 'hair_care';
-                break; 
             default:
                 // use generic query instead of pre-defined type search
         }

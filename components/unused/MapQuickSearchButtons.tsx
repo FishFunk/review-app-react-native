@@ -15,7 +15,7 @@ export default class MapQuickSearchButtons extends Component<{
     render(){
         // let possibleTypes: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
         //     'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
-        //     'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy' | 'hair_care';
+        //     'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy';
 
         const { onQuickSearch } = this.props;
         return(
@@ -43,11 +43,6 @@ export default class MapQuickSearchButtons extends Component<{
                         onPress={()=>onQuickSearch('cafe')}>
                         <Icon type={'FontAwesome5'} name={'mug-hot'} style={styles.exploreIcon}></Icon>
                         <Label style={styles.exploreLabel}>Cafes</Label>
-                    </Button>
-                    <Button small rounded style={styles.exploreButton} iconLeft
-                        onPress={()=>onQuickSearch('hair_care')}>
-                        <Icon type={'FontAwesome5'} name={'cut'} style={styles.exploreIcon}></Icon>
-                        <Label style={styles.exploreLabel}>Hair Care</Label>
                     </Button>
                 </ScrollView>
             </View>
