@@ -3,7 +3,7 @@ import getConfig from './firebaseServiceConfig';
 import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';
 import { Email, Contact } from 'expo-contacts';
-import { fullApiPlace, dbPlace, placeMarkerData } from '../models/place';
+import { dbPlace, placeMarkerData } from '../models/place';
 import _get from 'lodash/get';
 import _filter from 'lodash/filter';
 import _indexOf from 'lodash/indexOf';
@@ -330,7 +330,8 @@ class FirebaseService {
 					review_key: key,
 					reports: review.reports,
 					thanks: review.thanks,
-					user_verified: Utils.isUserVerified(usr)
+					user_verified: Utils.isUserVerified(usr),
+					covid_safe: review.covid_safe
 				}
 				
 				reviewSummaries.push(reviewSummary);
@@ -405,6 +406,7 @@ class FirebaseService {
 			avg_rating: review.avg_rating,
 			pricing: review.pricing,
 			comments: review.comments,
+			covid_safe: review.covid_safe,
 			date: new Date().toDateString(),
 			reports: [],
 			thanks: []

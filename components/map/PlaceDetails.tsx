@@ -189,9 +189,28 @@ export default class PlaceDetails extends React.Component<
                 <ListAvatar user_verified={review.user_verified} img={review.img} />
             </Left>
             <Body>
-                <ReviewStars rating={review.avg_rating} fontSize={18} />
                 <Text>{review.reviewer_id === FirebaseService.getCurrentUserId() ? 'You' : review.name}</Text>
+                <ReviewStars rating={review.avg_rating} fontSize={18} />
+                {
+                    review.covid_safe != null ?
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ fontSize: 12, fontFamily: theme.fontLight }}>COVID-19 Safe</Text>
+                        {
+                            review.covid_safe ?
+                                <Icon type={'FontAwesome'} name={'check-circle'} style={{
+                                    fontSize: 12, 
+                                    alignSelf: 'center', 
+                                    color: theme.SECONDARY_COLOR}}></Icon>
+                                :
+                                <Icon type={'FontAwesome'} name={'times-circle'} 
+                                    style={{fontSize: 12, 
+                                        alignSelf: 'center', 
+                                        color: theme.DANGER_COLOR}}></Icon>
+                        }
+                    </View> : null
+                }
                 <Text note>{review.comments}</Text>
+
                 <Text note style={{position: 'absolute', top: 10, right: 5, fontSize: 12 }}>{ review.date }</Text>
                 {review.reviewer_id !== FirebaseService.getCurrentUserId() ?
                     <View style={styles.reviewIconContainer}>

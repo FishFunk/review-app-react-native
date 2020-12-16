@@ -17,7 +17,8 @@ import {
     Toast,
     Root,
     Spinner,
-    Form
+    Form,
+    Switch
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -43,7 +44,8 @@ export default class WriteReview extends Component<{
         pricing: number,
         comments: string,
         submittingReview: boolean,
-        editingReview: boolean
+        editingReview: boolean,
+        isSwitchEnabled: boolean
     }> {
 
     constructor(props: any){
@@ -56,6 +58,7 @@ export default class WriteReview extends Component<{
             comments: '',
             submittingReview: false,
             editingReview: false,
+            isSwitchEnabled: false
         }
     }
 
@@ -70,6 +73,7 @@ export default class WriteReview extends Component<{
                 rating3: nextProps.editReview.avg_rating,
                 pricing: nextProps.editReview.pricing,
                 comments: nextProps.editReview.comments,
+                isSwitchEnabled: nextProps.editReview.covidSafe === true,
                 editingReview: true
             };
         }
@@ -103,6 +107,10 @@ export default class WriteReview extends Component<{
         this.setState({ pricing: newRating });
     }
 
+    toggleSwitch(){
+        this.setState({ isSwitchEnabled: !this.state.isSwitchEnabled });
+    }
+
     isServiceEstablishment(){
         const { placeSummary: place } = this.props;
 
@@ -127,7 +135,7 @@ export default class WriteReview extends Component<{
     async onSubmitForm(){
         Keyboard.dismiss();
         const { placeId, title } = this.props.placeSummary;
-        const { rating1, rating2, rating3, pricing, comments } = this.state;
+        const { rating1, rating2, rating3, pricing, comments, isSwitchEnabled } = this.state;
         const avg = this.avgRating();
 
         if(avg === 0){
@@ -168,7 +176,8 @@ export default class WriteReview extends Component<{
             service: rating3,
             comments: comments,
             pricing: pricing,
-            avg_rating: avg
+            avg_rating: avg,
+            covid_safe: isSwitchEnabled
         }
 
         this.setState({ submittingReview: true });
@@ -241,6 +250,23 @@ export default class WriteReview extends Component<{
                                     fontSize={30}
                                     initalRating={this.props.editReview ? this.props.editReview.pricing : this.state.pricing} 
                                     onRatingChanged={this.onUpdatePricing.bind(this)}  />
+                            </Item>
+                            <Item bordered={false} style={styles.starItem}>
+                                <Label>COVID-19 Safe</Label>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        {
+                                            this.state.isSwitchEnabled ?
+                                            <Text style={{fontFamily: theme.fontLight, marginRight: 4}}>Yes</Text> :
+                                            <Text style={{fontFamily: theme.fontLight, marginRight: 4}}>No</Text>
+                                        }
+                                        <Switch
+                                            trackColor={{ false: theme.DANGER_COLOR, true: theme.SECONDARY_COLOR }}
+                                            ios_backgroundColor={theme.DANGER_COLOR}
+                                            thumbColor={theme.LIGHT_COLOR}
+                                            onValueChange={this.toggleSwitch.bind(this)}
+                                            value={this.state.isSwitchEnabled}
+                                        />
+                                    </View>
                             </Item>
                             <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
                                 <Item stackedLabel style={styles.textAreaItem}>

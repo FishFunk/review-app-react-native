@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 12,
-        width: '80%',
+        width: '78%',
         fontFamily: theme.fontBold
     },
     info: {

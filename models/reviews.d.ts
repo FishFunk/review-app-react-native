@@ -11,9 +11,11 @@ export interface reviewSummary {
     reports: Array[];
     thanks: Array[];
     user_verified: boolean;
+    covid_safe: boolean;
   }
 
   export interface dbReview {
+    covid_safe: boolean;
     place_id: string;
     place_name: string;
     reviewer_id: string;

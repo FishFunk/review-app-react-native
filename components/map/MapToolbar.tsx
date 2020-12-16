@@ -31,7 +31,7 @@ export default class MapToolbar extends React.Component<
                                 name={'map-marked-alt'}
                                 style={styles.buttonIcon}>
                             </Icon>
-                            <Label style={styles.buttonText}>Nearby Reviews</Label>
+                            <Label style={styles.buttonText}>NoBull Reviews</Label>
                         </View>
                     }
                 </Button>
