@@ -9,6 +9,7 @@ import {
     Body
 } from "native-base";
 import theme from '../styles/theme';
+import Logo from './Logo';
 
 export default function AppHeader(props: any) {
     const fontSize = props.fontSize ? props.fontSize : 24;
@@ -24,7 +25,7 @@ export default function AppHeader(props: any) {
             </Left>
             <Body>
                 {
-                    props.title ? <Title>{props.title}</Title> : null
+                    props.title ? <Title>{props.title}</Title> : <Logo/>
                 }
             </Body>
             <Right>

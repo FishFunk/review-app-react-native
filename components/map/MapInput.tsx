@@ -5,29 +5,42 @@ import theme from '../../styles/theme';
 
 class MapInput extends React.Component<
     { 
-        handleSelectPlace: (place: searchPlace)=>void, 
+        handleSelectPlace: (place: searchPlace)=>any, 
+        handleGenericSearch: (query: string)=>any,
         apiKey: string
     },
     {
-        value: string
+        submitting: boolean
     }> {
 
     state = {
-        value: ''
+        submitting: false
     }
 
     placesInputRef = null;
 
-    onSubmitEditing(){
-        // if(this.state.value.length > 0){
-        //     this.props.handleGenericSearch(this.state.value);
-        // }
+    onSubmitEditing(event: any){
+        event?.preventDefault();
+
+        if(this.placesInputRef){
+            if(this.placesInputRef.state.query.length > 0 && !this.state.submitting){
+                this.setState({ submitting: true });
+                this.props.handleGenericSearch(this.placesInputRef.state.query);
+                this.placesInputRef.setState({ places: [], showList: false });
+
+                setTimeout(()=>{
+                    this.placesInputRef.setState({ places: [], showList: false });
+                    this.setState({ submitting: false });
+                }, 1000)
+            }
+        }
     }
 
     onChangeText(val: string){
-        this.setState({value: val});
-        if(this.placesInputRef && val.length === 0){
-            this.placesInputRef.setState({places: []});
+        if(this.placesInputRef){
+            if(this.placesInputRef.state.query == '' || this.state.submitting){
+                this.placesInputRef.setState({ places: [], showList: false });
+            }
         }
     }
 
@@ -45,9 +58,9 @@ class MapInput extends React.Component<
                 onSelect={(place: searchPlace) => {
                     this.props.handleSelectPlace(place);
                 }}
-                query={this.state.value}
                 clearQueryOnSelect={true}
                 requiredCharactersBeforeSearch={2}
+                requiredTimeBeforeSearch={500}
                 stylesItemText={{color: theme.DARK_COLOR}}
                 onChangeText={this.onChangeText.bind(this)}
                 textInputProps={{

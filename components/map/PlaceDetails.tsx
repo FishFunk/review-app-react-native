@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Image } from 'react-native';
 import { 
     ListItem, 
     Text, 
@@ -15,8 +15,7 @@ import FirebaseService from '../../services/firebaseService';
 import { reviewSummary } from '../../models/reviews';
 import theme from '../../styles/theme';
 import WriteReview from '../reviews/WriteReview';
-import { getGooglePlaceById, getPhotoUrl } from '../../services/googlePlaceApiService';
-import { fullApiPlace } from '../../models/place';
+import { getPhotoUrl } from '../../services/googlePlaceApiService';
 import _indexOf from 'lodash/indexOf';
 import HorizontalPhotoList from '../HorizontalPhotoList';
 import openMap from 'react-native-open-maps';
@@ -29,12 +28,14 @@ import ReviewDollars from '../reviews/ReviewDollars';
 import ReportModal from '../ReportModal';
 import HorizontalButtonList from '../HorizontalButtonList';
 import ListAvatar from '../profile/ListAvatar';
+import YelpReviewStars from '../reviews/YelpReviewStars';
+import { placeMarkerData } from '../../models/place';
 
 export default class PlaceDetails extends React.Component<
     { 
         navigation: any,
         apiKey: string, 
-        placeId: string, 
+        placeSummary: placeMarkerData, 
         toggleSummaryModal: Function
     },
     { 
@@ -45,17 +46,15 @@ export default class PlaceDetails extends React.Component<
         editReview: reviewSummary,
         reportReview: reviewSummary,
         isLoading: boolean,
-        place: fullApiPlace,
         disableEdit: boolean,
         photoUrls: Array<string>,
-        rating: number,
-        pricing: number,
         reloadMarkers: boolean,
-        openInfo: { open_now: boolean, message: string } | null
+        openInfo: { open_now: boolean, message: string } | null,
+        pricing: number,
+        rating: number
     }> {
 
     // Initalize complex state values to remove type warnings
-    initialPlace: fullApiPlace = {};
     initialReportReview: any = {};
     initialOpenInfo: any = {};
     initialEditReview: any = null;
@@ -68,11 +67,10 @@ export default class PlaceDetails extends React.Component<
         editReview: this.initialEditReview,
         reportReview: this.initialReportReview,
         items: new Array<reviewSummary>(),
-        place: this.initialPlace,
+        pricing: 0,
+        rating: 0,
         photoUrls: new Array<string>(),
         disableEdit: true,
-        rating: 0,
-        pricing: 0,
         reloadMarkers: false,
         openInfo: this.initialOpenInfo
     }
@@ -80,22 +78,20 @@ export default class PlaceDetails extends React.Component<
 
     componentDidMount(){
         this.load()
-            .catch(error => FirebaseService.logError(error));
+            .catch(error => FirebaseService.logError(error, 'PlaceDetails - componentDidMount'));
     }
 
     async load(){
-        
-        const place = await getGooglePlaceById(this.props.apiKey, this.props.placeId);
-
-        const openInfo = Utils.checkForOpenCloseHours(place.opening_hours);
-        this.setState({ place: place, openInfo: openInfo });
+        const { apiKey, placeSummary } = this.props;
+        const openInfo = Utils.checkForOpenCloseHours(placeSummary.opening_hours);
+        this.setState({ openInfo: openInfo });
 
         let photoUrls = []
-        if(place && place.photos){
+        if(placeSummary.photos){
             // prefetch up to 3 photos
             for(let i=0; i<3; i++){
-                if(place.photos[i]){
-                    const url = getPhotoUrl(this.props.apiKey, place.photos[i].photo_reference);
+                if(placeSummary.photos[i]){
+                    const url = getPhotoUrl(apiKey, placeSummary.photos[i].photo_reference);
                     // await Image.prefetch(url);
                     photoUrls.push(url);
                     this.setState({ photoUrls: photoUrls });
@@ -113,16 +109,12 @@ export default class PlaceDetails extends React.Component<
 
     async getReviewState(){
         const userId = FirebaseService.getCurrentUserId();
-        const reviews = await FirebaseService.getReviewSummaries(this.props.placeId);
+        const reviews = await FirebaseService.getReviewSummaries(this.props.placeSummary.placeId);
         const averages = Utils.getReviewAverages(reviews);
 
         let disableEditing = _find(reviews, (r) => r.reviewer_id === userId) != null;
 
-        return { 
-            items: reviews, 
-            rating: averages.avgRating, 
-            pricing: averages.avgPrice, 
-            disableEdit: disableEditing };
+        return { items: reviews, disableEdit: disableEditing, pricing: averages.avgPrice, rating: averages.avgRating };
     }
 
     onPressWriteReview(){
@@ -141,6 +133,7 @@ export default class PlaceDetails extends React.Component<
                 showReviewModal: false, 
                 showReviewCompleteModal: true });
             const newReviewState = await this.getReviewState();
+
             this.setState({ ...newReviewState, isLoading: false, reloadMarkers: true });
         } else {
             this.setState({ showReviewModal: false });
@@ -152,12 +145,12 @@ export default class PlaceDetails extends React.Component<
     }
 
     onOpenMaps(){
-        const { formatted_address, name } = this.state.place;
+        const { formatted_address, title } = this.props.placeSummary;
         
         openMap({ 
             // latitude: lat,
             // longitude: lng, 
-            query: name, 
+            query: title, 
             end: formatted_address });
     }
 
@@ -233,13 +226,15 @@ export default class PlaceDetails extends React.Component<
     }
 
     render() {
+        const { placeSummary } = this.props;
+
         return (
         <View style={styles.container}>
             <View style={styles.titleView}>
                 <View>
                     <Button 
                         transparent
-                        style={{ width: 50, height: 50}}
+                        style={{ width: 50, height: 50 }}
                         onPress={this.onNavigateBack.bind(this)}>
                         <Icon 
                             style={{color: theme.PRIMARY_COLOR}}
@@ -247,57 +242,79 @@ export default class PlaceDetails extends React.Component<
                             type={'FontAwesome5'}/>
                     </Button>
                 </View>
-                <View>
-                    <Text style={styles.title}>{this.state.place.name}</Text>
+                <View style={{alignItems: 'center'}}>
+                    {
+                        placeSummary.business_status === 'CLOSED_TEMPORARILY' ?
+                        <Badge style={styles.warningBadge}>
+                            <Text style={styles.badgeText}>Closed Temporarily</Text>
+                        </Badge> : null
+                    }
+                    {
+                        placeSummary.business_status === 'CLOSED_PERMANENTLY' ?
+                        <Badge style={styles.warningBadge}>
+                            <Text style={styles.badgeText}>Closed Permanently</Text>
+                        </Badge> : null
+                    }
+                    {
+                        this.state.openInfo && this.state.openInfo.open_now === true ?
+                            <Badge style={styles.goodBadge}>
+                                <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open Now'}</Text>
+                            </Badge> : null
+                    }
+                    {
+                        this.state.openInfo && this.state.openInfo.open_now === false ?
+                            <Badge style={styles.warningBadge}>
+                                <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Closed'}</Text>
+                            </Badge> : null
+                    }
+                    <Text style={styles.title}>{placeSummary.title}</Text>
                     <TouchableOpacity 
                         containerStyle={styles.starTouchable}
-                        style={styles.starsView} 
                         onPress={this.onPressWriteReview.bind(this)}
                         disabled={this.state.disableEdit}>
-                        <ReviewStars rating={this.state.rating} fontSize={22}/>
+                        <View style={{alignItems: 'center'}}>
+                            <View style={styles.flexRow}>
+                                <ReviewStars rating={this.state.rating || 0} fontSize={20} /> 
+                                <Text style={styles.reviewCountLabel}>({this.state.items ? this.state.items.length : 0})</Text>
+                            </View>
+                            <ReviewDollars rating={this.state.pricing || 0} fontSize={16} style={{marginTop: 5}}/>
+                        </View>
                     </TouchableOpacity>
-                    {
-                        this.state.pricing ?
-                            <ReviewDollars 
-                                style={{alignSelf: 'center', marginBottom: 10}} 
-                                rating={this.state.pricing}
-                                fontSize={14}/> : null
-                    }
+                    <View style={styles.externalReviews}>
+                        <View>
+                            <View style={styles.flexRow}>
+                                <Text style={styles.brandLabel}>Google</Text>
+                                <Text style={styles.reviewCountLabel}>({placeSummary.googleCount || 'No data'})</Text>
+                            </View>
+                            <ReviewStars rating={placeSummary.googleRating || 0} 
+                                    fontSize={16} 
+                                    color={theme.googleRed} />
+                        </View>
+                        <View>
+                            <View style={{...styles.flexRow, marginBottom: 1}}>
+                                <Image
+                                    style={{ width: 30, height: 12 }}
+                                    source={require('../../assets/images/yelp_logo/yelp_logo_transparent.png')}
+                                />
+                                <Text style={styles.reviewCountLabel}>({placeSummary.yelpCount || 'No data'})</Text>
+                            </View>
+                            <YelpReviewStars rating={placeSummary.yelpRating || 0} />
+                        </View>
+                    </View>
                 </View>
                 <View style={{ width: 50, height: 50 ,justifyContent: 'center'}}>
                     {this.state.isLoading ? <SpinnerContainer /> : null }
                 </View>
             </View>
             {
-                this.state.place.business_status === 'CLOSED_TEMPORARILY' ?
-                <Badge style={styles.warningBadge}>
-                    <Text style={styles.badgeText}>Closed Temporarily</Text>
-                </Badge> : null
+                this.state.photoUrls && this.state.photoUrls.length > 0 ?
+                <View>
+                    <HorizontalPhotoList photoUrls={this.state.photoUrls} />
+                </View> : null
             }
-            {
-                this.state.place.business_status === 'CLOSED_PERMANENTLY' ?
-                <Badge style={styles.warningBadge}>
-                    <Text style={styles.badgeText}>Closed Permanently</Text>
-                </Badge> : null
-            }
-            {
-                this.state.openInfo && this.state.openInfo.open_now === true ?
-                    <Badge style={styles.goodBadge}>
-                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Open'}</Text>
-                    </Badge> : null
-            }
-            {
-                this.state.openInfo && this.state.openInfo.open_now === false ?
-                    <Badge style={styles.warningBadge}>
-                        <Text style={styles.badgeText}>{this.state.openInfo.message ? this.state.openInfo.message : 'Closed'}</Text>
-                    </Badge> : null
-            }
-            <View>
-                <HorizontalPhotoList photoUrls={this.state.photoUrls} />
-            </View>
             <HorizontalButtonList 
                 disableEdit={this.state.disableEdit}
-                place={this.state.place}
+                placeSummary={this.props.placeSummary}
                 onPressWriteReview={this.onPressWriteReview.bind(this)}/>
             {
                 this.state.items.length > 0 ?
@@ -322,7 +339,7 @@ export default class PlaceDetails extends React.Component<
             }
             <WriteReview 
                 editReview={this.state.editReview}
-                place={this.state.place}
+                placeSummary={this.props.placeSummary}
                 showModal={this.state.showReviewModal} 
                 onDismissModal={this.onDismissReviewModal.bind(this)}/>
 
@@ -342,26 +359,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
+    flexRow: {
+        flexDirection: 'row'
+    },
     titleView: {
         flexDirection: 'row', 
         justifyContent: 'space-between',
-        marginTop: '10%'
+        marginTop: '8%'
     },
     title: {
         maxWidth: 250,
         fontFamily: theme.fontBold,
-        fontSize: 20,
+        fontSize: 18,
         textAlign: 'center',
         flexWrap: 'wrap'
     },
     starTouchable: {
-        width: 120, 
-        alignSelf: 'center'
-    },
-    starsView: {
-        marginTop: 5,
-        marginBottom: 10,
-        alignSelf: 'center'
+        marginBottom: 4
     },
     listItem: {
         minHeight: 100,
@@ -398,15 +412,19 @@ const styles = StyleSheet.create({
     warningBadge: {
         backgroundColor: theme.DANGER_COLOR,
         alignSelf: 'center',
+        marginTop: 5,
         marginBottom: 5
     },
     goodBadge: {
         backgroundColor: theme.PRIMARY_COLOR,
         alignSelf: 'center',
+        marginTop: 5,
         marginBottom: 5
     },
     badgeText: {
-        fontSize: 14
+        fontFamily: theme.fontBold,
+        color: theme.LIGHT_COLOR,
+        fontSize: 12
     },
     noReviewText: {
         color: theme.DARK_COLOR
@@ -415,5 +433,22 @@ const styles = StyleSheet.create({
         marginTop: 10,
         backgroundColor: theme.PRIMARY_COLOR,
         alignSelf: 'center'
+    },
+    externalReviews: {
+        width: 220,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 4,
+        marginBottom: 4
+    },
+    brandLabel: {
+        fontFamily: theme.fontBold,
+        fontSize: 10
+    },
+    reviewCountLabel: {
+        fontSize: 10,
+        fontFamily: theme.fontLight,
+        alignSelf: 'center',
+        marginLeft: 4
     }
   });

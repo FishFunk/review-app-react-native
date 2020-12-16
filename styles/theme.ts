@@ -9,6 +9,7 @@ export default {
 
     facebookBlue: '#4267b2',
     googleRed: '#db3236',
+    yelpRed: '#af0606',
 
     font: 'Nunito-Regular',
     fontBold: 'Nunito-Bold',

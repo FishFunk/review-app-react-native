@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Icon, Label, View } from 'native-base';
 import { StyleSheet, Linking } from 'react-native';
-import { fullApiPlace } from '../models/place';
+import { placeMarkerData } from '../models/place';
 import openMap from 'react-native-open-maps';
 import theme from '../styles/theme';
 import { openShareSheet } from '../services/shareService';
@@ -12,18 +12,19 @@ export default function HorizontalButtonList(
     props: {
         disableEdit: boolean,
         onPressWriteReview: ()=>any,
-        place: fullApiPlace
+        placeSummary: placeMarkerData
     }){
 
     function onOpenMaps(){
-        const { formatted_address, name } = props.place;
+        const { formatted_address, title } = props.placeSummary;
         
         openMap({ 
             // latitude: lat,
             // longitude: lng, 
-            query: name, 
+            query: title, 
             end: formatted_address });
     }
+
     return (
         <View style={styles.buttonContainer}>
             <ScrollView 
@@ -44,25 +45,25 @@ export default function HorizontalButtonList(
                     <Label style={{fontSize: 12}}>Directions</Label>
                 </Button>
                 {
-                    props.place.formatted_phone_number != null ? 
+                    props.placeSummary.formatted_phone_number != null ? 
                         <Button small rounded transparent style={styles.roundButton}
-                            onPress={()=>Linking.openURL(`tel:${props.place.formatted_phone_number}`)}>
+                            onPress={()=>Linking.openURL(`tel:${props.placeSummary.formatted_phone_number}`)}>
                             <Icon type={'FontAwesome5'} name={'phone'} style={styles.buttonIcon}></Icon>
                             <Label style={{fontSize: 12}}>Call</Label>
                         </Button> : null
                 }
                 {
-                    props.place.website != null ? 
+                    props.placeSummary.website != null ? 
                         <Button small rounded transparent style={styles.roundButton}
-                            onPress={()=>Linking.openURL(`${props.place.website}`)}>
+                            onPress={()=>Linking.openURL(`${props.placeSummary.website}`)}>
                             <Icon type={'FontAwesome5'} name={'globe'} style={styles.buttonIcon}></Icon>
                             <Label style={{fontSize: 12}}>Website</Label>
                         </Button> : null
                 }
                 {
-                    props.place.website != null ? 
+                    props.placeSummary.website != null ? 
                         <Button small rounded transparent style={styles.roundButton}
-                            onPress={()=>{openShareSheet(props.place.website, websiteShareMessage)}}>
+                            onPress={()=>{openShareSheet(props.placeSummary.website, websiteShareMessage)}}>
                             <Icon type={'FontAwesome5'} name={'share'} style={styles.buttonIcon}></Icon>
                             <Label style={{fontSize: 12}}>Share</Label>
                         </Button> : null

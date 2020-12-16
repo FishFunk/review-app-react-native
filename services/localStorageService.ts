@@ -1,34 +1,51 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // **********
 // Utility class for interfacing with local storage
 // *********
 
 class LocalStorageService {
-    constructor(){
-        if(!localStorage){
-            throw new Error("Local storage is required for this app to run properly");
-        }
-    }
 
-    clearAll(){
-        localStorage.clear();
+    async clearAll(){
+        return AsyncStorage.clear();
     }
 
     // Set a value into local storage
-    setItem(key: string, value: string){
-        if(typeof(key) === 'string' && typeof(value) === 'string'){
-            localStorage.setItem(key, value);
-        } else {
-            throw new Error("Bad param types. Local storage accepts only string values");
+    async setItem(key: string, value: string | Object){
+        if(typeof(key) !== 'string'){
+            throw new Error("Key value must be a string!");
+        }
+
+        try {
+            let jsonValue;
+            if(typeof(value) === 'string'){
+                jsonValue = value;
+            } else {
+                jsonValue = JSON.stringify(value);
+            }
+            await AsyncStorage.setItem(key, jsonValue);
+        } catch (e) {
+            console.error(e);
         }
     }
 
     // Retrieve a stored value form local storage
-    getItem(key: string){
-        if(typeof(key) === 'string'){
-            return localStorage.getItem(key);
-        } else {
-            throw new Error("Bad param types. Local storage accepts only string values");
+    async getItem(key: string){
+        if(typeof(key) !== 'string'){
+            throw new Error("Key value must be a string!");
         }
+
+        let data;
+        let jsonValue = await AsyncStorage.getItem(key);
+        // Try parse
+        try{
+            data = jsonValue ? JSON.parse(jsonValue) : null;
+        } catch (ex){
+            // Not parsable
+            data = jsonValue;
+        }
+        
+        return data;
     }
 }
 

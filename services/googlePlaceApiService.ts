@@ -1,11 +1,12 @@
 import { fullApiPlace, placeId } from '../models/place';
 
 const baseUrl = 'https://maps.googleapis.com/maps/api/place';
+const searchRadius = '1600'; // Search radius in meters
 
 const _getPlaceUrl = (apiKey: string, place_id: string, fields?: Array<string>)=> {
     const urlExt = '/details/json?';
     const placeId = `place_id=${place_id}`;
-    const fieldStr = fields ? `&fields=${fields.join(',')}` : ''
+    const fieldStr = fields ? `&fields=${fields.join(',')}` : '';
     return `${baseUrl}${urlExt}${placeId}${fieldStr}&key=${apiKey}`;
 }
 
@@ -18,38 +19,43 @@ const _findNearbyUrl = (
         apiKey: string, 
         lat: number, 
         lng: number, 
-        type: string)=>{
+        type: string,
+        fields?: string[])=>{
 
     const urlExt = '/nearbysearch/json?';
     const location = `&location=${lat},${lng}`;
-    const radius = `&radius=10000`;
-    return `${baseUrl}${urlExt}${location}${radius}&type=${type}&key=${apiKey}`;
+    const radius = `&radius=${searchRadius}`;
+    const fieldStr = fields ? `&fields=${fields.join(',')}` : '';
+
+    return `${baseUrl}${urlExt}${location}${radius}${fieldStr}&type=${type}&key=${apiKey}`;
 }
 
 const _findPlacesByTextUrl = (
         apiKey: string, 
         lat: number, 
         lng: number, 
-        query: string)=> {
+        query: string,
+        fields?: string[])=> {
     
     const urlExt = `/textsearch/json?`;
     const location = `&location=${lat},${lng}`;
-    const radius = `&radius=15000`;
+    const radius = `&radius=${searchRadius}`;
+    const fieldStr = fields ? `&fields=${fields.join(',')}` : '';
 
-    return  `${baseUrl}${urlExt}${location}${radius}&query=${query}&key=${apiKey}`;
+    return  `${baseUrl}${urlExt}${location}${radius}${fieldStr}&query=${query}&key=${apiKey}`;
 }
 
-const _fetchNextPage = async (pageToken: string, apiKey: string) => {
-    const url = `${baseUrl}/nearbysearch/json?pagetoken=${pageToken}&key=${apiKey}`;
-    const response = await fetch(url);
-    const json = await response.json();
+// const _fetchNextPage = async (pageToken: string, apiKey: string) => {
+//     const url = `${baseUrl}/nearbysearch/json?pagetoken=${pageToken}&key=${apiKey}`;
+//     const response = await fetch(url);
+//     const json = await response.json();
 
-    if(json.status === "OK" && json.results && json.results.length > 0){
-        return json.results;
-    } else {
-        return Promise.reject("No matching places found");
-    }
-}
+//     if(json.status === "OK" && json.results && json.results.length > 0){
+//         return json.results;
+//     } else {
+//         return Promise.reject("No matching places found");
+//     }
+// }
 
 export const getPhotoUrl = (apiKey: string,photoRef: string)=>{
     const url = 
@@ -60,9 +66,7 @@ export const getPhotoUrl = (apiKey: string,photoRef: string)=>{
 export const getGooglePlaceById = (
     apiKey: string,
     place_id: string, 
-    fields: Array<string> = ['business_status', 'geometry', 'name', 'icon',
-        'opening_hours', 'photos', 'place_id', 'website', 'formatted_phone_number', 
-        'formatted_address', 'types'])=> {
+    fields: Array<string>)=> {
     const url = _getPlaceUrl(apiKey, place_id, fields);
 
     return new Promise<fullApiPlace>((resolve, reject)=>{
@@ -96,16 +100,19 @@ export const getGooglePlaceIdBySearch = (apiKey: string, searchQuery: string)=> 
     });
 }
 
-export const getGooglePlaceIdListByType = async (
+
+// Get nearby results by type. Doesn't return full places details
+export const getGooglePlaceListByType = async (
         apiKey: string,
         lat: number,
         lng: number,
         type: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
             'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
-            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy'): Promise<fullApiPlace[]> => {
+            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy',
+        fields?: string[]): Promise<fullApiPlace[]> => {
 
     try{
-        let url = _findNearbyUrl(apiKey, lat, lng, type);
+        let url = _findNearbyUrl(apiKey, lat, lng, type, fields);
 
         const response = await fetch(url);
         const json = await response.json();
@@ -120,15 +127,16 @@ export const getGooglePlaceIdListByType = async (
     }
 }
 
-
-export const getGooglePlaceIdListByQuery = async (
+// Get nearby results by text query. Doesn't return full places details
+export const getGooglePlaceListByQuery = async (
     apiKey: string,
     lat: number,
     lng: number,
-    query: string): Promise<fullApiPlace[]> => {
+    query: string,
+    fields?: string[]): Promise<fullApiPlace[]> => {
 
     try{
-        let url = _findPlacesByTextUrl(apiKey, lat, lng, query);
+        let url = _findPlacesByTextUrl(apiKey, lat, lng, query, fields);
 
         const response = await fetch(url);
         const json = await response.json();

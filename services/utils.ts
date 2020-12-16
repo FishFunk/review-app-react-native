@@ -74,7 +74,7 @@ export default class Utils {
         if(str.length === 3){
             const hours = str.slice(0,1);
             const mins = str.slice(1);
-            return `${hours}:${mins} AM`;
+            return `${hours == '0' ? '12' : hours}:${mins} AM`;
         } else if (str.length === 4){
             const hours = +str.slice(0,2);
             const amPm = hours >= 12 ? 'PM' : 'AM'

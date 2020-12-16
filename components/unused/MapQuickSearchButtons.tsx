@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { 
     Icon, 
     Button, 
@@ -7,111 +7,46 @@ import {
 } from "native-base";
 import theme from '../../styles/theme';
 import { ScrollView, StyleSheet } from 'react-native';
-// import FirebaseService from '../../services/firebaseService';
 
-export default function MapQuickSearchButtons(props: any) {
+export default class MapQuickSearchButtons extends Component<{
+    onQuickSearch: (queryOrType: string) => any
+},{}> {
 
-    const onQuickSearch = async (query: string) => {
-        // let possibleType;
-        // let possibleQuery;
+    render(){
+        // let possibleTypes: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
+        //     'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
+        //     'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy';
 
-        // switch(query){
-        //     case('food'):
-        //         possibleType = 'food';
-        //         break;    
-        //     case('bar'):
-        //         possibleType = 'bar';
-        //         break;    
-        //     case('restuarant'):
-        //         possibleType = 'restaurant';
-        //         break;
-        //     case('delivery'):
-        //         possibleType = 'meal_delivery';
-        //         break;
-        //     case('cafe'):
-        //         possibleType = 'cafe';
-        //         break;   
-        //     case('shopping'):
-        //         possibleType = 'shopping_mall';
-        //         break; 
-        //     default:
-        //         possibleQuery = query;
-        // }
-
-        // let places;
-        // if(possibleType){
-        //     places = await getGooglePlaceIdListByType(
-        //         this.state.apiKey, 
-        //         this.state.region.latitude, 
-        //         this.state.region.longitude,
-        //         possibleType);
-
-        // } else {
-        //     places = await getGooglePlaceIdListByQuery(
-        //         this.state.apiKey, 
-        //         this.state.region.latitude, 
-        //         this.state.region.longitude,
-        //         possibleQuery);
-        // }
-
-        // const { latitude, longitude } = this.state.region;
-
-        // const nearbyPlaces = await FirebaseService.getNearbyPlaces(latitude, longitude, 15);
-        // const filteredPlaces = nearbyPlaces.map((place)=> _indexOf(place.types, possibleType) >= 0);
-
-        // const placeIds = places.map(p=>p.place_id);
-        // const dbPlaces = await FirebaseService.getPlacesById(placeIds, false);
-
-        // if(dbPlaces.length === 0){
-        //     console.log("No places currently matching criteria. Try searching outside of network");
-        // }
-
-        // const markers = this.convertPlacesToMarkers(dbPlaces);
-
-        // this.setState({markers: markers});
-    }
-
-
-    return (
-        <View style={styles.exploreButtonContainer}>
-            <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false}
-                style={{backgroundColor: 'transparent'}}
-                contentContainerStyle={{backgroundColor: 'transparent'}}>                        
-                <Button small rounded style={styles.exploreButton} iconLeft
-                    onPress={()=>{}}>
-                    <Icon type={'FontAwesome5'} name={'hotdog'} style={styles.exploreIcon}></Icon>
-                    <Label style={styles.exploreLabel}>Food</Label>
-                </Button>                    
-                <Button small rounded style={styles.exploreButton} iconLeft
-                    onPress={()=>{}}>
-                    <Icon type={'FontAwesome5'} name={'cocktail'} style={styles.exploreIcon}></Icon>
-                    <Label style={styles.exploreLabel}>Drinks</Label>
-                </Button>
-                <Button small rounded style={styles.exploreButton} iconLeft
-                    onPress={()=>{}}>
-                    <Icon type={'FontAwesome5'} name={'utensils'} style={styles.exploreIcon}></Icon>
-                    <Label style={styles.exploreLabel}>Dining</Label>
-                </Button>
-                <Button small rounded style={styles.exploreButton} iconLeft
-                    onPress={()=>{}}>
-                    <Icon type={'FontAwesome5'} name={'pizza-slice'} style={styles.exploreIcon}></Icon>
-                    <Label style={styles.exploreLabel}>Delivery</Label>
-                </Button>
-                <Button small rounded style={styles.exploreButton} iconLeft
-                    onPress={()=>{}}>
-                    <Icon type={'FontAwesome5'} name={'mug-hot'} style={styles.exploreIcon}></Icon>
-                    <Label style={styles.exploreLabel}>Cafes</Label>
-                </Button>
-                <Button small rounded style={styles.exploreButton} iconLeft
-                    onPress={()=>{}}>
-                    <Icon type={'FontAwesome5'} name={'shopping-bag'} style={styles.exploreIcon}></Icon>
-                    <Label style={styles.exploreLabel}>Shopping</Label>
-                </Button>
-            </ScrollView>
-        </View>
-    );
+        const { onQuickSearch } = this.props;
+        return(
+            <View style={styles.exploreButtonContainer}>
+                <ScrollView 
+                    horizontal 
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollView}>                                        
+                    <Button small rounded style={styles.exploreButton} iconLeft
+                        onPress={()=>onQuickSearch('bar')}>
+                        <Icon type={'FontAwesome5'} name={'cocktail'} style={styles.exploreIcon}></Icon>
+                        <Label style={styles.exploreLabel}>Drinks</Label>
+                    </Button>
+                    <Button small rounded style={styles.exploreButton} iconLeft
+                        onPress={()=>onQuickSearch('restaurant')}>
+                        <Icon type={'FontAwesome5'} name={'utensils'} style={styles.exploreIcon}></Icon>
+                        <Label style={styles.exploreLabel}>Dining</Label>
+                    </Button>
+                    <Button small rounded style={styles.exploreButton} iconLeft
+                        onPress={()=>onQuickSearch('meal_delivery')}>
+                        <Icon type={'FontAwesome5'} name={'pizza-slice'} style={styles.exploreIcon}></Icon>
+                        <Label style={styles.exploreLabel}>Delivery</Label>
+                    </Button>
+                    <Button small rounded style={styles.exploreButton} iconLeft
+                        onPress={()=>onQuickSearch('cafe')}>
+                        <Icon type={'FontAwesome5'} name={'mug-hot'} style={styles.exploreIcon}></Icon>
+                        <Label style={styles.exploreLabel}>Cafes</Label>
+                    </Button>
+                </ScrollView>
+            </View>
+        )}
 }
 
 const styles = StyleSheet.create({
@@ -120,7 +55,11 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 60,
         width: '100%',
-        zIndex: 999
+        zIndex: 9998
+    },
+    scrollView: {
+        paddingLeft: 10,
+        paddingRight: 10
     },
     exploreButton: {
         fontSize: 10,

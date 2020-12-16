@@ -128,7 +128,7 @@ export default function IntroScreen(props: any) {
         .catch(error =>{
           Toast.show({ text: 'Login Failed!', position: 'bottom', duration: 3000 });
           console.error(error);
-          FirebaseService.logError(error);
+          FirebaseService.logError(error, 'IntroScreen - onFacebookLogin');
         });
       } else {
         Toast.show({ text: "Facebook login does not work in Expo", position: 'bottom', duration: 5000, buttonText: 'OK' });
@@ -143,7 +143,7 @@ export default function IntroScreen(props: any) {
         .catch(error =>{
           Toast.show({ text: 'Login Failed!', position: 'bottom', duration: 3000 });
           console.error(error);
-          FirebaseService.logError(error);
+          FirebaseService.logError(error, 'IntroScreen - onGoogleLogin');
         });
     }
 

@@ -97,7 +97,7 @@ export default class SocialContainer extends React.Component<{
             try {
                 contacts = await getContacts();
             } catch(ex) {
-                FirebaseService.logError(ex);
+                FirebaseService.logError(ex, 'SocialContainer - populateSocialLists');
             }
         }
         
@@ -162,14 +162,14 @@ export default class SocialContainer extends React.Component<{
 
     updateUserFollowingIds(ids: string[]){
         FirebaseService.updateUserData({ following: ids })
-            .catch((error: any)=> FirebaseService.logError(error));
+            .catch((error: any)=> FirebaseService.logError(error, 'SocialContainer - updateUserFollowingIds'));
     }
 
     async onPressInvite() {
         const url = Platform.OS == 'ios' ? iosAppStoreUrl : androidPlayStoreUrl;
         openShareSheet(url, socialShareMessage)
             .catch(error =>{
-                FirebaseService.logError(error.message);
+                FirebaseService.logError(error.message, 'SocialContainer - onPressInvite');
             });
     }
 

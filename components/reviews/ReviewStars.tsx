@@ -3,12 +3,14 @@ import { View, StyleSheet  } from "react-native";
 import { Icon } from 'native-base';
 import theme from "../../styles/theme";
 
-class ReviewStars extends Component<{ rating: number, fontSize: number, style?: any }> {
+class ReviewStars extends Component<{ rating: number, fontSize: number, color?: string, style?: any }> {
 
   styles = StyleSheet.create({
     star: {
       fontSize: this.props.fontSize,
-      color: theme.STAR_COLOR
+      // paddingLeft: 1,
+      // paddingRight: 1,
+      color: this.props.color ? this.props.color : theme.STAR_COLOR
     }
   });
 

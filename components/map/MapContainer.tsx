@@ -3,18 +3,16 @@ import { View, Keyboard, StyleSheet, Dimensions } from 'react-native';
 import MapInput from './MapInput';
 import Map from './Map';
 import { getLocation } from '../../services/locationService';
-import { get } from 'lodash';
-import { searchPlace, markerData, dbPlace } from '../../models/place';
+import { searchPlace, placeMarkerData, dbPlace } from '../../models/place';
 import PlaceListModal from './PlaceListModal';
-import { 
-    getGooglePlaceIdBySearch, 
-    getGooglePlaceById
-} from '../../services/googlePlaceApiService';
+import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
+import { getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType, loadMoreResults } from '../../services/combinedApiService';
+import MapQuickSearchButtons from '../unused/MapQuickSearchButtons';
 
 export default class MapContainer extends React.Component<
     {
@@ -25,10 +23,11 @@ export default class MapContainer extends React.Component<
         loadingMap: boolean,
         loadingLocation: boolean,
         loadingNearby: boolean,
+        showGeneralLoadingSpinner: boolean,
+        showLoadMoreOption: boolean,
         region: Region, 
         zoomLevel: number,
-        markers: markerData[], 
-        places: dbPlace[],
+        markers: placeMarkerData[], 
         showListModal: boolean,
         reshowListModal: boolean,
         placeId: string,
@@ -58,10 +57,11 @@ export default class MapContainer extends React.Component<
         loadingMap: true,
         loadingLocation: false,
         loadingNearby: false,
+        showGeneralLoadingSpinner: false,
+        showLoadMoreOption: false,
         region: this.defaultRegion,
         zoomLevel: 14,
         markers: [],
-        places: [],
         showListModal: false,
         reshowListModal: false,
         apiKey: '',
@@ -80,6 +80,7 @@ export default class MapContainer extends React.Component<
         });
 
         FirebaseService.onUserFollowingUpdated(()=>{
+            console.log("setting reload markers to TRUE");
             this._reloadCurrentMarkers = true;
         });
 
@@ -90,7 +91,7 @@ export default class MapContainer extends React.Component<
                 });
             })
             .catch(error=>{
-                FirebaseService.logError(JSON.stringify(error));
+                FirebaseService.logError(JSON.stringify(error), 'MapContainer - componentDidMount');
             });
     }
 
@@ -131,25 +132,14 @@ export default class MapContainer extends React.Component<
                 duration: 10000,
                 buttonText: 'OK'
             });
-            return this.setState({ loadingNearby: false, markers: [], places: [] });
+            return this.setState({ loadingNearby: false, markers: [] });
         }
 
-        const markers = this.convertPlacesToMarkers(places);
+        const markers = await this.convertPlacesToMarkers(places);
 
-        if(this.mapViewRef){
-            const latLngs = markers.map(m=>m.latlng);
+        this.fitMapToMarkers(markers);
 
-            // include current region within scope
-            latLngs.push({ 
-                latitude: lat, 
-                longitude: lng });
-
-            this.mapViewRef.fitToCoordinates(latLngs, 
-                { animated: true, 
-                    edgePadding: {top: 100, right: 80, bottom: 80, left: 80 }});
-        }
-
-        this.setState({ markers: markers, loadingNearby: false, places: places, hideCallout: true  });
+        this.setState({ markers: markers, loadingNearby: false, hideCallout: true  });
     }
 
     async load(){
@@ -189,46 +179,26 @@ export default class MapContainer extends React.Component<
         this.setState({ loadingLocation: false });
     }
 
-    convertPlacesToMarkers(places: dbPlace[]){
-        return places.map((place)=>{
-            var m: markerData = {
-                latlng: {
-                    latitude: place.lat,
-                    longitude: place.lng
-                },
-                title: place.name,
-                rating: Utils.getPlaceAvgRating(place),
-                placeId: place.id,
-                icon: place.icon
+    async convertPlacesToMarkers(places: dbPlace[]){
+        let markers  = [];
+        for(let place of places){
+            let placeDetails = await getApiPlaceSummary(this.state.apiKey, place.id);
+            if(placeDetails){
+                placeDetails.reviewCount = place.reviews ? Object.keys(place.reviews).length : 0;
+                placeDetails.rating = Utils.getPlaceAvgRating(place);    
+                placeDetails.pricing = Utils.getPlaceAvgPricing(place);
+                markers.push(placeDetails);
             }
-            return m;
-        });
+           
+        }
+
+        return markers;
     }
 
     async handleSelectPlace(place: searchPlace){
         Keyboard.dismiss();
-        const region = {
-            latitude: get(place, 'result.geometry.location.lat'),
-            longitude: get(place, 'result.geometry.location.lng'),
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02
-        };
-
         const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
-        const dbPlace = await FirebaseService.getPlace(place_id);
-
-        const rating = Utils.getPlaceAvgRating(dbPlace);
-
-        const marker: markerData = {
-            latlng: region,
-            title: place.result.name,
-            rating: rating,
-            placeId: place_id
-        }
-
-        this.setState({ markers: [marker], placeId: place_id, places: [], hideCallout: false });
-
-        this.mapViewRef?.animateToRegion(region);
+        this.loadSingleMarker(place_id);
     }
 
     onHandleRegionChange(region: Region, marker: Marker | null){
@@ -242,7 +212,23 @@ export default class MapContainer extends React.Component<
         this.setState({ region:  { ...region }, zoomLevel: zoom, hideCallout: false });
     }
 
-    async onMarkerSelect(marker: markerData){
+    fitMapToMarkers(markers: placeMarkerData[]){
+        if(this.mapViewRef && markers){
+            const { latitude: lat, longitude: lng }  = this.state.region;
+            const latLngs = markers.map(m=>m.latlng);
+
+            // include current region within scope
+            latLngs.push({ 
+                latitude: lat, 
+                longitude: lng });
+
+            this.mapViewRef.fitToCoordinates(latLngs, 
+                { animated: true, 
+                    edgePadding: {top: 100, right: 80, bottom: 80, left: 80 }});
+        }
+    }
+
+    async onMarkerSelect(marker: placeMarkerData){
         Keyboard.dismiss();
         const region = { 
             latitude: marker.latlng.latitude, 
@@ -257,50 +243,46 @@ export default class MapContainer extends React.Component<
     }
 
     async loadSingleMarker(placeId: string){
-        let marker: markerData;
-        let geometry, name;
-        
-        this.setState({ refreshCallout: false });
-
-        const dbPlace = await FirebaseService.getPlace(placeId);
-
-        if(!dbPlace){
-            const apiPlace = await getGooglePlaceById(this.state.apiKey, placeId, ['geometry', 'name']);
-            geometry = apiPlace.geometry;
-            name = apiPlace.name;
-        } else {
-            geometry = { location: { lat: dbPlace.lat, lng: dbPlace.lng }};
-            name = dbPlace.name;
+        if(!placeId){
+            return;
         }
         
-        if(geometry && name){
-            marker = {
-                latlng: { latitude: geometry?.location.lat, longitude: geometry?.location.lng },
-                title: name,
-                rating: Utils.getPlaceAvgRating(dbPlace),
-                placeId: placeId
-            }
+        this.setState({ refreshCallout: false, showGeneralLoadingSpinner: true });
 
-            let region = {
-                latitude: marker.latlng.latitude,
-                longitude: marker.latlng.longitude,
-                latitudeDelta: this.state.region.latitudeDelta,
-                longitudeDelta: this.state.region.longitudeDelta
+        try{
+            const dbPlace = await FirebaseService.getPlace(placeId);
+            const placeSummary = await getApiPlaceSummary(this.state.apiKey, placeId);
+    
+            if(placeSummary){
+                placeSummary.reviewCount = dbPlace ? Object.keys(dbPlace.reviews).length : 0;
+                placeSummary.rating = Utils.getPlaceAvgRating(dbPlace);
+                placeSummary.pricing = Utils.getPlaceAvgPricing(dbPlace);
+    
+                let region = {
+                    latitude: placeSummary.latlng.latitude,
+                    longitude: placeSummary.latlng.longitude,
+                    latitudeDelta: this.state.region.latitudeDelta,
+                    longitudeDelta: this.state.region.longitudeDelta
+                }
+                
+                this.setState({ markers: [placeSummary], placeId: placeId, refreshCallout: true });
+        
+                this.mapViewRef?.animateToRegion(region);
             }
-            
-            this.setState({ markers: [marker], placeId: placeId, places: [], refreshCallout: true });
-
-            this.mapViewRef?.animateToRegion(region);
+        } catch (ex){
+            FirebaseService.logError(ex, 'MapContainer - loadSingleMarker');
         }
+
+        this.setState({ showGeneralLoadingSpinner: false });
     }
 
     onPressMapArea(){
         Keyboard.dismiss();
     }
 
-    async onShowDetails(placeId: string){
+    async onShowDetails(placeSummary: placeMarkerData){
         this.props.navigation.navigate(
-            'PlaceDetails', { apiKey: this.state.apiKey, placeId: placeId });
+            'PlaceDetails', { apiKey: this.state.apiKey, placeSummary: placeSummary });
     }
 
     showListModal(){
@@ -332,6 +314,83 @@ export default class MapContainer extends React.Component<
         this.setState({ listOrderedBy: orderBy });
     }
 
+    async onQuickSearch(query: string){
+        Keyboard.dismiss();
+        
+        this.setState({ showGeneralLoadingSpinner: true, hideCallout: true, showLoadMoreOption: true });
+        let possibleType: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
+            'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
+            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy';
+
+        switch(query){
+            case('bar'):
+                possibleType = 'bar';
+                break;    
+            case('restaurant'):
+                possibleType = 'restaurant';
+                break;
+            case('meal_delivery'):
+                possibleType = 'meal_delivery';
+                break;
+            case('cafe'):
+                possibleType = 'cafe';
+                break;   
+            default:
+                // use generic query instead of pre-defined type search
+        }
+
+        let placeMarkers: placeMarkerData[] = [];
+
+        try{
+            const { apiKey } = this.state;
+            const { latitude, longitude } = this.state.region;
+            
+            if(possibleType != null){
+                placeMarkers = await getNearbyPlaceSummariesByType(
+                    apiKey, latitude, longitude, possibleType);
+            } else {
+                placeMarkers = await getNearbyPlaceSummariesByQuery(
+                    apiKey,  latitude, longitude, query);
+            }
+
+            for(let place of placeMarkers){
+                const match = await FirebaseService.getPlace(place.placeId);
+                if(match){
+                    place.reviewCount = match.reviews ? Object.keys(match.reviews).length : 0;
+                    place.rating = Utils.getPlaceAvgRating(match);    
+                    place.pricing = Utils.getPlaceAvgPricing(match);
+                }
+            }
+        } catch (ex){
+            console.error(ex);
+        }
+
+        if(!placeMarkers || placeMarkers.length === 0){
+            Toast.show({
+                text: "Shoot! We didn't find any relevant places nearby. Try a different search!",
+                position: 'bottom',
+                duration: 10000,
+                buttonText: 'OK'
+            });
+        } else {
+            this.fitMapToMarkers(placeMarkers)
+        }
+
+        this.setState({ markers: placeMarkers, showGeneralLoadingSpinner: false });
+    }
+
+    async onLoadMoreResults(){
+        const currentPlaces = this.state.markers;
+        this.setState({ showGeneralLoadingSpinner: true });
+        const morePlaces = await loadMoreResults(this.state.apiKey);
+        const allPlaces = currentPlaces.concat(morePlaces);
+        
+        this.setState({ 
+            showLoadMoreOption: allPlaces.length <= 15,
+            markers: allPlaces, 
+            showGeneralLoadingSpinner: false });
+    }
+
     render() {
         if(this.state.loadingMap){
             return <SpinnerContainer />
@@ -341,8 +400,14 @@ export default class MapContainer extends React.Component<
                 <View style={styles.mapInput}>
                     <MapInput 
                         handleSelectPlace={this.handleSelectPlace.bind(this)}
+                        handleGenericSearch={this.onQuickSearch.bind(this)}
                         apiKey={this.state.apiKey} />
+                    {
+                        this.state.showGeneralLoadingSpinner ? 
+                            <SpinnerContainer transparent={true} /> : null
+                    }
                 </View>
+                <MapQuickSearchButtons onQuickSearch={this.onQuickSearch.bind(this)} />
                 {
                     this.state.region.latitude ?
                         <View style={styles.flex}>
@@ -369,10 +434,12 @@ export default class MapContainer extends React.Component<
                 <PlaceListModal 
                     apiKey={this.state.apiKey}
                     isOpen={this.state.showListModal}
-                    places={this.state.places}
+                    places={this.state.markers}
                     onDismissModal={this.onDismissListModal.bind(this)}
                     onShowPlaceDetails={this.onShowDetails.bind(this)}
                     onUpdateSortOrder={this.onUpdateListOrder.bind(this)}
+                    onLoadMoreResults={this.onLoadMoreResults.bind(this)}
+                    showLoadMoreOption={this.state.showLoadMoreOption}
                     orderBy={this.state.listOrderedBy}/>
             </View>
         )

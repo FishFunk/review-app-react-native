@@ -22,7 +22,7 @@ import {
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
 import EditableStars from './EditableStars';
-import { fullApiPlace } from '../../models/place';
+import { placeMarkerData } from '../../models/place';
 import FirebaseService from '../../services/firebaseService';
 import _indexOf from 'lodash/indexOf';
 import _some from 'lodash/some';
@@ -33,7 +33,7 @@ import { reviewSummary } from '../../models/reviews';
 export default class WriteReview extends Component<{ 
         showModal: boolean, 
         onDismissModal: Function,
-        place: fullApiPlace,
+        placeSummary: placeMarkerData,
         editReview?: reviewSummary
     },
     {
@@ -104,7 +104,7 @@ export default class WriteReview extends Component<{
     }
 
     isServiceEstablishment(){
-        const { place } = this.props;
+        const { placeSummary: place } = this.props;
 
         if(place.types){
             const matchingTypes = [
@@ -115,7 +115,6 @@ export default class WriteReview extends Component<{
                 'bakery',
                 'spa',
                 'beauty_salon',
-                'hair_care',
                 'lodging',
                 'night_club'];
             
@@ -127,7 +126,7 @@ export default class WriteReview extends Component<{
 
     async onSubmitForm(){
         Keyboard.dismiss();
-        const { place_id, name } = this.props.place;
+        const { placeId, title } = this.props.placeSummary;
         const { rating1, rating2, rating3, pricing, comments } = this.state;
         const avg = this.avgRating();
 
@@ -162,8 +161,8 @@ export default class WriteReview extends Component<{
         }
 
         const reviewData = {
-            place_id: place_id,
-            place_name: name,
+            place_id: placeId,
+            place_name: title,
             atmosphere: rating1,
             menu: rating2,
             service: rating3,
@@ -179,7 +178,7 @@ export default class WriteReview extends Component<{
             await FirebaseService.updateReview(this.props.editReview.review_key, reviewData);
         } else {
             // Create new review
-            await FirebaseService.submitReview(this.props.place, reviewData);
+            await FirebaseService.submitReview(this.props.placeSummary, reviewData);
         }
 
         this.setState({ submittingReview: false, editingReview: false });
@@ -208,7 +207,7 @@ export default class WriteReview extends Component<{
             <Root>
                 <ScrollView style={{flex: 1}} ref={ref => {this._scrollViewRef = ref}}>
                 <View>
-                    <Text style={styles.title}>Review {this.props.place.name}</Text>
+                    <Text style={styles.title}>Review {this.props.placeSummary.title}</Text>
                 </View>
                 <View style={styles.formContainer}>
                     {

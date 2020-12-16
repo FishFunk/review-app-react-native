@@ -70,8 +70,10 @@ export interface fullApiPlace {
         }
     }
   },
+  address_components: any[],
   formatted_address?: string,
   formatted_phone_number? : string,
+  international_phone_number?: string,
   icon? : string,
   name? : string,
   opening_hours? : {
@@ -90,16 +92,28 @@ export interface fullApiPlace {
   vicinity? : string
 }
 
-export interface markerData {
+export interface placeMarkerData {
+  placeId: string,
   latlng: {
     latitude: number,
     longitude: number
   },
   title: string,
   description?: string,
-  rating?: number,
+  formatted_address?: string,
+  business_status?: string,
+  types?: string[],
   icon?: string,
-  placeId: string
+  opening_hours?: { open_now : boolean, periods: Array<openClosePeriod> },
+  photos?: any[],
+  rating?: number,
+  reviewCount?: number,
+  pricing?: number,
+  googleRating?: number,
+  googleCount?: number,
+  yelpRating?: number,
+  yelpCount?: number,
+  website?: string
 }
 
 export interface placePhoto {
