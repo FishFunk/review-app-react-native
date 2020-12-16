@@ -4,26 +4,28 @@ import { getGooglePlaceById, getGooglePlaceListByQuery, getGooglePlaceListByType
 import { fullApiPlace, placeMarkerData } from '../models/place';
 import LocalStorageService from '../services/localStorageService';
 
-const defaultFields = ['name', 
-'international_phone_number', 
-'formatted_phone_number',
-'address_components', 
-'geometry', 
-'rating', 
-'formatted_address',
-'business_status',
-'opening_hours', 
-'website',
-'photos',
-'user_ratings_total',
-'icon',
-'types'];
+const defaultFields = [
+    'place_id',
+    'name', 
+    'international_phone_number', 
+    'formatted_phone_number',
+    'address_components', 
+    'geometry', 
+    'rating', 
+    'formatted_address',
+    'business_status',
+    'opening_hours', 
+    'website',
+    'photos',
+    'user_ratings_total',
+    'icon',
+    'types'];
 
 export const getApiPlaceSummary = async (apiKey: string, googlePlaceId: string): Promise<placeMarkerData | undefined>=> {
     const googlePlace = await getGooglePlaceById(apiKey, googlePlaceId, defaultFields);
 
     if(googlePlace){
-        const yelpPlace = _getYelpInfoFromGoogleResult(googlePlace);
+        const yelpPlace = await _getYelpInfoFromGoogleResult(googlePlace);
         return _createPlaceMarkerObject(googlePlace, yelpPlace);
     }
 }
@@ -93,10 +95,10 @@ const _createPlaceMarkerObject = (googlePlace: fullApiPlace, yelpData: any): pla
         icon: googlePlace.icon,
         latlng: { latitude: googlePlace.geometry?.location.lat, longitude: googlePlace.geometry?.location.lng },
         title: googlePlace.name, 
-        googleRating: googlePlace.rating, 
-        googleCount: googlePlace.user_ratings_total,
-        yelpRating: yelpData?.rating,
-        yelpCount: yelpData?.review_count
+        googleRating: googlePlace.rating ? googlePlace.rating : 0, 
+        googleCount: googlePlace.user_ratings_total ? googlePlace.user_ratings_total : 0,
+        yelpRating: yelpData && yelpData.rating ? yelpData.rating : 0,
+        yelpCount: yelpData && yelpData.review_count ? yelpData.review_count  : 0
     };
 
     return result;

@@ -345,7 +345,6 @@ export default class MapContainer extends React.Component<
         let placeMarkers: placeMarkerData[] = [];
 
         try{
-            // const t0 = performance.now();
             const { apiKey } = this.state;
             const { latitude, longitude } = this.state.region;
             
@@ -358,20 +357,13 @@ export default class MapContainer extends React.Component<
             }
 
             for(let place of placeMarkers){
-                // let t1 = performance.now();
                 const match = await FirebaseService.getPlace(place.placeId);
                 if(match){
                     place.reviewCount = match.reviews ? Object.keys(match.reviews).length : 0;
                     place.rating = Utils.getPlaceAvgRating(match);    
                     place.pricing = Utils.getPlaceAvgPricing(match);
                 }
-                // let t2 = performance.now();
-                // console.log(`getPlace took ${t2 - t1} milliseconds`);
             }
-
-            // const t3 = performance.now();
-            // console.log(`Entire quick search took ${t3-t0} milliseconds`)
-
         } catch (ex){
             console.error(ex);
         }

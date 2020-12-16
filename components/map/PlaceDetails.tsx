@@ -306,9 +306,12 @@ export default class PlaceDetails extends React.Component<
                     {this.state.isLoading ? <SpinnerContainer /> : null }
                 </View>
             </View>
-            <View>
-                <HorizontalPhotoList photoUrls={this.state.photoUrls} />
-            </View>
+            {
+                this.state.photoUrls && this.state.photoUrls.length > 0 ?
+                <View>
+                    <HorizontalPhotoList photoUrls={this.state.photoUrls} />
+                </View> : null
+            }
             <HorizontalButtonList 
                 disableEdit={this.state.disableEdit}
                 placeSummary={this.props.placeSummary}

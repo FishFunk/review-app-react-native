@@ -6,7 +6,6 @@ import { FlatList } from "react-native-gesture-handler";
 import { getPhotoUrl } from '../../services/googlePlaceApiService';
 import Utils from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
-import _uniq from 'lodash/uniq';
 import DropDownPicker from 'react-native-dropdown-picker';
 import theme from "../../styles/theme";
 import _orderBy from 'lodash/orderBy';
