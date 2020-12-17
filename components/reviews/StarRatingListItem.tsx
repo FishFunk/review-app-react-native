@@ -23,21 +23,24 @@ export default class StarRatingListItem extends Component<{
         },
         flexRow: {
             flexDirection: 'row',
-            width: '80%'
+            width: '100%'
         },
         starRow: {
             marginTop: 4,
-            flexDirection: 'row'
+            flexDirection: 'row',
+            width: '100%'
         },
         yelpRow: {
             flexDirection: 'row',
-            marginTop: 6
+            marginTop: 6,
+            width: '100%'
         },
         subTextView: {
-            alignSelf: 'center'
+            justifyContent: 'flex-end',
+            alignSelf: 'flex-end'
         },
         subText: {
-            alignSelf: 'center',
+            alignSelf: 'flex-end',
             fontFamily: theme.fontLight,
             fontSize: 10
         }
@@ -52,7 +55,7 @@ export default class StarRatingListItem extends Component<{
             yelpRating, 
             yelpCount } = this.props;
 
-        return <View>
+        return <View style={{width: 130}}>
             <View style={this.styles.starRow}>
                 <View style={this.styles.flexRow}>
                     <Text style={this.styles.label}>NoBull</Text>

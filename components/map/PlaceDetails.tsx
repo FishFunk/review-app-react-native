@@ -327,7 +327,7 @@ export default class PlaceDetails extends React.Component<
             </View>
             {
                 this.state.photoUrls && this.state.photoUrls.length > 0 ?
-                <View>
+                <View style={{alignItems: 'center'}}>
                     <HorizontalPhotoList photoUrls={this.state.photoUrls} />
                 </View> : null
             }

@@ -117,7 +117,7 @@ export default class PlaceList extends React.Component<
                     />
             </Left>
             <Body>
-                <View style={{ width: '100%' }}>
+                <View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.title}>{item.title}</Text>
                         <ReviewDollars 
