@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
         borderColor: theme.PRIMARY_COLOR,
         borderWidth: 0.5,
         padding: 10,
-        width: 180
+        width: 182
     },
     bubbleHeader: {
         flexDirection: 'row', 
@@ -190,7 +190,8 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     title: {
-        width: '70%',
+        width: '80%',
+        paddingRight: 4,
         textAlign: 'center',
         fontFamily: theme.fontBold,
         fontSize: 12,
