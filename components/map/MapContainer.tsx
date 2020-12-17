@@ -5,14 +5,16 @@ import Map from './Map';
 import { getLocation } from '../../services/locationService';
 import { searchPlace, placeMarkerData, dbPlace } from '../../models/place';
 import PlaceListModal from './PlaceListModal';
-import { getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
+import { getGooglePlaceById, getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
-import { getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType, loadMoreResults } from '../../services/combinedApiService';
+import { createPlaceMarkerObjectFromGooglePlace, getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType, loadMoreResults } from '../../services/combinedApiService';
 import MapQuickSearchButtons from '../unused/MapQuickSearchButtons';
+import _indexOf from 'lodash/indexOf';
+import { defaultGoogleApiFields } from '../../constants/Various';
 
 export default class MapContainer extends React.Component<
     {
@@ -197,7 +199,7 @@ export default class MapContainer extends React.Component<
 
     async handleSelectPlace(place: searchPlace){
         Keyboard.dismiss();
-        const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
+        const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.formatted_address || place.result.name);
         this.loadSingleMarker(place_id);
     }
 
@@ -251,22 +253,30 @@ export default class MapContainer extends React.Component<
 
         try{
             const dbPlace = await FirebaseService.getPlace(placeId);
-            const placeSummary = await getApiPlaceSummary(this.state.apiKey, placeId);
+            const googleApiPlace = await getGooglePlaceById(this.state.apiKey, placeId, defaultGoogleApiFields);
     
-            if(placeSummary){
-                placeSummary.reviewCount = dbPlace ? Object.keys(dbPlace.reviews).length : 0;
-                placeSummary.rating = Utils.getPlaceAvgRating(dbPlace);
-                placeSummary.pricing = Utils.getPlaceAvgPricing(dbPlace);
-    
+            if(googleApiPlace){
                 let region = {
-                    latitude: placeSummary.latlng.latitude,
-                    longitude: placeSummary.latlng.longitude,
+                    latitude: googleApiPlace.geometry?.location.lat,
+                    longitude: googleApiPlace.geometry?.location.lng,
                     latitudeDelta: this.state.region.latitudeDelta,
                     longitudeDelta: this.state.region.longitudeDelta
+                };
+
+                if(_indexOf(googleApiPlace.types, 'political') > -1 || 
+                    _indexOf(googleApiPlace.types, 'locality') > -1){
+                    // if target place is not relevant for reviews, just animate to region
+                    this.setState({ refreshCallout: false });
+                } else {
+                    // if target place IS relevant for reviews, load review data and create marker
+                    const placeMarker = await createPlaceMarkerObjectFromGooglePlace(googleApiPlace);
+                    placeMarker.reviewCount = dbPlace ? Object.keys(dbPlace.reviews).length : 0;
+                    placeMarker.rating = Utils.getPlaceAvgRating(dbPlace);
+                    placeMarker.pricing = Utils.getPlaceAvgPricing(dbPlace);
+    
+                    this.setState({ markers: [placeMarker], placeId: placeId, refreshCallout: true });
                 }
-                
-                this.setState({ markers: [placeSummary], placeId: placeId, refreshCallout: true });
-        
+
                 this.mapViewRef?.animateToRegion(region);
             }
         } catch (ex){

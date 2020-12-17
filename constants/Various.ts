@@ -1,0 +1,16 @@
+export const defaultGoogleApiFields = [
+    'place_id',
+    'name', 
+    'international_phone_number', 
+    'formatted_phone_number',
+    'address_components', 
+    'geometry', 
+    'rating', 
+    'formatted_address',
+    'business_status',
+    'opening_hours', 
+    'website',
+    'photos',
+    'user_ratings_total',
+    'icon',
+    'types'];

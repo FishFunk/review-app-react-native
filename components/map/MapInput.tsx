@@ -55,6 +55,7 @@ class MapInput extends React.Component<
                 googleApiKey={this.props.apiKey}
                 placeHolder={"Search for places"}
                 language={"en-US"}
+                // queryTypes={"establishment"}
                 onSelect={(place: searchPlace) => {
                     this.props.handleSelectPlace(place);
                 }}

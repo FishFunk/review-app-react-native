@@ -14,6 +14,124 @@
     "iOS_APP_STORE_URL" : ""
   },
   "places" : {
+    "ChIJ-x07qOFU2YAR1CQDnslKByc" : {
+      "formatted_address" : "4404 Park Blvd suite a, San Diego, CA 92116, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+      "id" : "ChIJ-x07qOFU2YAR1CQDnslKByc",
+      "lat" : 32.7573889,
+      "lng" : -117.1464083,
+      "name" : "Pop Pie Co.",
+      "reviews" : {
+        "-MN5YLqNHY_uvZTbhMqS" : {
+          "atmosphere" : 5,
+          "avg_rating" : 5,
+          "comments" : "Amazing!! Small menu but everything is delicious 🥧 ",
+          "covid_safe" : true,
+          "date" : "Thu Nov 26 2020",
+          "menu" : 5,
+          "place_id" : "ChIJ-x07qOFU2YAR1CQDnslKByc",
+          "place_name" : "Pop Pie Co.",
+          "pricing" : 2,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 5
+        }
+      },
+      "types" : [ "bakery", "cafe", "restaurant", "food", "point_of_interest", "store", "establishment" ]
+    },
+    "ChIJ9TBxRTqq3oARfDBVt6kOMLE" : {
+      "formatted_address" : "5060 Newport Ave, San Diego, CA 92107, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+      "id" : "ChIJ9TBxRTqq3oARfDBVt6kOMLE",
+      "lat" : 32.7476247,
+      "lng" : -117.252021,
+      "name" : "Mike's Taco Club",
+      "reviews" : {
+        "-MO45zOWbmqA4jCM-g-7" : {
+          "atmosphere" : 5,
+          "avg_rating" : 5,
+          "comments" : "Best Cali burrito in San Diego! 🌯 ",
+          "covid_safe" : false,
+          "date" : "Tue Dec 08 2020",
+          "menu" : 5,
+          "place_id" : "ChIJ9TBxRTqq3oARfDBVt6kOMLE",
+          "place_name" : "Mike's Taco Club",
+          "pricing" : 2,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 5
+        }
+      },
+      "types" : [ "restaurant", "food", "point_of_interest", "establishment" ]
+    },
+    "ChIJR_44nfBU2YARxoeMmnbLDFY" : {
+      "formatted_address" : "Howard Ave, San Diego, CA 92104, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/park-71.png",
+      "id" : "ChIJR_44nfBU2YARxoeMmnbLDFY",
+      "lat" : 32.7525892,
+      "lng" : -117.1345193,
+      "name" : "North Park Community Park",
+      "reviews" : {
+        "-MNeNz1iM_Ft_-6Ls8Tz" : {
+          "atmosphere" : 1,
+          "avg_rating" : 1,
+          "comments" : "Should be called hobo park.",
+          "date" : "Thu Dec 03 2020",
+          "menu" : 0,
+          "place_id" : "ChIJR_44nfBU2YARxoeMmnbLDFY",
+          "place_name" : "North Park Community Park",
+          "pricing" : 0,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 0
+        }
+      },
+      "types" : [ "park", "tourist_attraction", "point_of_interest", "establishment" ]
+    },
+    "ChIJXYzpTx5V2YARVxS3J-j1wM8" : {
+      "formatted_address" : "4646 Park Blvd, San Diego, CA 92116, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+      "id" : "ChIJXYzpTx5V2YARVxS3J-j1wM8",
+      "lat" : 32.7619444,
+      "lng" : -117.1463889,
+      "name" : "Bahn Thai",
+      "reviews" : {
+        "-MN5MqPvf36U2YCO0bON" : {
+          "atmosphere" : 4,
+          "avg_rating" : 4.67,
+          "comments" : "Some of the best Thai food in the area. Our go to spot. Pretty busy on the weekends usually so order ahead!",
+          "date" : "Thu Nov 26 2020",
+          "menu" : 5,
+          "place_id" : "ChIJXYzpTx5V2YARVxS3J-j1wM8",
+          "place_name" : "Bahn Thai",
+          "pricing" : 2,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 5
+        }
+      },
+      "types" : [ "restaurant", "food", "point_of_interest", "establishment" ]
+    },
+    "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" : {
+      "formatted_address" : "3926 30th St, San Diego, CA 92104, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png",
+      "id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
+      "lat" : 32.7490528,
+      "lng" : -117.1304167,
+      "name" : "Coin-Op Game Room",
+      "reviews" : {
+        "-MOhasn3dxk3df9CmnyR" : {
+          "atmosphere" : 5,
+          "avg_rating" : 4,
+          "comments" : "Super fun and good drink selection. Basic bar food. It is an expensive date! Farthest thing from covid cautious.",
+          "covid_safe" : false,
+          "date" : "Wed Dec 16 2020",
+          "menu" : 4,
+          "place_id" : "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c",
+          "place_name" : "Coin-Op Game Room",
+          "pricing" : 3,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 3
+        }
+      },
+      "types" : [ "bar", "point_of_interest", "establishment" ]
+    },
     "ChIJj-FdH-uAhYARIp6mvqK3HNM" : {
       "formatted_address" : "1621 Polk St, San Francisco, CA 94109, USA",
       "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
@@ -34,18 +152,6 @@
           "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
           "service" : 5
         },
-        "mockUser8" : {
-          "atmosphere" : 5,
-          "avg_rating" : 5,
-          "comments" : "So good! My personal favorite is the apple glazed.",
-          "date" : "Wed Nov 22 2020",
-          "menu" : 5,
-          "place_id" : "ChIJj-FdH-uAhYARIp6mvqK3HNM",
-          "place_name" : "Bob's Donut and Pastry Shop",
-          "pricing" : 1,
-          "reviewer_id" : "mockUser8",
-          "service" : 5
-        },
         "mockUser2" : {
           "atmosphere" : 4,
           "avg_rating" : 4,
@@ -57,6 +163,18 @@
           "pricing" : 1,
           "reviewer_id" : "mockUser2",
           "service" : 4
+        },
+        "mockUser8" : {
+          "atmosphere" : 5,
+          "avg_rating" : 5,
+          "comments" : "So good! My personal favorite is the apple glazed.",
+          "date" : "Wed Nov 19 2020",
+          "menu" : 5,
+          "place_id" : "ChIJj-FdH-uAhYARIp6mvqK3HNM",
+          "place_name" : "Bob's Donut and Pastry Shop",
+          "pricing" : 1,
+          "reviewer_id" : "mockUser8",
+          "service" : 5
         }
       },
       "types" : [ "bakery", "food", "point_of_interest", "store", "establishment" ]
@@ -68,7 +186,114 @@
       "lat" : 38.91163409999999,
       "lng" : -77.0322039,
       "name" : "Pearl Dive Oyster Palace",
+      "reviews" : {
+        "-MNzTPaWZinJSDPVdY1a" : {
+          "atmosphere" : 3,
+          "avg_rating" : 2.33,
+          "comments" : "Rikekrf",
+          "date" : "Mon Dec 07 2020",
+          "menu" : 2,
+          "place_id" : "ChIJk8E57em3t4kRmaKt-70LtHY",
+          "place_name" : "Pearl Dive Oyster Palace",
+          "pricing" : 2,
+          "reviewer_id" : "HeWA9dsG9QQSpcICfCr7EWZNfzc2",
+          "service" : 2
+        }
+      },
       "types" : [ "restaurant", "food", "point_of_interest", "establishment" ]
+    },
+    "ChIJoXMhMQ615YgRW3jU9yxR1iA" : {
+      "formatted_address" : "10150 Beach Blvd, Jacksonville, FL 32246, EE. UU.",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+      "id" : "ChIJoXMhMQ615YgRW3jU9yxR1iA",
+      "lat" : 30.2861726,
+      "lng" : -81.54990640000001,
+      "name" : "Kathy's Bakery Café",
+      "reviews" : {
+        "-MN54B5omtyTOVPjHGYi" : {
+          "atmosphere" : 3,
+          "avg_rating" : 3.33,
+          "comments" : "Food is sub par Cuban ",
+          "date" : "Thu Nov 26 2020",
+          "menu" : 3,
+          "place_id" : "ChIJoXMhMQ615YgRW3jU9yxR1iA",
+          "place_name" : "Kathy's Bakery Café",
+          "pricing" : 2,
+          "reviewer_id" : "HeWA9dsG9QQSpcICfCr7EWZNfzc2",
+          "service" : 4
+        }
+      },
+      "types" : [ "bakery", "restaurant", "food", "point_of_interest", "store", "establishment" ]
+    },
+    "ChIJpZPqMqNU2YARvWok4Fl9Thc" : {
+      "formatted_address" : "2001 Pan American Plaza, San Diego, CA 92101, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png",
+      "id" : "ChIJpZPqMqNU2YARvWok4Fl9Thc",
+      "lat" : 32.7262324,
+      "lng" : -117.1543679,
+      "name" : "San Diego Air & Space Museum",
+      "reviews" : {
+        "-MNeo5q9pMtMcSUY5eyS" : {
+          "atmosphere" : 5,
+          "avg_rating" : 5,
+          "comments" : "Always my favorite museum! ",
+          "date" : "Thu Dec 03 2020",
+          "menu" : 0,
+          "place_id" : "ChIJpZPqMqNU2YARvWok4Fl9Thc",
+          "place_name" : "San Diego Air & Space Museum",
+          "pricing" : 0,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 0
+        }
+      },
+      "types" : [ "museum", "tourist_attraction", "point_of_interest", "establishment" ]
+    },
+    "ChIJvU0IdVMB3IARPLazrndkTGM" : {
+      "formatted_address" : "4325 Ocean Blvd, San Diego, CA 92109, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+      "id" : "ChIJvU0IdVMB3IARPLazrndkTGM",
+      "lat" : 32.793831,
+      "lng" : -117.2557162,
+      "name" : "Waterbar",
+      "reviews" : {
+        "-MO4KyqMFGqa4kywe9aK" : {
+          "atmosphere" : 5,
+          "avg_rating" : 3.67,
+          "comments" : "Cool spot for drinks but food is mediocre and a bit pricey. Go here for the ocean view!",
+          "date" : "Tue Dec 08 2020",
+          "menu" : 3,
+          "place_id" : "ChIJvU0IdVMB3IARPLazrndkTGM",
+          "place_name" : "Waterbar",
+          "pricing" : 3,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 3
+        }
+      },
+      "types" : [ "bar", "restaurant", "food", "point_of_interest", "establishment" ]
+    },
+    "ChIJvXl2weCAhYARjSxnhzrBfNc" : {
+      "formatted_address" : "900 North Point St Ste F301, San Francisco, CA 94109, USA",
+      "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/shopping-71.png",
+      "id" : "ChIJvXl2weCAhYARjSxnhzrBfNc",
+      "lat" : 37.80567389999999,
+      "lng" : -122.4223763,
+      "name" : "The Original Ghirardelli Ice Cream and Chocolate Shop",
+      "reviews" : {
+        "-MO3AFo6CfgAWxSu2PjY" : {
+          "atmosphere" : 5,
+          "avg_rating" : 5,
+          "comments" : "Expensive but worth itttt",
+          "covid_safe" : true,
+          "date" : "Tue Dec 08 2020",
+          "menu" : 5,
+          "place_id" : "ChIJvXl2weCAhYARjSxnhzrBfNc",
+          "place_name" : "The Original Ghirardelli Ice Cream and Chocolate Shop",
+          "pricing" : 3,
+          "reviewer_id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
+          "service" : 5
+        }
+      },
+      "types" : [ "food", "point_of_interest", "store", "establishment" ]
     }
   },
   "users" : {
@@ -77,14 +302,15 @@
       "email" : "swong0183@gmail.com",
       "email_verified" : true,
       "firstName" : "Steven",
-      "following" : [ "xWQgFk5jTBMJBmBrrffnHxlfj6k1", "mockUser7" ],
+      "following" : [ "mockUser7", "xWQgFk5jTBMJBmBrrffnHxlfj6k1", "Ofr8jT3NWxOMxhBtcckqtAkVQd13" ],
       "id" : "HeWA9dsG9QQSpcICfCr7EWZNfzc2",
-      "lastActive" : "Sun Nov 22 2020",
+      "lastActive" : "Mon Dec 07 2020",
       "lastName" : "Wong",
+      "mobile" : "+17865568365",
       "phone_verified" : true,
       "photoUrl" : "https://lh3.googleusercontent.com/a-/AOh14Gjnx2DWnWQCr8ewCzJI8PFV5aaEP577RNEOmBH56Q=s96-c",
       "push_tokens" : [ "ExponentPushToken[FH3sXMF9qcDxoV-4_9LLGG]" ],
-      "reviews" : [ "ChIJk8E57em3t4kRmaKt-70LtHY" ]
+      "reviews" : [ "ChIJk8E57em3t4kRmaKt-70LtHY", "ChIJoXMhMQ615YgRW3jU9yxR1iA" ]
     },
     "Ofr8jT3NWxOMxhBtcckqtAkVQd13" : {
       "dateJoined" : "Fri Nov 13 2020",
@@ -99,12 +325,12 @@
     "QQ3CUgKpD8bJIcYJaSJ8F79KYr72" : {
       "dateJoined" : "Tue Nov 24 2020",
       "email" : "alli.bates@hotmail.com",
+      "email_verified" : true,
       "firstName" : "Alli",
       "following" : [ "xWQgFk5jTBMJBmBrrffnHxlfj6k1" ],
       "id" : "QQ3CUgKpD8bJIcYJaSJ8F79KYr72",
-      "lastActive" : "Tue Nov 24 2020",
+      "lastActive" : "Thu Nov 26 2020",
       "lastName" : "B",
-      "mobile" : "",
       "photoUrl" : "https://lh6.googleusercontent.com/-AGOdOId_4d8/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnVZ4H6q4t3aX3PLBPf008Sdv0I2g/s96-c/photo.jpg",
       "push_tokens" : [ "ExponentPushToken[M6f87bPhXTAQD7URB2pq0T]" ]
     },
@@ -126,7 +352,8 @@
       "lastActive" : "",
       "lastName" : "Tarly",
       "mobile" : "",
-      "photoUrl" : "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/samtarly2-1558188483.jpg?crop=0.565xw:1.00xh;0.274xw,0&resize=480:*"
+      "photoUrl" : "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/samtarly2-1558188483.jpg?crop=0.565xw:1.00xh;0.274xw,0&resize=480:*",
+      "reviews" : [ "ChIJj-FdH-uAhYARIp6mvqK3HNM" ]
     },
     "mockUser3" : {
       "dateJoined" : "",
@@ -186,22 +413,23 @@
       "lastActive" : "",
       "lastName" : "Appleseed",
       "mobile" : "(888) 555-5512",
-      "photoUrl" : "https://cdn.shopify.com/s/files/1/0778/2679/files/johnchapman_1024x1024.jpg?10297121571074472901"
+      "photoUrl" : "https://cdn.shopify.com/s/files/1/0778/2679/files/johnchapman_1024x1024.jpg?10297121571074472901",
+      "reviews" : [ "ChIJj-FdH-uAhYARIp6mvqK3HNM" ]
     },
     "xWQgFk5jTBMJBmBrrffnHxlfj6k1" : {
       "dateJoined" : "Sat Nov 07 2020",
       "email" : "fishfry62@gmail.com",
       "email_verified" : true,
       "firstName" : "Daniel",
-      "following" : [ "QQ3CUgKpD8bJIcYJaSJ8F79KYr72", "mockUser5", "HeWA9dsG9QQSpcICfCr7EWZNfzc2" ],
+      "following" : [ "HeWA9dsG9QQSpcICfCr7EWZNfzc2", "QQ3CUgKpD8bJIcYJaSJ8F79KYr72", "mockUser5", "mockUser8", "mockUser2" ],
       "id" : "xWQgFk5jTBMJBmBrrffnHxlfj6k1",
-      "lastActive" : "Wed Nov 25 2020",
+      "lastActive" : "Wed Dec 16 2020",
       "lastName" : "Fishman",
       "mobile" : "+17034736358",
       "phone_verified" : true,
       "photoUrl" : "https://lh3.googleusercontent.com/a-/AOh14GgHSGbYcjKc9vzjgyG6CzE4oe7jh3MgZbXf--xlxw=s96-c",
-      "push_tokens" : [ "ExponentPushToken[WmkfbEGlbxAWPMNOHI3lF5]" ],
-      "reviews" : [ "ChIJvXl2weCAhYARjSxnhzrBfNc", "ChIJmfgIQ-iAhYARq5osc-JybBo", "ChIJX1oMlvKAhYARNZquwetszd8", "ChIJJ3tIspSAhYAR-Uzxpdu0DQk", "ChIJC3O0GsGAhYAR4JK4ut4xPsM", "ChIJXYzpTx5V2YARVxS3J-j1wM8", "ChIJ490io-JU2YARHN4qa378oQE", "ChIJ9TBxRTqq3oARfDBVt6kOMLE", "ChIJc7zR9MdU2YARk5MLergidlk", "ChIJ-x07qOFU2YAR1CQDnslKByc", "ChIJkceyP-i3t4kRISOyo8QO6Mo", "ChIJk8E57em3t4kRmaKt-70LtHY", "ChIJj-FdH-uAhYARIp6mvqK3HNM" ]
+      "push_tokens" : [ "ExponentPushToken[WmkfbEGlbxAWPMNOHI3lF5]", "ExponentPushToken[KB1qIcDD1IMmtIJWjEibTg]", "ExponentPushToken[hfKT5CJrcEFsQGNuP-UV3z]" ],
+      "reviews" : [ "ChIJvXl2weCAhYARjSxnhzrBfNc", "ChIJmfgIQ-iAhYARq5osc-JybBo", "ChIJX1oMlvKAhYARNZquwetszd8", "ChIJJ3tIspSAhYAR-Uzxpdu0DQk", "ChIJC3O0GsGAhYAR4JK4ut4xPsM", "ChIJXYzpTx5V2YARVxS3J-j1wM8", "ChIJ490io-JU2YARHN4qa378oQE", "ChIJ9TBxRTqq3oARfDBVt6kOMLE", "ChIJc7zR9MdU2YARk5MLergidlk", "ChIJ-x07qOFU2YAR1CQDnslKByc", "ChIJkceyP-i3t4kRISOyo8QO6Mo", "ChIJk8E57em3t4kRmaKt-70LtHY", "ChIJj-FdH-uAhYARIp6mvqK3HNM", "ChIJR_44nfBU2YARxoeMmnbLDFY", "ChIJpZPqMqNU2YARvWok4Fl9Thc", "ChIJvU0IdVMB3IARPLazrndkTGM", "ChIJ_eT0k_ZU2YAR_Bpap6q7R3c" ]
     }
   }
 }
