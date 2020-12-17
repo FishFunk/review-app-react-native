@@ -2,7 +2,7 @@ import React from "react";
 import { Dimensions, StyleSheet } from 'react-native';
 import { Body, Button, Icon, Left, ListItem, Spinner, Text, Thumbnail, Title, View } from "native-base";
 import { placeMarkerData } from "../../models/place";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { getPhotoUrl } from '../../services/googlePlaceApiService';
 import Utils from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
@@ -197,16 +197,18 @@ export default class PlaceList extends React.Component<
                     contentContainerStyle={styles.list} 
                     data={this.state.detailedPlaces} 
                     keyExtractor={(x, i) => i.toString()}
-                    renderItem={({item}) => this.renderListItem(item)}/>
-                
+                    renderItem={({item}) => this.renderListItem(item)}/> 
+                <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
                 {
                     this.props.showLoadMoreOption && !this.state.loading ?
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                            <Button transparent onPress={this.onPressLoadMore.bind(this)}>
-                                <Text>Load More</Text>
-                            </Button>
-                        </View> : null
+                        <Button small transparent onPress={this.onPressLoadMore.bind(this)}>
+                            <Text style={{ fontSize: 14, color: theme.PRIMARY_COLOR }}>
+                                Load More
+                            </Text>
+                        </Button> : null
                 }
+                </View>
+                
             </View>
         )
     }

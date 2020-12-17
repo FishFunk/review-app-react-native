@@ -141,7 +141,7 @@ export default class MapContainer extends React.Component<
 
         this.fitMapToMarkers(markers);
 
-        this.setState({ markers: markers, loadingNearby: false, hideCallout: true  });
+        this.setState({ markers: markers, loadingNearby: false, hideCallout: true, showLoadMoreOption: false  });
     }
 
     async load(){
@@ -266,7 +266,7 @@ export default class MapContainer extends React.Component<
                 if(_indexOf(googleApiPlace.types, 'political') > -1 || 
                     _indexOf(googleApiPlace.types, 'locality') > -1){
                     // if target place is not relevant for reviews, just animate to region
-                    this.setState({ refreshCallout: false });
+                    this.setState({ showGeneralLoadingSpinner: false });
                 } else {
                     // if target place IS relevant for reviews, load review data and create marker
                     const placeMarker = await createPlaceMarkerObjectFromGooglePlace(googleApiPlace);
@@ -274,16 +274,16 @@ export default class MapContainer extends React.Component<
                     placeMarker.rating = Utils.getPlaceAvgRating(dbPlace);
                     placeMarker.pricing = Utils.getPlaceAvgPricing(dbPlace);
     
-                    this.setState({ markers: [placeMarker], placeId: placeId, refreshCallout: true });
+                    this.setState({ markers: [placeMarker], placeId: placeId, refreshCallout: true, showGeneralLoadingSpinner: false });
                 }
 
                 this.mapViewRef?.animateToRegion(region);
             }
         } catch (ex){
+            this.setState({ showGeneralLoadingSpinner: false });
             FirebaseService.logError(ex, 'MapContainer - loadSingleMarker');
         }
 
-        this.setState({ showGeneralLoadingSpinner: false });
     }
 
     onPressMapArea(){
@@ -380,7 +380,8 @@ export default class MapContainer extends React.Component<
                 text: "Shoot! We didn't find any relevant places nearby. Try a different search!",
                 position: 'bottom',
                 duration: 10000,
-                buttonText: 'OK'
+                buttonText: 'OK',
+                onClose: ()=>Toast.hide()
             });
         } else {
             this.fitMapToMarkers(placeMarkers)
