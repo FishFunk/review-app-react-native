@@ -226,7 +226,7 @@ export default class MapContainer extends React.Component<
 
             this.mapViewRef.fitToCoordinates(latLngs, 
                 { animated: true, 
-                    edgePadding: {top: 100, right: 80, bottom: 80, left: 80 }});
+                    edgePadding: {top: 120, right: 80, bottom: 80, left: 80 }});
         }
     }
 
