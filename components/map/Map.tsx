@@ -33,17 +33,18 @@ export default class Map extends React.Component<
     markerRef: Marker | null  = null;
 
     componentDidUpdate(prevProps: any){
-        if(this.props.markers && this.props.markers.length === 1){
-            this.markerRef?.hideCallout();
-            this.markerRef?.showCallout();
-        } else if(!_isEqual(prevProps.markers, this.props.markers) && this.props.refreshCallout){
-            if(Platform.OS === 'ios'){
-                this.markerRef?.redrawCallout();
-            } else {
+        if(!_isEqual(prevProps.markers, this.props.markers)){
+            if(this.props.markers && this.props.markers.length === 1){
                 this.markerRef?.hideCallout();
                 this.markerRef?.showCallout();
+            } else if(this.props.refreshCallout){
+                if(Platform.OS === 'ios'){
+                    this.markerRef?.redrawCallout();
+                } else {
+                    this.markerRef?.hideCallout();
+                    this.markerRef?.showCallout();
+                }
             }
-            return;
         }
     }
 

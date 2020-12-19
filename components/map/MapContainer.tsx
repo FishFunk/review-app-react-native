@@ -131,8 +131,7 @@ export default class MapContainer extends React.Component<
             Toast.show({
                 text: "Darn... we couldn't any reviews by the people you follow in this area. Try zooming out and searching again or find more reviewers to follow in the social tab!",
                 position: 'bottom',
-                duration: 10000,
-                buttonText: 'OK'
+                duration: 8000
             });
             return this.setState({ loadingNearby: false, markers: [] });
         }
@@ -199,7 +198,7 @@ export default class MapContainer extends React.Component<
 
     async handleSelectPlace(place: searchPlace){
         Keyboard.dismiss();
-        const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.formatted_address || place.result.name);
+        const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
         this.loadSingleMarker(place_id);
     }
 
@@ -379,9 +378,7 @@ export default class MapContainer extends React.Component<
             Toast.show({
                 text: "Shoot! We didn't find any relevant places nearby. Try a different search!",
                 position: 'bottom',
-                duration: 10000,
-                buttonText: 'OK',
-                onClose: ()=>Toast.hide()
+                duration: 8000
             });
         } else {
             this.fitMapToMarkers(placeMarkers)

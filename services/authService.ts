@@ -15,7 +15,7 @@ export const signInWithFacebook =
     await Facebook.initializeAsync(appConfig.expo.facebookAppId, appConfig.expo.facebookDisplayName);
     const result = await Facebook.logInWithReadPermissionsAsync(
         {
-            permissions: ['public_profile', 'email', 'user_friends']
+            permissions: ['public_profile', 'email'] // TODO: add user_friends
         });
 
     switch (result.type) {
