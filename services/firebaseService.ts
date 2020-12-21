@@ -13,8 +13,9 @@ import _first from 'lodash/first';
 import _last from 'lodash/last';
 import { registerForPushNotificationsAsync } from './notificationService';
 import Utils from './utils';
-import { signInWithGoogle, signInWithFacebook } from './authService';
+import { signInWithGoogle, signInWithFacebook, loginWithApple } from './authService';
 import { authResult } from '../models/auth';
+import { AppleAuthenticationFullName } from 'expo-apple-authentication';
 
 class FirebaseService {
     public auth: firebase.auth.Auth;
@@ -78,6 +79,18 @@ class FirebaseService {
 		}
 		else {
 			return Promise.reject("Failed to create new Firebase user by email");
+		}
+	}
+
+	async loginWithApple(idToken: string, nonce: string, email: string, fullName: AppleAuthenticationFullName): Promise<authResult>{
+		const result = await loginWithApple(idToken, nonce);
+		if(result && result.uid){
+			// Succssfully logged in User
+			result.email = email;
+			result.displayName = `${fullName.givenName} ${fullName.familyName}`;
+			return this.initializeUser(result);
+		} else {
+			return result;
 		}
 	}
 

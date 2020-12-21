@@ -10,6 +10,38 @@ import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';
 import { Toast } from 'native-base';
 
+export const loginWithApple = async (identityToken: string, nonce: string) => {
+    if (identityToken) {
+        await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        const provider = new firebase.auth.OAuthProvider("apple.com");
+        const credential = provider.credential({
+            idToken: identityToken,
+            rawNonce: nonce
+        });
+
+        let firebaseUser: firebase.User;
+        try{
+            const cred = await firebase.auth().signInWithCredential(credential);
+            firebaseUser = cred.user;
+        } catch (error){
+            var errorCode = error.code;
+            if (errorCode === 'auth/account-exists-with-different-credential') {
+                if(firebaseUser && error.credential){
+                    await firebaseUser.linkWithCredential(error.credential);
+                }
+            }
+        }
+
+        if(firebaseUser){
+            return firebaseUser;
+        } else {
+            return Promise.reject("Failed to sign in with Apple");
+        }
+    }
+
+    return null;
+  }
+
 export const signInWithFacebook = 
     async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
     await Facebook.initializeAsync(appConfig.expo.facebookAppId, appConfig.expo.facebookDisplayName);
@@ -33,10 +65,9 @@ export const signInWithFacebook =
                 var errorCode = error.code;
                 if (errorCode === 'auth/account-exists-with-different-credential') {
                     Toast.show({
-                        text: `Email already associated with a Google account. Luckily we can link them!`,
+                        text: `Email already associated with a Google account. Attempting to merge profiles...`,
                         duration: 5000,
-                        position: 'bottom',
-                        buttonText: 'OK'
+                        position: 'bottom'
                     });
                     return signInWithGoogle(error.credential);
                 } else {
@@ -147,10 +178,9 @@ const _handleAuthTypeSuccess = async (
         var errorCode = error.code;
         if (errorCode === 'auth/account-exists-with-different-credential') {
             Toast.show({
-                text: `Email already associated with a Facebook account. Luckily we can link them!`,
+                text: `Email already associated with a Facebook account. Attempting to merge profiles...`,
                 duration: 5000,
-                position: 'bottom',
-                buttonText: 'OK'
+                position: 'bottom'
             });
             return signInWithFacebook(error.credential);
         } else {

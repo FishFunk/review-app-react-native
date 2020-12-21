@@ -99,7 +99,7 @@ export default class Map extends React.Component<
                 zoomEnabled={true}
                 provider={PROVIDER_GOOGLE}
                 style={{flex: 1}}
-                region={this.props.region}
+                initialRegion={this.props.region}
                 onRegionChangeComplete={this.onRegionChange.bind(this)} 
                 showsMyLocationButton={false}
                 showsUserLocation

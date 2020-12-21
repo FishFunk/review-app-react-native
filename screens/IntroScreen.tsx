@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet } from 'react-native';
+import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { 
   Button,
   Icon,
@@ -15,6 +15,7 @@ import Constants, { AppOwnership } from 'expo-constants';
 import FirebaseService from '../services/firebaseService';
 import UndrawFeedbackSvg from "../svgs/undraw_feedback";
 import UndrawNeighborsSvg from "../svgs/undraw_neighbors";
+import { AppleAuth } from "../components/AppleAuthentication";
 
 export default function IntroScreen(props: any) {
     const buttonWidth = 160;
@@ -186,6 +187,7 @@ export default function IntroScreen(props: any) {
                       <Icon style={styles.googleIcon} type={"FontAwesome5"} name="google"></Icon>
                     </Button>
                   </View>
+                  { Platform.OS === 'ios' ? <AppleAuth/> : null }
                 </View>
             } 
           </View>
