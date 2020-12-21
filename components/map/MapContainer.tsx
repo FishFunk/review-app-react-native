@@ -124,11 +124,6 @@ export default class MapContainer extends React.Component<
                 radius = 100;
             } else if (zoomLevel >= 10) {
                 radius = 250;
-            } else if (zoomLevel >= 8){
-                radius = 1000;
-            } else {
-                // Max
-                radius = 3000;
             }
         }
 

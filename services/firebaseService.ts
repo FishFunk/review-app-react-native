@@ -393,6 +393,7 @@ class FirebaseService {
 					if(topReviewers.length === 0){
 						topReviewers.push(user);
 					} else {
+						// Push top reviewers onto stack
 						if(user.reviews.length > topReviewers[topReviewers.length - 1].reviews.length){
 							topReviewers.push(user);
 						}
@@ -406,7 +407,8 @@ class FirebaseService {
 			}
 		});
 
-		const topReviewerSlice = topReviewers.length > 5 ? topReviewers.slice(topReviewers.length - 5) : topReviewers;
+		// Return top 4 reviewers
+		const topReviewerSlice = topReviewers.length > 4 ? topReviewers.slice(topReviewers.length - 4) : topReviewers;
 
 		return [matches, topReviewerSlice, verifiedReviewers];
 	}
@@ -464,7 +466,7 @@ class FirebaseService {
 	}
 
 	// TODO: Move to Functions? - Single API call returns nearby results
-	async getNearbyPlaces(lat: number, lng: number, radiusInKm=25): Promise<dbPlace[]>{
+	async getNearbyPlaces(lat: number, lng: number, radiusInKm?: number): Promise<dbPlace[]>{
 		this._verifyInitialized();
 	
 		const placesSnapshot = await this.db.ref(`places`).once('value');
@@ -473,9 +475,16 @@ class FirebaseService {
 		let places: dbPlace[] = [];
 		placesSnapshot.forEach((snapshot: firebase.database.DataSnapshot)=>{
 			const place = snapshot.val();
-			if(this._doesPlaceHaveRelevantReviews(place, targetIds) && 
-				Utils.isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
-				places.push(place);
+			// If radius is provided, filter results accordingly, otherwise collect all relevant reviews
+			if(radiusInKm){
+				if(this._doesPlaceHaveRelevantReviews(place, targetIds) &&
+					Utils.isInRadius(lat, lng, place.lat, place.lng, radiusInKm)){
+					places.push(place);
+				}
+			} else {
+				if(this._doesPlaceHaveRelevantReviews(place, targetIds)){
+					places.push(place);
+				}
 			}
 		});
 		

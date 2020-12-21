@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Animated, StyleSheet } from 'react-native';
-import firebaseConfig from '../services/firebaseServiceConfig';
+import getConfig from '../services/firebaseServiceConfig';
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { Button, Input, Item, Label, Text, Toast, View } from 'native-base';
 import theme from '../styles/theme';
@@ -53,7 +53,7 @@ export default function PhoneVerifyRecaptcha(props: { onSuccess: ()=> any }) {
         <View style={styles.container}>
             <FirebaseRecaptchaVerifierModal
                 ref={recaptchaVerifier}
-                firebaseConfig={firebaseConfig}
+                firebaseConfig={getConfig()}
             />
             <Animated.View style={{
                 alignItems: 'center',
