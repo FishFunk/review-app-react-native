@@ -114,7 +114,6 @@ export default class MapContainer extends React.Component<
 
         if(!radius){
             const { zoomLevel } = this.state;
-            console.log(zoomLevel);
             if(zoomLevel >= 15){
                 radius = 10;
             } else if (zoomLevel >= 14){
@@ -211,7 +210,6 @@ export default class MapContainer extends React.Component<
     }
 
     onHandleRegionChange(region: Region, marker: Marker | null){
-        console.log('onHandleRegionChange');
         if(marker && this.state.hideCallout){
             marker.hideCallout();
         }

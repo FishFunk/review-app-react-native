@@ -11,6 +11,24 @@ export default class Utils {
         return Math.random().toString(20).substr(2, 8);
     }
 
+    static getProfilePhotoUrlFromProvider(userData: firebase.User, providerId: "facebook.com" | "apple.com" | "google.com"){  
+        let uri = '';
+        if(userData.providerData){
+            for(let provider of userData.providerData){
+                if(provider?.providerId === providerId && provider.photoURL){
+                    uri = provider.photoURL;
+                    continue;
+                }
+            }
+        }
+
+        if(!uri){
+            uri = userData.photoURL || '';
+        }
+
+        return uri;
+    }
+
     static checkForOpenCloseHours(opening_hours: { open_now : boolean, periods: Array<openClosePeriod>}){
         if(!opening_hours){
             return null;

@@ -62,25 +62,25 @@ class FirebaseService {
 		}
 	}
 
-    async login(email: string, password: string): Promise<{type: string, message: string}> {
-		const { user } = await this.auth.signInWithEmailAndPassword(email, password);
-		if(user) {
-			return this.initializeUser(user);
-		} else {
-			return Promise.reject("Failed to login to Firebase by email");
-		}
-	}
+    // async login(email: string, password: string): Promise<{type: string, message: string}> {
+	// 	const { user } = await this.auth.signInWithEmailAndPassword(email, password);
+	// 	if(user) {
+	// 		return this.initializeUser(user);
+	// 	} else {
+	// 		return Promise.reject("Failed to login to Firebase by email");
+	// 	}
+	// }
 
-	async registerUser(first: string, last:string, email: string, password: string): Promise<{type: string, message: string}>{
-		const { user } = await this.auth.createUserWithEmailAndPassword(email, password);
-		if( user ) {
-			user.displayName = `${first} ${last}`;
-			return this.initializeUser(user);
-		}
-		else {
-			return Promise.reject("Failed to create new Firebase user by email");
-		}
-	}
+	// async registerUser(first: string, last:string, email: string, password: string): Promise<{type: string, message: string}>{
+	// 	const { user } = await this.auth.createUserWithEmailAndPassword(email, password);
+	// 	if( user ) {
+	// 		user.displayName = `${first} ${last}`;
+	// 		return this.initializeUser(user);
+	// 	}
+	// 	else {
+	// 		return Promise.reject("Failed to create new Firebase user by email");
+	// 	}
+	// }
 
 	async loginWithApple(idToken: string, nonce: string, email: string, fullName: AppleAuthenticationFullName): Promise<authResult>{
 		const result = await loginWithApple(idToken, nonce);
@@ -88,7 +88,7 @@ class FirebaseService {
 			// Succssfully logged in User
 			result.email = email;
 			result.displayName = `${fullName.givenName} ${fullName.familyName}`;
-			return this.initializeUser(result);
+			return this.initializeUser(result, "apple.com");
 		} else {
 			return result;
 		}
@@ -98,7 +98,7 @@ class FirebaseService {
 		const result: any = await signInWithGoogle();
 		if(result.uid){
 			// Succssfully logged in User
-			return this.initializeUser(result);
+			return this.initializeUser(result, "google.com");
 		} else {
 			return result;
 		}
@@ -108,13 +108,13 @@ class FirebaseService {
 		const result: any = await signInWithFacebook();
 		if(result.uid){
 			// Succssfully logged in User
-			return this.initializeUser(result);
+			return this.initializeUser(result, "facebook.com");
 		} else {
 			return result;
 		}
 	}
 
-	async initializeUser(loggedInUserData: firebase.User): Promise<authResult>{
+	async initializeUser(loggedInUserData: firebase.User, providerId?: "facebook.com" | "apple.com" | "google.com"): Promise<authResult>{
 		if(!firebase.apps.length){
 			throw new Error("Firebase not initialized correctly!");
 		}
@@ -148,12 +148,17 @@ class FirebaseService {
 		} else {
 			// User already exists, update user data
 			var usr = userSnap.val();
-			await this.updateUserData({
+			var updateData = {
 				lastActive: new Date().toDateString(),
-				photoUrl: loggedInUserData.photoURL, 
 				mobile: loggedInUserData.phoneNumber,
 				email_verified: loggedInUserData.emailVerified
-			});
+			};
+
+			if(providerId){
+				updateData.photoUrl = Utils.getProfilePhotoUrlFromProvider(loggedInUserData, providerId);
+			}
+
+			await this.updateUserData(updateData);
 
 			return Promise.resolve({ type: 'success', message: `Welcome back ${usr.firstName}!`});
 		}

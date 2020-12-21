@@ -83,8 +83,7 @@ export default class SocialContainer extends React.Component<{
             Toast.show({
                 text: 'To work properly, this feature requires access to your phone contacts. You can edit permissions in your phone settings.',
                 position: 'bottom',
-                duration: 5000,
-                buttonText: 'OK'
+                duration: 5000
             });
         }
 

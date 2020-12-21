@@ -111,7 +111,6 @@ const _signInWithGoogleAuth = async (failedCredential?: firebase.auth.AuthCreden
 
         result = await GoogleSignIn.signInAsync();
     } catch(error){
-        alert('error');
         // User cancelled
         if(error.code == '-3'){
             return { type: 'cancel', message: 'User cancelled Google login' };
