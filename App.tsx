@@ -56,7 +56,8 @@ export default function App(props: any) {
   }, []);
 
   if (!isLoadingComplete || initializing || !fontLoaded || updating) {
-    return <SpinnerContainer />;
+    return <SpinnerContainer message={updating ? 
+        `It's not you, it's us. You caught us during some maintenance down time. Try again soon!` : '' }/>;
   }
 
   if(!user){
