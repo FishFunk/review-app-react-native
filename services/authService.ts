@@ -24,7 +24,7 @@ export const loginWithApple = async (identityToken: string, nonce: string) => {
             const cred = await firebase.auth().signInWithCredential(credential);
             firebaseUser = cred.user;
         } catch (error){
-            alert(error);
+            // alert(error);
             var errorCode = error.code;
             if (errorCode === 'auth/account-exists-with-different-credential') {
                 if(firebaseUser && error.credential){
