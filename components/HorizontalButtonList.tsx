@@ -68,11 +68,6 @@ export default function HorizontalButtonList(
                             <Label style={{fontSize: 12}}>Share</Label>
                         </Button> : null
                 }
-                {/* <Button small rounded transparent style={styles.roundButton}
-                    onPress={()=>{alert("not implemented")}}>
-                    <Icon type={'FontAwesome5'} name={'star'} style={styles.buttonIcon}></Icon>
-                    <Label style={{fontSize: 12}}>Favorite</Label>
-                </Button> */}
             </ScrollView>
         </View>
     )
