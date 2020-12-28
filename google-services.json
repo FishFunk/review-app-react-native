@@ -15,13 +15,21 @@
       },
       "oauth_client": [
         {
+          "client_id": "111193503088-7qo9nq1vji5d6skn6strukr60bon1sqc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wanderlustlabs.reviewers",
+            "certificate_hash": "71eeb3d6565b39bb710c94a85ac82097dca8f5a8"
+          }
+        },
+        {
           "client_id": "111193503088-j2rmitch4r2q937k7un96t35vrichv6q.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA_XmZyhSfzPdQGqInU3Cc27MxInBZjzm8"
+          "current_key": "AIzaSyDGbRl2zAikh_HlRTxhhckz_mWQamS9LAE"
         }
       ],
       "services": {
@@ -32,7 +40,7 @@
               "client_type": 3
             },
             {
-              "client_id": "111193503088-2kmo6qaqvmhv9ndbi5dq9qpncph1s8dl.apps.googleusercontent.com",
+              "client_id": "111193503088-264uad6780305998nfvfl7s5bcuefnls.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.wanderlustlabs.reviewers"

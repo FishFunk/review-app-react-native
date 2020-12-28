@@ -6,10 +6,10 @@
     "extra": {
       "releaseChannel": "production",
       "iosClientId": "111193503088-2kmo6qaqvmhv9ndbi5dq9qpncph1s8dl.apps.googleusercontent.com",
-      "androidClientId": "111193503088-jkk5f9a902f6nggirjmh12cegc6q77si.apps.googleusercontent.com",
+      "androidClientId": "111193503088-7qo9nq1vji5d6skn6strukr60bon1sqc.apps.googleusercontent.com",
       "yelpApiBearerToken": "Bearer en2ZVirgzxSZUqzj4aBO1Rj1bvAdXnNuul3LW6cFdTHXe6pjn2Mu8LJAVUQnDMqVq0u3MFth4QpVyS-1X5gA2rCkajArCO-S79Er7gvsn7HjD6k32wZKgx7QlNPLX3Yx"
     },
-    "version": "1.0.18",
+    "version": "1.0.19",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
@@ -24,7 +24,12 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "androidStatusBar": {
+      "backgroundColor": "#F5F5F5",
+      "translucent": false
+    },
     "android": {
+      "versionCode": 1,
       "package": "com.wanderlustlabs.reviewers",
       "googleServicesFile": "./google-services.json",
       "config": {

@@ -102,7 +102,7 @@ export const signInWithGoogle =
 
 const _signInWithGoogleAuth = async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
     let result: GoogleSignIn.GoogleSignInAuthResult;
-    let clientId = Platform.OS === 'android' ? appConfig.expo.extra.androidClientId : appConfig.expo.extra.iosClientId;
+    // let clientId = Platform.OS === 'android' ? appConfig.expo.extra.androidClientId : appConfig.expo.extra.iosClientId;
     try{
         // await GoogleSignIn.initAsync({
         //     // clientId: clientId, 
@@ -135,10 +135,10 @@ const _signInWithGoogleAuth = async (failedCredential?: firebase.auth.AuthCreden
 const _signInWithGoogleExpo = async (failedCredential?: firebase.auth.AuthCredential): Promise<authResult | firebase.User> => {
     let result: Google.LogInResult;
     let clientId = Platform.OS === 'android' ? appConfig.expo.extra.androidClientId : appConfig.expo.extra.iosClientId;
+    
     try{
         result = await Google.logInAsync({
             clientId: clientId,
-            // behavior: 'web',
             scopes: ['profile', 'email', 'https://www.googleapis.com/auth/contacts.readonly']
         });
     } catch(error){

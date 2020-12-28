@@ -19,6 +19,8 @@ import IntroScreen from './screens/IntroScreen';
 import getTheme from './native-base-theme/components';
 import platform from './native-base-theme/variables/platform';
 import SpinnerContainer from './components/SpinnerContainer';
+import Constants from 'expo-constants';
+import theme from './styles/theme';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
@@ -45,7 +47,10 @@ export default function App(props: any) {
   useEffect(()=>{
     Font.loadAsync({
       Roboto: require('native-base/Fonts/Roboto.ttf'),
-      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf')
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      'Nunito-Regular': require('./assets/fonts/Nunito/Nunito-Regular.ttf'),
+      'Nunito-Bold': require('./assets/fonts/Nunito/Nunito-Bold.ttf'),
+      'Nunito-Light': require('./assets/fonts/Nunito/Nunito-Light.ttf')
     })
     .then(()=>setFontLoaded(true));
   }, [])
@@ -56,8 +61,7 @@ export default function App(props: any) {
   }, []);
 
   if (!isLoadingComplete || initializing || !fontLoaded || updating) {
-    return <SpinnerContainer message={updating ? 
-        `It's not you, it's us. You caught us during some maintenance down time. Try again soon!` : '' }/>;
+    return <SpinnerContainer />;
   }
 
   if(!user){
@@ -77,11 +81,12 @@ export default function App(props: any) {
     return (
       <StyleProvider style={getTheme(platform)}>
         <Container>
-          <StatusBar />
+          <StatusBar backgroundColor={theme.LIGHT_COLOR} style={"dark"}/>
           <NavigationContainer>
             <Root>
             <mainStackNavigator.Navigator initialRouteName="Home" screenOptions={{
               headerShown: false,
+              cardStyle: { paddingTop: Constants.statusBarHeight + 10 }
             }}>
               <mainStackNavigator.Screen name="Home" component={HomeScreen} />
               <mainStackNavigator.Screen name="PlaceDetails" component={PlaceDetailsScreen} />

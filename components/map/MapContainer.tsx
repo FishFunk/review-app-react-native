@@ -131,7 +131,7 @@ export default class MapContainer extends React.Component<
 
         if(!places || places.length === 0){
             Toast.show({
-                text: "Darn... we couldn't any reviews by the people you follow in this area. Try zooming out and searching again or find more reviewers to follow in the social tab!",
+                text: "Darn... we couldn't find any reviews by the people you follow in this area. Try zooming out and searching again or find more reviewers to follow in the social tab!",
                 position: 'bottom',
                 duration: 8000
             });
