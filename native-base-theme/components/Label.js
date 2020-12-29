@@ -1,15 +1,11 @@
 // @flow
 
-import theme from "../../styles/theme";
-
 export default () => {
   const labelTheme = {
     '.focused': {
       width: 0
     },
-    fontSize: 17,
-    fontFamily: theme.font,
-    color: theme.DARK_COLOR
+    fontSize: 17
   };
 
   return labelTheme;

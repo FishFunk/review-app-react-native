@@ -54,7 +54,7 @@ export default {
   badgePadding: platform === PLATFORM.IOS ? 3 : 0,
 
   // Button
-  buttonFontFamily: theme.fontBold, // platform === PLATFORM.IOS ? 'System' : 'Roboto_medium',
+  buttonFontFamily: theme.fontBold,
   buttonDisabledBg: '#b5b5b5',
   buttonPadding: 6,
   buttonDefaultActiveOpacity: 0.5,
@@ -123,9 +123,9 @@ export default {
   CheckboxBorderWidth: platform === PLATFORM.IOS ? 1 : 2,
   CheckboxPaddingLeft: platform === PLATFORM.IOS ? 4 : 2,
   CheckboxPaddingBottom: platform === PLATFORM.IOS ? 0 : 5,
-  CheckboxIconSize: platform === PLATFORM.IOS ? 21 : 16,
+  CheckboxIconSize: platform === PLATFORM.IOS ? 19 : 16,
   CheckboxIconMarginTop: platform === PLATFORM.IOS ? undefined : 1,
-  CheckboxFontSize: platform === PLATFORM.IOS ? 23 / 0.9 : 17,
+  CheckboxFontSize: platform === PLATFORM.IOS ? 12 / 0.9 : 17,
   checkboxBgColor: '#039BE5',
   checkboxSize: 20,
   checkboxTickColor: '#fff',
@@ -172,7 +172,7 @@ export default {
 
   // Font
   DefaultFontSize: 16,
-  fontFamily: theme.font, //platform === PLATFORM.IOS ? 'System' : 'Roboto',
+  fontFamily: theme.font,
   fontSizeBase: 15,
   get fontSizeH1() {
     return this.fontSizeBase * 1.8;
@@ -209,14 +209,10 @@ export default {
   toolbarDefaultBorder: platform === PLATFORM.IOS ? '#a7a6ab' : '#3F51B5',
   iosStatusbar: platform === PLATFORM.IOS ? 'dark-content' : 'light-content',
   get statusBarColor() {
-    return color(this.toolbarDefaultBg)
-      .darken(0.2)
-      .hex();
+    return color(this.toolbarDefaultBg).darken(0.2).hex();
   },
   get darkenHeader() {
-    return color(this.tabBgColor)
-      .darken(0.03)
-      .hex();
+    return color(this.tabBgColor).darken(0.03).hex();
   },
 
   // Icon
@@ -299,11 +295,11 @@ export default {
   },
 
   // Title
-  titleFontfamily: theme.fontBold, // platform === PLATFORM.IOS ? 'System' : 'Roboto_medium',
+  titleFontfamily: theme.fontBold,
   titleFontSize: platform === PLATFORM.IOS ? 17 : 19,
   subTitleFontSize: platform === PLATFORM.IOS ? 11 : 14,
   subtitleColor: platform === PLATFORM.IOS ? '#8e8e93' : '#FFF',
-  titleFontColor: theme.DARK_COLOR, //platform === PLATFORM.IOS ? '#000' : '#FFF',
+  titleFontColor: theme.DARK_COLOR,
 
   // Other
   borderRadiusBase: platform === PLATFORM.IOS ? 5 : 2,
@@ -322,13 +318,13 @@ export default {
       topInset: 24,
       leftInset: 0,
       rightInset: 0,
-      bottomInset: 34
+      bottomInset: 34,
     },
     landscape: {
       topInset: 0,
       leftInset: 44,
       rightInset: 44,
-      bottomInset: 21
-    }
-  }
+      bottomInset: 21,
+    },
+  },
 };

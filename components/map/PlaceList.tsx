@@ -164,7 +164,7 @@ export default class PlaceList extends React.Component<
                     searchable={false}
                     items={[
                         {label: 'NoBull', value: 'rating', 
-                            icon: () => <Icon name="star" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.STAR_COLOR }} />},
+                            icon: () => <Icon name="ios-star" style={{ fontSize: 14, color: theme.STAR_COLOR, marginLeft: 1 }} />},
                         {label: 'Pricing', value: 'pricing', 
                             icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR, marginLeft: 4, marginRight: 4, alignSelf: 'center' }} /> },
                         {label: 'Google', value: 'google', 
