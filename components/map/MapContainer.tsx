@@ -5,14 +5,14 @@ import Map from './Map';
 import { getLocation } from '../../services/locationService';
 import { searchPlace, placeMarkerData, dbPlace } from '../../models/place';
 import PlaceListModal from './PlaceListModal';
-import { getGooglePlaceById, getGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
+import { getGooglePlaceById, getSingleGooglePlaceIdBySearch } from '../../services/googlePlaceApiService';
 import FirebaseService from '../../services/firebaseService';
 import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
-import { createPlaceMarkerObjectFromGooglePlace, getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType, loadMoreResults } from '../../services/combinedApiService';
-import MapQuickSearchButtons from '../unused/MapQuickSearchButtons';
+import { createPlaceMarkerObjectFromGooglePlace, getApiPlaceSummary, getNearbyPlaceSummariesByQuery, loadMoreResults } from '../../services/combinedApiService';
+import MapQuickSearchButtons from './MapQuickSearchButtons';
 import _indexOf from 'lodash/indexOf';
 import { defaultGoogleApiFields } from '../../constants/Various';
 
@@ -200,7 +200,17 @@ export default class MapContainer extends React.Component<
 
     async handleSelectPlace(place: searchPlace){
         Keyboard.dismiss();
-        const { place_id } = await getGooglePlaceIdBySearch(this.state.apiKey, place.result.name);
+
+        let lat, lng;
+        if(place.result.geometry){
+            lat = place.result.geometry.location.lat;
+            lng = place.result.geometry.location.lng;
+        } else {
+            lat = this.state.region.latitude;
+            lng = this.state.region.longitude;
+        }
+
+        const { place_id } = await getSingleGooglePlaceIdBySearch(this.state.apiKey, place.result.name, lat, lng);
         this.loadSingleMarker(place_id);
     }
 
@@ -329,22 +339,21 @@ export default class MapContainer extends React.Component<
         Keyboard.dismiss();
         
         this.setState({ showGeneralLoadingSpinner: true, hideCallout: true, showLoadMoreOption: true });
-        let possibleType: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
-            'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
-            'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy';
+        let searchText = '';
 
+        // if query is a quick search item convert to plain text
         switch(query){
             case('bar'):
-                possibleType = 'bar';
+                searchText = 'bar';
                 break;    
             case('restaurant'):
-                possibleType = 'restaurant';
+                searchText = 'restaurant';
                 break;
             case('meal_delivery'):
-                possibleType = 'meal_delivery';
+                searchText = 'meal delivery';
                 break;
             case('cafe'):
-                possibleType = 'cafe';
+                searchText = 'cafe';
                 break;   
             default:
                 // use generic query instead of pre-defined type search
@@ -356,14 +365,9 @@ export default class MapContainer extends React.Component<
             const { apiKey } = this.state;
             const { latitude, longitude } = this.state.region;
             
-            if(possibleType != null){
-                placeMarkers = await getNearbyPlaceSummariesByType(
-                    apiKey, latitude, longitude, possibleType);
-            } else {
-                placeMarkers = await getNearbyPlaceSummariesByQuery(
-                    apiKey,  latitude, longitude, query);
-            }
-
+            placeMarkers = await getNearbyPlaceSummariesByQuery(
+                apiKey, latitude, longitude, searchText);
+  
             for(let place of placeMarkers){
                 const match = await FirebaseService.getPlace(place.placeId);
                 if(match){

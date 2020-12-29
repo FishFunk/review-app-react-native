@@ -13,10 +13,6 @@ export default class MapQuickSearchButtons extends Component<{
 },{}> {
 
     render(){
-        // let possibleTypes: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
-        //     'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
-        //     'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy';
-
         const { onQuickSearch } = this.props;
         return(
             <View style={styles.exploreButtonContainer}>
@@ -58,8 +54,8 @@ const styles = StyleSheet.create({
         zIndex: 9998
     },
     scrollView: {
-        paddingLeft: 10,
-        paddingRight: 10
+        justifyContent: 'center',
+        width: '100%'
     },
     exploreButton: {
         fontSize: 10,

@@ -1,6 +1,6 @@
 import _indexOf from 'lodash/indexOf';
 import { yelpApiSearchByPhone, yelpApiBusinessMatch } from './yelpApiService';
-import { getGooglePlaceById, getGooglePlaceListByQuery, getGooglePlaceListByType } from './googlePlaceApiService';
+import { getGooglePlaceById, getGooglePlaceListByQuery } from './googlePlaceApiService';
 import { fullApiPlace, placeMarkerData } from '../models/place';
 import LocalStorageService from '../services/localStorageService';
 import { GOOGLE_API_RESULTS_KEY, GOOGLE_API_RESULTS_INDEX_KEY } from '../constants/AsyncStorage';
@@ -20,19 +20,8 @@ export const createPlaceMarkerObjectFromGooglePlace = async (googlePlace: fullAp
     return _createPlaceMarkerObject(googlePlace, yelpPlace);
 }
 
-export const getNearbyPlaceSummariesByType = async (
-    apiKey: string, lat: number, lng: number, 
-    type: 'bar' | 'cafe' | 'tourist_attraction' | 'spa' | 
-        'shopping_mall' | 'shoe_store' | 'restaurant' | 'park' | 'night_club'|
-        'meal_delivery' | 'meal_takeaway' | 'lodging' | 'liquor_store' | 'pharmacy'): Promise<placeMarkerData[]>=> {
-    const nearbyGooglePlaces = await getGooglePlaceListByType(apiKey, lat, lng, type, ['place_id']);
-    await LocalStorageService.setItem(GOOGLE_API_RESULTS_KEY, nearbyGooglePlaces);
-    await LocalStorageService.setItem(GOOGLE_API_RESULTS_INDEX_KEY, 4);
-    return _iterateAndConvertNearbyPlaceResults(apiKey, nearbyGooglePlaces, 5);
-}
-
 export const getNearbyPlaceSummariesByQuery = async (apiKey: string, lat: number, lng: number, query: string): Promise<placeMarkerData[]>=> {
-    const nearbyGooglePlaces = await getGooglePlaceListByQuery(apiKey, lat, lng, query, defaultGoogleApiFields);
+    const nearbyGooglePlaces = await getGooglePlaceListByQuery(apiKey, lat, lng, query);
     await LocalStorageService.setItem(GOOGLE_API_RESULTS_KEY, nearbyGooglePlaces);
     await LocalStorageService.setItem(GOOGLE_API_RESULTS_INDEX_KEY, 4);
     return _iterateAndConvertNearbyPlaceResults(apiKey, nearbyGooglePlaces, 5);
@@ -45,7 +34,7 @@ export const loadMoreResults = async (apiKey: string) => {
 }
 
 const _iterateAndConvertNearbyPlaceResults = 
-    async (apiKey: string, nearbyGooglePlaceResults: fullApiPlace[], count: number, startIndex: number = 0)=>{
+    async (apiKey: string, nearbyGooglePlaces: fullApiPlace[], count: number, startIndex: number = 0)=>{
     let places = [];
 
     if(startIndex > 20 || count < 1 || count > 10){
@@ -54,14 +43,15 @@ const _iterateAndConvertNearbyPlaceResults =
 
     await LocalStorageService.setItem(GOOGLE_API_RESULTS_INDEX_KEY, startIndex + count);
 
-    if(nearbyGooglePlaceResults && nearbyGooglePlaceResults.length > 0){
+    if(nearbyGooglePlaces && nearbyGooglePlaces.length > 0){
         // Limit # of results for performance
         for(let i = startIndex; i < (startIndex + count); i++){
-            let googlePlace = nearbyGooglePlaceResults[i];
+            let googlePlace = nearbyGooglePlaces[i];
             if(googlePlace && googlePlace.place_id){
-                const fullGooglePlace = await getGooglePlaceById(apiKey, googlePlace.place_id, defaultGoogleApiFields);
-                const yelpData = await _getYelpInfoFromGoogleResult(fullGooglePlace);
-                const placeMarker = _createPlaceMarkerObject(fullGooglePlace, yelpData);
+                // TODO: Don't want to fetch data we've already fetched. Merge results?
+                const apiGooglePlace = await getGooglePlaceById(apiKey, googlePlace.place_id, defaultGoogleApiFields);
+                const yelpData = await _getYelpInfoFromGoogleResult(apiGooglePlace);
+                const placeMarker = _createPlaceMarkerObject(apiGooglePlace, yelpData);
                 places.push(placeMarker);
             }
         }
