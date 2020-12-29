@@ -6,14 +6,13 @@ import {
   Row,
   Title,
   Icon, 
-  View,
-  Label} from 'native-base';
+  View } from 'native-base';
 import FirebaseService from '../../services/firebaseService';
 import theme from '../../styles/theme';
 import { ScrollView } from 'react-native-gesture-handler';
 import { appUser } from '../../models/user';
 import SpinnerContainer from '../SpinnerContainer';
-import PhoneVerifyRecaptcha from '../PhoneVerifyRecaptcha';
+import PhoneVerifyRecaptcha from './PhoneVerifyRecaptcha';
 import LegalModal from '../legal/LicenseAgreementModal';
 
 export default class ProfileContainer extends React.Component<{navigation: any},{

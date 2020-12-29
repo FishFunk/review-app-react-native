@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { Animated, StyleSheet } from 'react-native';
-import getConfig from '../services/firebaseServiceConfig';
+import getConfig from '../../services/firebaseServiceConfig';
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { Button, Input, Item, Label, Text, Toast, View } from 'native-base';
-import theme from '../styles/theme';
-import FirebaseService from '../services/firebaseService';
+import theme from '../../styles/theme';
+import FirebaseService from '../../services/firebaseService';
 import PhoneInput from "react-native-phone-number-input";
 export default function PhoneVerifyRecaptcha(props: { onSuccess: ()=> any }) {
 
