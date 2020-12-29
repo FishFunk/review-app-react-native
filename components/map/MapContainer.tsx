@@ -123,6 +123,8 @@ export default class MapContainer extends React.Component<
                 radius = 100;
             } else if (zoomLevel >= 10) {
                 radius = 250;
+            } else {
+                // radius remains undefined so any relevant places will be pulled no matter the range
             }
         }
 
@@ -220,7 +222,6 @@ export default class MapContainer extends React.Component<
 
         // Calculate map zoom level
         const zoom = Math.log2(360 * ((Dimensions.get('screen').width /256) / region.longitudeDelta)) + 1;
-
         this.setState({ region:  { ...region }, zoomLevel: zoom, hideCallout: false });
     }
 
@@ -426,7 +427,10 @@ export default class MapContainer extends React.Component<
                             <SpinnerContainer transparent={true} /> : null
                     }
                 </View>
-                <MapQuickSearchButtons onQuickSearch={this.onQuickSearch.bind(this)} />
+                {
+                    this.state.zoomLevel >= 12 ?
+                        <MapQuickSearchButtons onQuickSearch={this.onQuickSearch.bind(this)} /> : null
+                }
                 {
                     this.state.region.latitude ?
                         <View style={styles.flex}>

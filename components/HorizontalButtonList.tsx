@@ -25,10 +25,13 @@ export default function HorizontalButtonList(
             end: formatted_address });
     }
 
+    const isScrollEnabled = props.placeSummary.website != null;
+
     return (
         <View style={styles.buttonContainer}>
             <ScrollView 
-                style={{alignSelf: 'center'}}
+                scrollEnabled={isScrollEnabled}
+                style={{alignSelf: !isScrollEnabled ? 'center' : 'auto'}}
                 horizontal 
                 showsHorizontalScrollIndicator={false}>
                 <Button small rounded transparent 

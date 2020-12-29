@@ -213,124 +213,125 @@ export default class WriteReview extends Component<{
             transparent={true}
         >
             <View style={styles.modalView}>
-            <Root>
-                <ScrollView style={{flex: 1}} ref={ref => {this._scrollViewRef = ref}}>
-                <View>
-                    <Text style={styles.title}>Review {this.props.placeSummary.title}</Text>
-                </View>
-                <View style={styles.formContainer}>
-                    {
-                        this.isServiceEstablishment() ? 
-                        // Food / Restaurant Review Form
-                        <Form>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Atmosphere</Label>
-                                <EditableStars 
-                                    fontSize={30}
-                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating1} 
-                                    onRatingChanged={this.onUpdateRating1.bind(this)}  />
-                            </Item>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Quality</Label>
-                                <EditableStars 
-                                    fontSize={30}
-                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating2} 
-                                    onRatingChanged={this.onUpdateRating2.bind(this)}  />
-                            </Item>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Service</Label>
-                                <EditableStars 
-                                    fontSize={30}
-                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating3} 
-                                    onRatingChanged={this.onUpdateRating3.bind(this)}  />
-                            </Item>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Pricing</Label>
-                                <EditableDollars 
-                                    fontSize={30}
-                                    initalRating={this.props.editReview ? this.props.editReview.pricing : this.state.pricing} 
-                                    onRatingChanged={this.onUpdatePricing.bind(this)}  />
-                            </Item>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>COVID-19 Safe</Label>
-                                    <View style={{ flexDirection: 'row' }}>
+                <Root>
+                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+                        <ScrollView style={{flex: 1}} ref={ref => {this._scrollViewRef = ref}}>
+                            <View>
+                                <Text style={styles.title}>Review {this.props.placeSummary.title}</Text>
+                            </View>
+                            <View style={styles.formContainer}>
+                                {
+                                    this.isServiceEstablishment() ? 
+                                    // Food / Restaurant Review Form
+                                    <Form>
+                                        <Item bordered={false} style={styles.starItem}>
+                                            <Label>Atmosphere</Label>
+                                            <EditableStars 
+                                                fontSize={30}
+                                                initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating1} 
+                                                onRatingChanged={this.onUpdateRating1.bind(this)}  />
+                                        </Item>
+                                        <Item bordered={false} style={styles.starItem}>
+                                            <Label>Quality</Label>
+                                            <EditableStars 
+                                                fontSize={30}
+                                                initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating2} 
+                                                onRatingChanged={this.onUpdateRating2.bind(this)}  />
+                                        </Item>
+                                        <Item bordered={false} style={styles.starItem}>
+                                            <Label>Service</Label>
+                                            <EditableStars 
+                                                fontSize={30}
+                                                initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating3} 
+                                                onRatingChanged={this.onUpdateRating3.bind(this)}  />
+                                        </Item>
+                                        <Item bordered={false} style={styles.starItem}>
+                                            <Label>Pricing</Label>
+                                            <EditableDollars 
+                                                fontSize={30}
+                                                initalRating={this.props.editReview ? this.props.editReview.pricing : this.state.pricing} 
+                                                onRatingChanged={this.onUpdatePricing.bind(this)}  />
+                                        </Item>
+                                        <Item bordered={false} style={styles.starItem}>
+                                            <Label>COVID-19 Safe</Label>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    {
+                                                        this.state.isSwitchEnabled ?
+                                                        <Text style={{fontFamily: theme.fontLight, marginRight: 4}}>Yes</Text> :
+                                                        <Text style={{fontFamily: theme.fontLight, marginRight: 4}}>No</Text>
+                                                    }
+                                                    <Switch
+                                                        trackColor={{ false: theme.DANGER_COLOR, true: theme.SECONDARY_COLOR }}
+                                                        ios_backgroundColor={theme.DANGER_COLOR}
+                                                        thumbColor={theme.LIGHT_COLOR}
+                                                        onValueChange={this.toggleSwitch.bind(this)}
+                                                        value={this.state.isSwitchEnabled}
+                                                    />
+                                                </View>
+                                        </Item>
+                                        <Item stackedLabel style={styles.textAreaItem}>
+                                            <Label>Comments</Label>
+                                            <Label style={styles.sublabel}>up to 250 characters</Label>
+                                            <TextInput 
+                                                onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
+                                                returnKeyType='done'
+                                                value={this.state.comments}
+                                                maxLength={250}
+                                                multiline={true}
+                                                blurOnSubmit={true}
+                                                onChangeText={this.onEditComment.bind(this)}
+                                                style={styles.textArea} />
+                                        </Item>
+                                        <Item stackedLabel style={styles.starItem}>
+                                            <Label>Average Total</Label>
+                                            <ReviewStars rating={this.avgRating()} fontSize={30} />
+                                        </Item>
+                                    </Form> : 
+                                    // Generic Place Review Form
+                                    <Form>
+                                        <Item bordered={false} style={styles.starItem}>
+                                            <Label>Rating</Label>
+                                            <EditableStars 
+                                                fontSize={30}
+                                                initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating1} 
+                                                onRatingChanged={this.onUpdateRating1.bind(this)}  />
+                                        </Item>
+                                        <Item stackedLabel style={styles.textAreaItem}>
+                                            <Label>Comments</Label>
+                                            <Label style={styles.sublabel}>up to 250 characters</Label>
+                                            <TextInput
+                                                onBlur={()=>Keyboard.dismiss()}
+                                                onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
+                                                returnKeyType='done'
+                                                blurOnSubmit={true}
+                                                value={this.state.comments}
+                                                maxLength={250}
+                                                multiline={true}
+                                                onChangeText={this.onEditComment.bind(this)}
+                                                style={styles.textArea} />
+                                        </Item>
+                                    </Form>
+                                }  
+                            </View>
+                            <View style={styles.buttonGroup}>
+                                <TouchableOpacity onPress={this.onDismissModal.bind(this, false)} disabled={this.state.submittingReview}> 
+                                    <Button style={styles.cancelButton}>
+                                        <Text>Cancel</Text>
+                                    </Button>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={this.onSubmitForm.bind(this)} disabled={this.state.submittingReview}> 
+                                    <Button style={styles.submitButton}>
                                         {
-                                            this.state.isSwitchEnabled ?
-                                            <Text style={{fontFamily: theme.fontLight, marginRight: 4}}>Yes</Text> :
-                                            <Text style={{fontFamily: theme.fontLight, marginRight: 4}}>No</Text>
+                                            this.state.submittingReview ? 
+                                                <Spinner color={theme.LIGHT_COLOR} size={12} style={{width: 80}}/> : 
+                                                <Text>Submit</Text>
                                         }
-                                        <Switch
-                                            trackColor={{ false: theme.DANGER_COLOR, true: theme.SECONDARY_COLOR }}
-                                            ios_backgroundColor={theme.DANGER_COLOR}
-                                            thumbColor={theme.LIGHT_COLOR}
-                                            onValueChange={this.toggleSwitch.bind(this)}
-                                            value={this.state.isSwitchEnabled}
-                                        />
-                                    </View>
-                            </Item>
-                            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
-                                <Item stackedLabel style={styles.textAreaItem}>
-                                    <Label>Comments</Label>
-                                    <Label style={styles.sublabel}>up to 250 characters</Label>
-                                    <TextInput 
-                                        onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
-                                        returnKeyType='done'
-                                        value={this.state.comments}
-                                        maxLength={250}
-                                        multiline={true}
-                                        blurOnSubmit={true}
-                                        onChangeText={this.onEditComment.bind(this)}
-                                        style={styles.textArea} />
-                                </Item>
-                                <Item stackedLabel style={styles.starItem}>
-                                    <Label>Average Total</Label>
-                                    <ReviewStars rating={this.avgRating()} fontSize={30} />
-                                </Item>
-                            </KeyboardAvoidingView>
-                        </Form> : 
-                        // Generic Place Review Form
-                        <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
-                            <Item bordered={false} style={styles.starItem}>
-                                <Label>Rating</Label>
-                                <EditableStars 
-                                    fontSize={30}
-                                    initalRating={this.props.editReview ? this.props.editReview.avg_rating : this.state.rating1} 
-                                    onRatingChanged={this.onUpdateRating1.bind(this)}  />
-                            </Item>
-                            <Item stackedLabel style={styles.textAreaItem}>
-                                <Label>Comments</Label>
-                                <Label style={styles.sublabel}>up to 250 characters</Label>
-                                <TextInput 
-                                    onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
-                                    returnKeyType='done'
-                                    blurOnSubmit={true}
-                                    value={this.state.comments}
-                                    maxLength={250}
-                                    multiline={true}
-                                    onChangeText={this.onEditComment.bind(this)}
-                                    style={styles.textArea} />
-                            </Item>
-                        </KeyboardAvoidingView>
-                    }  
-                </View>
-                <View style={styles.buttonGroup}>
-                    <TouchableOpacity onPress={this.onDismissModal.bind(this, false)} disabled={this.state.submittingReview}> 
-                        <Button style={styles.cancelButton}>
-                            <Text>Cancel</Text>
-                        </Button>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={this.onSubmitForm.bind(this)} disabled={this.state.submittingReview}> 
-                        <Button style={styles.submitButton}>
-                            {
-                                this.state.submittingReview ? 
-                                    <Spinner color={theme.LIGHT_COLOR} size={12} style={{width: 80}}/> : 
-                                    <Text>Submit</Text>
-                            }
-                        </Button>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-            </Root>
+                                    </Button>
+                                </TouchableOpacity>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                </Root>
             </View>
         </Modal>
         )

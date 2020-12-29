@@ -215,8 +215,10 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     title: {
-        fontSize: 24,
-        color: theme.DARK_COLOR 
+        fontSize: 20,
+        fontFamily: theme.fontBold,
+        color: theme.DARK_COLOR ,
+        alignSelf: 'center'
     },
     checkboxLabel: {
         fontSize: 14, 
