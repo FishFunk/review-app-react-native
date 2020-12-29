@@ -5,8 +5,6 @@ export const checkForUpdates = async () => {
         const update = await Updates.checkForUpdateAsync();
         if (update.isAvailable) {
             await Updates.fetchUpdateAsync();
-            // ... notify user of update ...
-            console.log("App Updating...");
             await Updates.reloadAsync();
         }
     }

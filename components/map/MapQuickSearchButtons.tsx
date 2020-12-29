@@ -36,6 +36,11 @@ export default class MapQuickSearchButtons extends Component<{
                         <Label style={styles.exploreLabel}>Delivery</Label>
                     </Button>
                     <Button small rounded style={styles.exploreButton} iconLeft
+                        onPress={()=>onQuickSearch('meal_takeaway')}>
+                        <Icon type={'FontAwesome5'} name={'hamburger'} style={styles.exploreIcon}></Icon>
+                        <Label style={styles.exploreLabel}>Takeout</Label>
+                    </Button>
+                    <Button small rounded style={styles.exploreButton} iconLeft
                         onPress={()=>onQuickSearch('cafe')}>
                         <Icon type={'FontAwesome5'} name={'mug-hot'} style={styles.exploreIcon}></Icon>
                         <Label style={styles.exploreLabel}>Cafes</Label>

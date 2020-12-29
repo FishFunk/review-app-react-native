@@ -1,6 +1,6 @@
 import _indexOf from 'lodash/indexOf';
 import { yelpApiSearchByPhone, yelpApiBusinessMatch } from './yelpApiService';
-import { getGooglePlaceById, getGooglePlaceListByQuery } from './googlePlaceApiService';
+import { getGooglePlaceById, getGooglePlaceListByQuery, getGooglePlaceListByType } from './googlePlaceApiService';
 import { fullApiPlace, placeMarkerData } from '../models/place';
 import LocalStorageService from '../services/localStorageService';
 import { GOOGLE_API_RESULTS_KEY, GOOGLE_API_RESULTS_INDEX_KEY } from '../constants/AsyncStorage';
@@ -19,6 +19,17 @@ export const createPlaceMarkerObjectFromGooglePlace = async (googlePlace: fullAp
     const yelpPlace = await _getYelpInfoFromGoogleResult(googlePlace);
     return _createPlaceMarkerObject(googlePlace, yelpPlace);
 }
+
+
+export const getNearbyPlaceSummariesByType = async (apiKey: string, lat: number, lng: number, 
+    type: 'bar' | 'restaurant' | 'cafe' | 'meal_delivery' | 'meal_takeaway' | 'night_club',
+    keyword?: string): Promise<placeMarkerData[]>=> {
+    const nearbyGooglePlaces = await getGooglePlaceListByType(apiKey, lat, lng, type, keyword);
+    await LocalStorageService.setItem(GOOGLE_API_RESULTS_KEY, nearbyGooglePlaces);
+    await LocalStorageService.setItem(GOOGLE_API_RESULTS_INDEX_KEY, 4);
+    return _iterateAndConvertNearbyPlaceResults(apiKey, nearbyGooglePlaces, 5);
+}
+
 
 export const getNearbyPlaceSummariesByQuery = async (apiKey: string, lat: number, lng: number, query: string): Promise<placeMarkerData[]>=> {
     const nearbyGooglePlaces = await getGooglePlaceListByQuery(apiKey, lat, lng, query);

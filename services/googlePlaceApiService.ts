@@ -18,32 +18,36 @@ const _findPlaceFromTextUrl = (apiKey: string, searchQuery: string,
     return `${baseUrl}${urlExt}input=${searchQuery}&inputtype=textquery${biasParam}${fieldsParam}&key=${apiKey}`;
 }
 
-// // Note: API does not allow specifcying fields for nearby search
-// const _findNearbyUrl = (
-//         apiKey: string, 
-//         lat: number, 
-//         lng: number, 
-//         type: string)=>{
+// Note: API does not allow specifcying fields for nearby search
+const _findNearbyUrl = (
+        apiKey: string, 
+        lat: number, 
+        lng: number, 
+        type: 'bar' | 'restaurant' | 'cafe' | 'meal_delivery' | 'meal_takeaway' | 'night_club',
+        keyword?: string)=>{
 
-//     const urlExt = '/nearbysearch/json?';
-//     const location = `&location=${lat},${lng}`;
-//     const radius = `&radius=${searchRadius}`;
+    const urlExt = '/nearbysearch/json?';
+    const locationParam = `&location=${lat},${lng}`;
+    const radiusParam = `&radius=${searchRadius}`;
+    const keywordParam = keyword ? `&keyword=${keyword}`: '';
 
-//     return `${baseUrl}${urlExt}${location}${radius}&type=${type}&key=${apiKey}`;
-// }
+    return `${baseUrl}${urlExt}${locationParam}${radiusParam}${keywordParam}&type=${type}&key=${apiKey}`;
+}
 
 // Note: API does not allow specifcying fields for text search
 const _findPlacesByTextSearchUrl = (
         apiKey: string, 
         lat: number, 
         lng: number, 
-        query: string)=> {
+        query: string,
+        type?: 'bar' | 'restaurant' | 'cafe' | 'meal_delivery' | 'meal_takeaway' | 'night_club')=> {
     
     const urlExt = `/textsearch/json?`;
-    const location = `&location=${lat},${lng}`;
-    const radius = `&radius=${searchRadius}`;
+    const locationParam = `&location=${lat},${lng}`;
+    const radiusParam = `&radius=${searchRadius}`;
+    const typeParam = type ? `&type=${type}` : '';
 
-    return  `${baseUrl}${urlExt}${location}${radius}&query=${query}&key=${apiKey}`;
+    return  `${baseUrl}${urlExt}${locationParam}${radiusParam}${typeParam}&query=${query}&key=${apiKey}`;
 }
 
 export const getPhotoUrl = (apiKey: string,photoRef: string)=>{
@@ -94,10 +98,35 @@ export const getGooglePlaceListByQuery = async (
     apiKey: string,
     lat: number,
     lng: number,
-    query: string): Promise<fullApiPlace[]> => {
+    query: string,
+    type?: 'bar' | 'restaurant' | 'cafe' | 'meal_delivery' | 'meal_takeaway' | 'night_club'): Promise<fullApiPlace[]> => {
 
     try{
-        let url = _findPlacesByTextSearchUrl(apiKey, lat, lng, query);
+        let url = _findPlacesByTextSearchUrl(apiKey, lat, lng, query, type);
+
+        const response = await fetch(url);
+        const json = await response.json();
+
+        if(json.status === "OK" && json.results && json.results.length > 0){
+            return json.results;
+        } else {
+            return Promise.reject("No matching places found");
+        }
+    } catch (ex){
+        return Promise.reject(ex);
+    }
+}
+
+// Get nearby results by type and location. Doesn't return full place details and fields cannot be specified.
+export const getGooglePlaceListByType = async (
+    apiKey: string,
+    lat: number,
+    lng: number,
+    type: 'bar' | 'restaurant' | 'cafe' | 'meal_delivery' | 'meal_takeaway' | 'night_club',
+    keyword?: string): Promise<fullApiPlace[]> => {
+
+    try{
+        let url = _findNearbyUrl(apiKey, lat, lng, type, keyword);
 
         const response = await fetch(url);
         const json = await response.json();

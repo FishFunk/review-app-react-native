@@ -11,7 +11,7 @@ import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
-import { createPlaceMarkerObjectFromGooglePlace, getApiPlaceSummary, getNearbyPlaceSummariesByQuery, loadMoreResults } from '../../services/combinedApiService';
+import { createPlaceMarkerObjectFromGooglePlace, getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType, loadMoreResults } from '../../services/combinedApiService';
 import MapQuickSearchButtons from './MapQuickSearchButtons';
 import _indexOf from 'lodash/indexOf';
 import { defaultGoogleApiFields } from '../../constants/Various';
@@ -82,7 +82,6 @@ export default class MapContainer extends React.Component<
         });
 
         FirebaseService.onUserFollowingUpdated(()=>{
-            console.log("setting reload markers to TRUE");
             this._reloadCurrentMarkers = true;
         });
 
@@ -339,21 +338,23 @@ export default class MapContainer extends React.Component<
         Keyboard.dismiss();
         
         this.setState({ showGeneralLoadingSpinner: true, hideCallout: true, showLoadMoreOption: true });
-        let searchText = '';
+        let type: 'bar' | 'restaurant' | 'cafe' | 'meal_delivery' | 'meal_takeaway' | 'night_club';
 
         // if query is a quick search item convert to plain text
         switch(query){
             case('bar'):
-                searchText = 'bar';
+                type = 'bar';
                 break;    
             case('restaurant'):
-                searchText = 'restaurant';
                 break;
             case('meal_delivery'):
-                searchText = 'meal delivery';
+                type = 'meal_delivery';
+                break;
+            case('meal_takeaway'):
+                type = 'meal_takeaway';
                 break;
             case('cafe'):
-                searchText = 'cafe';
+                type = 'cafe';
                 break;   
             default:
                 // use generic query instead of pre-defined type search
@@ -365,9 +366,13 @@ export default class MapContainer extends React.Component<
             const { apiKey } = this.state;
             const { latitude, longitude } = this.state.region;
             
-            placeMarkers = await getNearbyPlaceSummariesByQuery(
-                apiKey, latitude, longitude, searchText);
-  
+            if(type){
+                placeMarkers = await getNearbyPlaceSummariesByType(apiKey, latitude, longitude, type);
+            } else {
+                placeMarkers = await getNearbyPlaceSummariesByQuery(
+                    apiKey, latitude, longitude, query);
+            }
+
             for(let place of placeMarkers){
                 const match = await FirebaseService.getPlace(place.placeId);
                 if(match){
