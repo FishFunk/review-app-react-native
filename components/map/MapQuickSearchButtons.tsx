@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
         zIndex: 9998
     },
     scrollView: {
-        justifyContent: 'center',
-        width: '100%'
+        paddingLeft: 10,
+        paddingRight: 10
     },
     exploreButton: {
         fontSize: 10,
