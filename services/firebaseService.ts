@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app';
+import * as firebase from 'firebase';
 import getConfig from './firebaseServiceConfig';
 import { reviewSummary, dbReview } from '../models/reviews';
 import { appUser } from '../models/user';

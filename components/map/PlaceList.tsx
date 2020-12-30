@@ -2,7 +2,7 @@ import React from "react";
 import { Dimensions, StyleSheet } from 'react-native';
 import { Body, Button, Icon, Left, ListItem, Spinner, Text, Thumbnail, Title, View } from "native-base";
 import { placeMarkerData } from "../../models/place";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 import { getPhotoUrl } from '../../services/googlePlaceApiService';
 import Utils from '../../services/utils';
 import _isEqual from 'lodash/isEqual';
@@ -42,7 +42,7 @@ export default class PlaceList extends React.Component<
         }
     }
 
-    load(){
+    async load(){
         const { apiKey, places } = this.props;
 
         let detailedPlaces = []
