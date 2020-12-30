@@ -352,7 +352,7 @@ export default class MapContainer extends React.Component<
                 type = 'meal_delivery';
                 break;
             case('meal_takeaway'):
-                type = 'meal_takeaway';
+                query = 'takeout';
                 break;
             case('cafe'):
                 type = 'cafe';

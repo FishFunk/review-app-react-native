@@ -383,8 +383,7 @@ const styles = StyleSheet.create({
     },
     titleView: {
         flexDirection: 'row', 
-        justifyContent: 'space-between',
-        marginTop: '8%'
+        justifyContent: 'space-between'
     },
     title: {
         maxWidth: 250,
