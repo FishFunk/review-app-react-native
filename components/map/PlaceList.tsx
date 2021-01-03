@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, Platform, StyleSheet } from 'react-native';
 import { Body, Button, Icon, Left, ListItem, Spinner, Text, Thumbnail, Title, View } from "native-base";
 import { placeMarkerData } from "../../models/place";
 import { FlatList } from "react-native-gesture-handler";
@@ -160,30 +160,33 @@ export default class PlaceList extends React.Component<
     render(){
         return (
             <View style={styles.container}>
-                <DropDownPicker 
-                    searchable={false}
-                    items={[
-                        {label: 'NoBull', value: 'rating', 
-                            icon: () => <Icon name="ios-star" style={{ fontSize: 14, color: theme.STAR_COLOR, marginLeft: 1 }} />},
-                        {label: 'Pricing', value: 'pricing', 
-                            icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR, marginLeft: 4, marginRight: 4, alignSelf: 'center' }} /> },
-                        {label: 'Google', value: 'google', 
-                            icon: () => <Icon name="google" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.googleRed, marginLeft: 2, alignSelf: 'center' }} />},
-                        {label: 'Yelp', value: 'yelp', 
-                            icon: () => <Icon name="yelp" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.yelpRed, marginLeft: 4, marginRight: 2, alignSelf: 'center' }} />}
-                    ]}
-                    defaultValue={this.props.orderBy}
-                    style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0 }}
-                    labelStyle={{ fontSize: 12, fontFamily: theme.fontLight }}
-                    placeholder="Order by"
-                    itemStyle={{ justifyContent: 'flex-start' }}
-                    containerStyle={{
-                        height: 40,
-                        width: 100, 
-                        right: 5,
-                        top: 5,
-                        position: 'absolute' }}
-                    onChangeItem={item => this.onChangeDropdownItem(item.value)}/>
+                { 
+                    Platform.OS === 'ios' ? // TODO: Picker doesnt work well on android and react native picker sucks. Need custom implementation.
+                    <DropDownPicker 
+                        searchable={false}
+                        items={[
+                            {label: 'NoBull', value: 'rating', 
+                                icon: () => <Icon name="ios-star" style={{ fontSize: 14, color: theme.STAR_COLOR, marginLeft: 1 }} />},
+                            {label: 'Pricing', value: 'pricing', 
+                                icon: () => <Icon name="dollar-sign" type={'FontAwesome5'} style={{fontSize: 14, color: theme.SECONDARY_COLOR, marginLeft: 4, marginRight: 4, alignSelf: 'center' }} /> },
+                            {label: 'Google', value: 'google', 
+                                icon: () => <Icon name="google" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.googleRed, marginLeft: 2, alignSelf: 'center' }} />},
+                            {label: 'Yelp', value: 'yelp', 
+                                icon: () => <Icon name="yelp" type={'FontAwesome5'} style={{ fontSize: 14, color: theme.yelpRed, marginLeft: 4, marginRight: 2, alignSelf: 'center' }} />}
+                        ]}
+                        defaultValue={this.props.orderBy}
+                        style={{backgroundColor: theme.LIGHT_COLOR, borderWidth: 0 }}
+                        labelStyle={{ fontSize: 12, fontFamily: theme.fontLight }}
+                        placeholder="Order by"
+                        itemStyle={{ justifyContent: 'flex-start' }}
+                        containerStyle={{
+                            height: 40,
+                            width: 100, 
+                            right: 5,
+                            top: 5,
+                            position: 'absolute' }}
+                        onChangeItem={item => this.onChangeDropdownItem(item.value)}/> : null 
+                }
                 <View style={styles.header}>
                     {
                         this.state.loading ?
@@ -216,13 +219,12 @@ export default class PlaceList extends React.Component<
 
 const styles = StyleSheet.create({
     container: {
-        height: Dimensions.get('screen').height - 100 // offset plus header height
+        flex: 1
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        // marginRight: '20%',
         height: 50,
         borderBottomWidth: 0.5,
         borderBottomColor: theme.GRAY_COLOR

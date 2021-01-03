@@ -14,6 +14,7 @@ import { appUser } from '../../models/user';
 import SpinnerContainer from '../SpinnerContainer';
 import PhoneVerifyRecaptcha from './PhoneVerifyRecaptcha';
 import LegalModal from '../legal/LicenseAgreementModal';
+import defaultPhoto from '../../assets/images/profile.png';
 
 export default class ProfileContainer extends React.Component<{navigation: any},{
     user: appUser, 
@@ -134,18 +135,18 @@ export default class ProfileContainer extends React.Component<{navigation: any},
                     <View style={this.getImageStyle()}>
                         <Image 
                             style={styles.profileImage}
-                            source={{uri: this.getPhotoUrl()}} 
-                            defaultSource={require('../../assets/images/profile.png')} />
+                            source={this.getPhotoUrl() ? {uri: this.getPhotoUrl()} : defaultPhoto} 
+                            defaultSource={defaultPhoto} />
                     </View>
                     {
                         this.allVerifcationStepsComplete()?
-                        <View style={{ position: 'absolute', top: 10 }}>
-                            <Text style={{fontSize: 12}}>verified</Text>
-                            <Icon style={{
-                                fontSize: 40,
-                                color: theme.STAR_COLOR,
-                                alignSelf: 'center' }} name={'award'} type={'FontAwesome5'}></Icon>
-                        </View> : null
+                            <View style={{ position: 'absolute', top: 10 }}>
+                                <Text style={{fontSize: 12}}>verified</Text>
+                                <Icon style={{
+                                    fontSize: 40,
+                                    color: theme.STAR_COLOR,
+                                    alignSelf: 'center' }} name={'award'} type={'FontAwesome5'}></Icon>
+                            </View> : null
                     }
                 </View>
                 <View style={styles.row}>

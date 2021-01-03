@@ -72,6 +72,7 @@ class MapInput extends React.Component<
                     returnKeyType: 'search',
                     onSubmitEditing: this.onSubmitEditing.bind(this)
                 }}
+                stylesContainer={{ zIndex: 9999 }}
             />
         )
     }

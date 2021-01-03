@@ -1,9 +1,10 @@
 import { Text, View } from 'native-base';
 import React, { Component } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, Platform, StyleSheet } from 'react-native';
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
 import YelpReviewStars from './YelpReviewStars';
+import yelpLogo from '../../assets/images/yelp_logo/yelp_logo_transparent.png';
 
 export default class StarRatingListItem extends Component<{
     pricing?: number,
@@ -75,15 +76,29 @@ export default class StarRatingListItem extends Component<{
                 </View>
             </View>
             <View style={this.styles.yelpRow}>
-                <View style={this.styles.flexRow}>
-                    <View style={{width: 42}}>
-                        <Image
-                            style={{ width: 30, height: 15 }}
-                            source={require('../../assets/images/yelp_logo/yelp_logo_transparent.png')}
-                        />
+                {
+                    // Need to use Text component for images to be rendered inside map callout on android
+                    Platform.OS === 'android' ? 
+                    <View style={this.styles.flexRow}>
+                            <Text style={{width: 42}}>
+                                <Image
+                                    style={{ width: 30, height: 15 }}
+                                    source={yelpLogo}
+                                />
+                            </Text>
+                            <YelpReviewStars rating={yelpRating || 0} useTextWrapper={true}/>
                     </View>
-                    <YelpReviewStars rating={yelpRating || 0} />
-                </View>
+                    :
+                    <View style={this.styles.flexRow}>
+                        <View style={{width: 42}}>
+                            <Image
+                                style={{ width: 30, height: 15 }}
+                                source={yelpLogo}
+                            />
+                        </View>
+                        <YelpReviewStars rating={yelpRating || 0} useTextWrapper={false}/>
+                    </View>
+                }
                 <View style={this.styles.subTextView}>
                     <Text style={this.styles.subText}>({yelpCount || 0})</Text>
                 </View>

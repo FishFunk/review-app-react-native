@@ -18,7 +18,8 @@ import {
     Root,
     Spinner,
     Form,
-    Switch
+    Switch,
+    Textarea
 } from 'native-base'
 import theme from '../../styles/theme';
 import ReviewStars from './ReviewStars';
@@ -272,7 +273,7 @@ export default class WriteReview extends Component<{
                                         <Item stackedLabel style={styles.textAreaItem}>
                                             <Label>Comments</Label>
                                             <Label style={styles.sublabel}>up to 250 characters</Label>
-                                            <TextInput 
+                                            <Textarea 
                                                 onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
                                                 returnKeyType='done'
                                                 value={this.state.comments}
@@ -280,7 +281,17 @@ export default class WriteReview extends Component<{
                                                 multiline={true}
                                                 blurOnSubmit={true}
                                                 onChangeText={this.onEditComment.bind(this)}
-                                                style={styles.textArea} />
+                                                style={styles.textArea}
+                                            />
+                                            {/* <TextInput 
+                                                onFocus={()=>this._scrollViewRef.scrollToEnd({animated: true})}
+                                                returnKeyType='done'
+                                                value={this.state.comments}
+                                                maxLength={250}
+                                                multiline={true}
+                                                blurOnSubmit={true}
+                                                onChangeText={this.onEditComment.bind(this)}
+                                                style={styles.textArea} /> */}
                                         </Item>
                                         <Item stackedLabel style={styles.starItem}>
                                             <Label>Average Total</Label>
@@ -313,22 +324,38 @@ export default class WriteReview extends Component<{
                                     </Form>
                                 }  
                             </View>
-                            <View style={styles.buttonGroup}>
-                                <TouchableOpacity onPress={this.onDismissModal.bind(this, false)} disabled={this.state.submittingReview}> 
-                                    <Button style={styles.cancelButton}>
-                                        <Text>Cancel</Text>
-                                    </Button>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={this.onSubmitForm.bind(this)} disabled={this.state.submittingReview}> 
-                                    <Button style={styles.submitButton}>
-                                        {
-                                            this.state.submittingReview ? 
-                                                <Spinner color={theme.LIGHT_COLOR} size={12} style={{width: 80}}/> : 
-                                                <Text>Submit</Text>
-                                        }
-                                    </Button>
-                                </TouchableOpacity>
-                            </View>
+                            {
+                                Platform.OS === 'android' ? 
+                                    <View style={styles.buttonGroup}>
+                                        <TouchableOpacity disabled={this.state.submittingReview}> 
+                                            <Button style={styles.cancelButton} onPress={this.onDismissModal.bind(this, false)} disabled={this.state.submittingReview}>
+                                                <Text>Cancel</Text>
+                                            </Button>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity disabled={this.state.submittingReview}> 
+                                            <Button style={styles.submitButton} onPress={this.onSubmitForm.bind(this)} disabled={this.state.submittingReview}>
+                                                {
+                                                    this.state.submittingReview ? 
+                                                        <Spinner color={theme.LIGHT_COLOR} size={12} style={{width: 80}}/> : 
+                                                        <Text>Submit</Text>
+                                                }
+                                            </Button>
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    <View style={styles.buttonGroup}>
+                                        <Button style={styles.cancelButton} onPress={this.onDismissModal.bind(this, false)} disabled={this.state.submittingReview}>
+                                            <Text>Cancel</Text>
+                                        </Button>
+                                        <Button style={styles.submitButton} onPress={this.onSubmitForm.bind(this)} disabled={this.state.submittingReview}>
+                                            {
+                                                this.state.submittingReview ? 
+                                                    <Spinner color={theme.LIGHT_COLOR} size={12} style={{width: 80}}/> : 
+                                                    <Text>Submit</Text>
+                                            }
+                                        </Button>
+                                    </View>
+                            }
                         </ScrollView>
                     </KeyboardAvoidingView>
                 </Root>

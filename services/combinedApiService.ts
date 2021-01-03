@@ -97,7 +97,7 @@ const _createPlaceMarkerObject = (googlePlace: fullApiPlace, yelpData: any): pla
 
 const _getYelpInfoFromGoogleResult = async (googlePlace: fullApiPlace) => {
     if(googlePlace.international_phone_number){
-        const targetPhone = googlePlace.international_phone_number.replaceAll(' ', '').replaceAll('-', '');
+        const targetPhone = googlePlace.international_phone_number.replace(/[\s-]+/g, ''); // strip any spaces or hyphens
         return await yelpApiSearchByPhone(targetPhone);
     } else if(googlePlace.address_components){
         // Search yelp by address components

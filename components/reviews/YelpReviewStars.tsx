@@ -1,12 +1,12 @@
-import { View } from "native-base";
+import { Text, View } from "native-base";
 import React, { Component } from "react";
 import { Image } from 'react-native';
 
 export default class YelpReviewStars 
-  extends Component<{ rating: number, size?: 'small' | 'regular', style?: any }> {
+  extends Component<{ rating: number, useTextWrapper: boolean, size?: 'small' | 'regular', style?: any }> {
 
   render() {
-    const { rating, size } = this.props;
+    const { rating, size, useTextWrapper } = this.props;
     const targetSize = size ? size : 'small';
     let asset;
 
@@ -85,6 +85,10 @@ export default class YelpReviewStars
     }
     
 
-    return <View style={ this.props.style? { ...this.props.style } : {} }><Image source={asset} /></View>;
+    return <View style={ this.props.style? { ...this.props.style } : {} }>
+            {
+              useTextWrapper ? <Text style={{flex: 1}}><Image source={asset}/></Text> : <Image source={asset}/>
+            }
+          </View>;
   }
 }

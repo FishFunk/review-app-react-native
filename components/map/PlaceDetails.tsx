@@ -317,7 +317,7 @@ export default class PlaceDetails extends React.Component<
                                 />
                                 <Text style={styles.reviewCountLabel}>({placeSummary.yelpCount || 'No data'})</Text>
                             </View>
-                            <YelpReviewStars rating={placeSummary.yelpRating || 0} />
+                            <YelpReviewStars rating={placeSummary.yelpRating || 0} useTextWrapper={false}/>
                         </View>
                     </View>
                 </View>

@@ -55,7 +55,6 @@ export default class Map extends React.Component<
 
     onPoiClick(event: MapEvent<{ placeId: string; name: string }>){
         if(this.markerRef) this.markerRef.hideCallout();
-        event.preventDefault();
         this.props.onPoiSelect(event.nativeEvent.placeId);
     }
 
@@ -64,12 +63,10 @@ export default class Map extends React.Component<
     }
 
     onMapPress(event: MapEvent<{}>){
-        event.preventDefault();
         this.props.onPress();
     }
 
     onPressCallout(event: MapEvent<{}>, data: placeMarkerData){
-        event.preventDefault();
         this.props.onShowDetails(data);
     }
 

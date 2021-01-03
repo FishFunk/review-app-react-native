@@ -6,7 +6,7 @@ import * as Font from 'expo-font';
 import FirebaseService from './services/firebaseService';
 import HomeScreen from './screens/HomeScreen';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { Assets, createStackNavigator } from '@react-navigation/stack';
 import SocialScreen from './screens/SocialScreen';
 import { checkForUpdates } from './services/updateService';
 import SearchScreen from './screens/SearchScreen';
@@ -21,6 +21,7 @@ import platform from './native-base-theme/variables/platform';
 import SpinnerContainer from './components/SpinnerContainer';
 import Constants from 'expo-constants';
 import theme from './styles/theme';
+import { useAssets } from 'expo-asset';
 
 export default function App(props: any) {
   const isLoadingComplete = useCachedResources();
@@ -31,6 +32,28 @@ export default function App(props: any) {
   const [user, setUser] = useState<firebase.User>();
   const [fontLoaded, setFontLoaded] = useState(false);
   const [updating, setUpdating] = useState(true);
+
+  const [assets] = useAssets([
+    require('./assets/images/profile.png'),
+    require('./assets/images/yelp_logo/yelp_logo_transparent.png'), 
+    require('./assets/images/yelp_stars/small/small_0.png'),
+    require('./assets/images/yelp_stars/small/small_1_half.png'),
+    require('./assets/images/yelp_stars/small/small_2.png'),
+    require('./assets/images/yelp_stars/small/small_2_half.png'),
+    require('./assets/images/yelp_stars/small/small_3.png'),
+    require('./assets/images/yelp_stars/small/small_3_half.png'),
+    require('./assets/images/yelp_stars/small/small_4.png'),
+    require('./assets/images/yelp_stars/small/small_4_half.png'),
+    require('./assets/images/yelp_stars/small/small_5.png'),
+    require('./assets/images/yelp_stars/regular/regular_0.png'),
+    require('./assets/images/yelp_stars/regular/regular_1_half.png'),
+    require('./assets/images/yelp_stars/regular/regular_2.png'),
+    require('./assets/images/yelp_stars/regular/regular_2_half.png'),
+    require('./assets/images/yelp_stars/regular/regular_3.png'),
+    require('./assets/images/yelp_stars/regular/regular_3_half.png'),
+    require('./assets/images/yelp_stars/regular/regular_4.png'),
+    require('./assets/images/yelp_stars/regular/regular_4_half.png'),
+    require('./assets/images/yelp_stars/regular/regular_5.png')]);
 
   async function onAuthStateChanged(user: firebase.User){
     if(user) await FirebaseService.initializeUser(user);
@@ -60,7 +83,7 @@ export default function App(props: any) {
     return subscriber;
   }, []);
 
-  if (!isLoadingComplete || initializing || !fontLoaded || updating) {
+  if (!isLoadingComplete || initializing || !fontLoaded || updating || !assets) {
     return <SpinnerContainer />;
   }
 

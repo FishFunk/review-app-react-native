@@ -15,7 +15,6 @@ import { createPlaceMarkerObjectFromGooglePlace, getApiPlaceSummary, getNearbyPl
 import MapQuickSearchButtons from './MapQuickSearchButtons';
 import _indexOf from 'lodash/indexOf';
 import { defaultGoogleApiFields } from '../../constants/Various';
-
 export default class MapContainer extends React.Component<
     {
         navigation: any,
@@ -417,16 +416,14 @@ export default class MapContainer extends React.Component<
         }
         return (
             <View style={styles.flex}>
-                <View style={styles.mapInput}>
-                    <MapInput 
-                        handleSelectPlace={this.handleSelectPlace.bind(this)}
-                        handleGenericSearch={this.onQuickSearch.bind(this)}
-                        apiKey={this.state.apiKey} />
-                    {
-                        this.state.showGeneralLoadingSpinner ? 
-                            <SpinnerContainer transparent={true} /> : null
-                    }
-                </View>
+                <MapInput 
+                    handleSelectPlace={this.handleSelectPlace.bind(this)}
+                    handleGenericSearch={this.onQuickSearch.bind(this)}
+                    apiKey={this.state.apiKey} />
+                {
+                    this.state.showGeneralLoadingSpinner ? 
+                        <SpinnerContainer transparent={true} /> : null
+                }
                 {
                     this.state.zoomLevel >= 12 ?
                         <MapQuickSearchButtons onQuickSearch={this.onQuickSearch.bind(this)} /> : null
@@ -472,10 +469,5 @@ export default class MapContainer extends React.Component<
 const styles = StyleSheet.create({
     flex: {
         flex: 1
-    },
-    mapInput: {
-        zIndex: 9999, 
-        marginLeft: 10, 
-        marginRight: 10
     }
 });

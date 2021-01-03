@@ -19,7 +19,7 @@ export default class PrivacyPolicy extends React.Component<
     onPressButton={this.props.onDismissModal.bind(this)} 
     buttonIconName={'times'}/>
         <ScrollView style={{}}>
-        <Title style={{marginTop: 15, fontSize: 18}}><Text>Privacy Policy</Text></Title>
+        <Title style={{marginTop: 15, fontSize: 18, alignSelf: 'center'}}><Text>Privacy Policy</Text></Title>
         <Text style={styles.sectionHeader}>LAST UPDATE: 11/24/2020</Text>
         <Text style={styles.content}>
 {`Wanderlust Labs, LLC built the NoBull app as a Free app. 

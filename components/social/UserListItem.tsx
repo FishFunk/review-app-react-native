@@ -69,6 +69,6 @@ const styles = StyleSheet.create({
     },
     subText: {
         fontFamily: theme.fontLight,
-        fontSize: 10
+        fontSize: 12
     }
 });

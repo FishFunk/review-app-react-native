@@ -19,7 +19,7 @@ export default class LicenseAgreement extends React.Component<
     onPressButton={this.props.onDismissModal.bind(this)} 
     buttonIconName={'times'}/>
         <ScrollView style={{}}>
-        <Title style={{marginTop: 15, fontSize: 18}}><Text>Software License Agreement</Text></Title>
+        <Title style={{marginTop: 15, fontSize: 18, alignSelf: 'center'}}><Text>Software License Agreement</Text></Title>
         <Text style={styles.content}>
 {`1. Under this Software License Agreement (the "Agreement"), Wanderlust Labs, LLC (the "Vendor") grants to the user (the "Licensee") a non-exclusive and non-transferable license (the "License") to use NoBull (the "Software").
 2. "Software" includes the executable computer programs and any related printed, electronic and online documentation and any other files that may accompany the product.

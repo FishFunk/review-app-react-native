@@ -80,7 +80,7 @@ export default class ReviewComplete extends Component<{
             transparent={true}
         >
             <View style={styles.modalView}>
-                <ConfettiCannon count={200} origin={{x: 100, y: 0}} autoStartDelay={300}/>
+                <ConfettiCannon count={200} origin={{x: 100, y: 0}} autoStartDelay={300} />
                 <Text style={styles.bigText}>{this.state.title}</Text>
                 <Text style={styles.regularText}>
                     {this.state.message}
@@ -110,13 +110,13 @@ export default class ReviewComplete extends Component<{
                         {
                             this.state.submitting ? 
                                 <SpinnerContainer color={theme.LIGHT_COLOR}/> :
-                                <Text>Submit Feedback</Text>
+                                <Text style={styles.btnText}>Submit Feedback</Text>
                         }
                     </Button>
                     <Button 
                         style={{backgroundColor: theme.PRIMARY_COLOR}} 
                         onPress={onDismissModal}>
-                        <Text>Close</Text>
+                        <Text style={styles.btnText}>Close</Text>
                     </Button>
                 </FadeInView>
             </View>
@@ -182,5 +182,9 @@ const styles=StyleSheet.create({
         backgroundColor: theme.SECONDARY_COLOR,
         opacity: 0.6,
         width: 160
+    },
+    btnText: {
+        textAlign: 'center', 
+        color: theme.LIGHT_COLOR
     }
 })

@@ -38,37 +38,47 @@ export default function HorizontalButtonList(
                     style={props.disableEdit ? styles.disabledButton : styles.roundButton} 
                     onPress={()=>props.onPressWriteReview()}
                     disabled={props.disableEdit}>
-                    <Icon type={'FontAwesome5'} name={'edit'} 
-                        style={props.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
-                    <Label style={{fontSize: 12}}>Review</Label>
+                    <View style={styles.flexColumn}>
+                        <Icon type={'FontAwesome5'} name={'edit'} 
+                            style={props.disableEdit ? styles.disabledIcon : styles.buttonIcon}></Icon>
+                        <Label style={{fontSize: 12}}>Review</Label>
+                    </View>
                 </Button>
                 <Button small rounded transparent style={styles.roundButton}
                     onPress={onOpenMaps}>
-                    <Icon type={'FontAwesome5'} name={'directions'} style={styles.buttonIcon}></Icon>
-                    <Label style={{fontSize: 12}}>Directions</Label>
+                    <View style={styles.flexColumn}>
+                        <Icon type={'FontAwesome5'} name={'directions'} style={styles.buttonIcon}></Icon>
+                        <Label style={{fontSize: 12}}>Directions</Label>
+                    </View>
                 </Button>
                 {
                     props.placeSummary.formatted_phone_number != null ? 
                         <Button small rounded transparent style={styles.roundButton}
                             onPress={()=>Linking.openURL(`tel:${props.placeSummary.formatted_phone_number}`)}>
-                            <Icon type={'FontAwesome5'} name={'phone'} style={styles.buttonIcon}></Icon>
-                            <Label style={{fontSize: 12}}>Call</Label>
+                            <View style={styles.flexColumn}>
+                                <Icon type={'FontAwesome5'} name={'phone'} style={styles.buttonIcon}></Icon>
+                                <Label style={{fontSize: 12}}>Call</Label>
+                            </View>
                         </Button> : null
                 }
                 {
                     props.placeSummary.website != null ? 
                         <Button small rounded transparent style={styles.roundButton}
                             onPress={()=>Linking.openURL(`${props.placeSummary.website}`)}>
-                            <Icon type={'FontAwesome5'} name={'globe'} style={styles.buttonIcon}></Icon>
-                            <Label style={{fontSize: 12}}>Website</Label>
+                            <View style={styles.flexColumn}>
+                                <Icon type={'FontAwesome5'} name={'globe'} style={styles.buttonIcon}></Icon>
+                                <Label style={{fontSize: 12}}>Website</Label>
+                            </View>
                         </Button> : null
                 }
                 {
                     props.placeSummary.website != null ? 
                         <Button small rounded transparent style={styles.roundButton}
                             onPress={()=>{openShareSheet(props.placeSummary.website, websiteShareMessage)}}>
-                            <Icon type={'FontAwesome5'} name={'share'} style={styles.buttonIcon}></Icon>
-                            <Label style={{fontSize: 12}}>Share</Label>
+                            <View style={styles.flexColumn}>
+                                <Icon type={'FontAwesome5'} name={'share'} style={styles.buttonIcon}></Icon>
+                                <Label style={{fontSize: 12}}>Share</Label>
+                            </View>
                         </Button> : null
                 }
             </ScrollView>
@@ -86,7 +96,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: theme.PRIMARY_COLOR,
         height: 50,
-        flexDirection: 'column'
+        justifyContent: 'center'
     },
     disabledButton: {
         margin: 5,
@@ -94,13 +104,21 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: theme.PRIMARY_COLOR,
         height: 50,
-        flexDirection: 'column',
-        opacity: .5
+        opacity: .5,
+        justifyContent: 'center'
     },
     buttonIcon:{
-        color: theme.PRIMARY_COLOR
+        color: theme.PRIMARY_COLOR,
+        alignSelf: 'center',
+        fontSize: 20
     },
     disabledIcon: {
-        color: theme.PRIMARY_COLOR
+        color: theme.PRIMARY_COLOR,
+        alignSelf: 'center',
+        fontSize: 20
+    },
+    flexColumn: {
+        flexDirection: 'column',
+        justifyContent: 'center'
     }
   });
