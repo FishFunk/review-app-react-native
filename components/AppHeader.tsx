@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
     Header, 
-    Title, 
+    Text, 
     Left, 
     Icon, 
     Right, 
@@ -25,7 +25,7 @@ export default function AppHeader(props: any) {
             </Left>
             <Body style={{flex: 1, alignItems: 'center'}}>
                 {
-                    props.title ? <Title>{props.title}</Title> : <Logo />
+                    props.title ? <Text style={{fontFamily: theme.fontBold}}>{props.title}</Text> : <Logo />
                 }
             </Body>
             <Right style={{flex: 1}}>

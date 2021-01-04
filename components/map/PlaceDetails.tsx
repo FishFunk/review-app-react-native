@@ -344,10 +344,8 @@ export default class PlaceDetails extends React.Component<
                     />
                     :
                     <View style={styles.noReviewConatiner}>
-                        <Text style={styles.noReviewText}>Hmm... No reviews from your network yet.</Text>
-                        <Text style={styles.noReviewText}>Be the first to write one...</Text>
-                        <Text style={styles.noReviewText}>or</Text>
-                        <Text style={styles.noReviewText}>Find more reviewers!</Text>
+                        <Text style={styles.noReviewText}>Nobody you follow has reviewed this place yet.</Text>
+                        <Text style={styles.noReviewText}>Be the first to write one or find more reviewers!</Text>
                         <Button 
                             small
                             style={styles.navigationButton}
@@ -421,11 +419,15 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end'
     },
     noReviewConatiner: {
-        padding: 10,
-        minHeight: 200,
-        width: '100%',
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    noReviewText: {
+        fontSize: 12,
+        lineHeight: 20,
+        color: theme.DARK_COLOR,
+        textAlign: 'center'
     },
     warningBadge: {
         backgroundColor: theme.DANGER_COLOR,
@@ -443,9 +445,6 @@ const styles = StyleSheet.create({
         fontFamily: theme.fontBold,
         color: theme.LIGHT_COLOR,
         fontSize: 12
-    },
-    noReviewText: {
-        color: theme.DARK_COLOR
     },
     navigationButton: {
         marginTop: 10,
