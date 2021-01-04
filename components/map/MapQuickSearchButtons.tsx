@@ -31,9 +31,9 @@ export default class MapQuickSearchButtons extends Component<{
                         <Label style={styles.exploreLabel}>Dining</Label>
                     </Button>
                     <Button small rounded style={styles.exploreButton} iconLeft
-                        onPress={()=>onQuickSearch('meal_delivery')}>
-                        <Icon type={'FontAwesome5'} name={'pizza-slice'} style={styles.exploreIcon}></Icon>
-                        <Label style={styles.exploreLabel}>Delivery</Label>
+                        onPress={()=>onQuickSearch('cafe')}>
+                        <Icon type={'FontAwesome5'} name={'mug-hot'} style={styles.exploreIcon}></Icon>
+                        <Label style={styles.exploreLabel}>Cafes</Label>
                     </Button>
                     <Button small rounded style={styles.exploreButton} iconLeft
                         onPress={()=>onQuickSearch('meal_takeaway')}>
@@ -41,9 +41,9 @@ export default class MapQuickSearchButtons extends Component<{
                         <Label style={styles.exploreLabel}>Takeout</Label>
                     </Button>
                     <Button small rounded style={styles.exploreButton} iconLeft
-                        onPress={()=>onQuickSearch('cafe')}>
-                        <Icon type={'FontAwesome5'} name={'mug-hot'} style={styles.exploreIcon}></Icon>
-                        <Label style={styles.exploreLabel}>Cafes</Label>
+                        onPress={()=>onQuickSearch('meal_delivery')}>
+                        <Icon type={'FontAwesome5'} name={'pizza-slice'} style={styles.exploreIcon}></Icon>
+                        <Label style={styles.exploreLabel}>Delivery</Label>
                     </Button>
                 </ScrollView>
             </View>

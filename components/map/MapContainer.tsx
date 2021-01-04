@@ -11,7 +11,13 @@ import MapView, { Region, Marker } from 'react-native-maps';
 import { Toast } from 'native-base';
 import Utils from '../../services/utils';
 import SpinnerContainer from '../SpinnerContainer';
-import { createPlaceMarkerObjectFromGooglePlace, getApiPlaceSummary, getNearbyPlaceSummariesByQuery, getNearbyPlaceSummariesByType, loadMoreResults } from '../../services/combinedApiService';
+import { 
+    createPlaceMarkerObjectFromGooglePlace,
+    getApiPlaceSummary, 
+    getNearbyPlaceSummariesByQuery, 
+    getNearbyPlaceSummariesByType, 
+    loadMoreResults, 
+    shouldShowLoadMoreOption } from '../../services/combinedApiService';
 import MapQuickSearchButtons from './MapQuickSearchButtons';
 import _indexOf from 'lodash/indexOf';
 import { defaultGoogleApiFields } from '../../constants/Various';
@@ -346,9 +352,10 @@ export default class MapContainer extends React.Component<
                 type = 'bar';
                 break;    
             case('restaurant'):
+                // query = resutaurant
                 break;
             case('meal_delivery'):
-                type = 'meal_delivery';
+                query = 'delivery';
                 break;
             case('meal_takeaway'):
                 query = 'takeout';
@@ -403,9 +410,10 @@ export default class MapContainer extends React.Component<
         this.setState({ showGeneralLoadingSpinner: true });
         const morePlaces = await loadMoreResults(this.state.apiKey);
         const allPlaces = currentPlaces.concat(morePlaces);
+        const showLoadMoreOption = await shouldShowLoadMoreOption();
         
         this.setState({ 
-            showLoadMoreOption: allPlaces.length <= 15,
+            showLoadMoreOption: showLoadMoreOption,
             markers: allPlaces, 
             showGeneralLoadingSpinner: false });
     }

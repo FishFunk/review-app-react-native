@@ -44,6 +44,12 @@ export const loadMoreResults = async (apiKey: string) => {
     return _iterateAndConvertNearbyPlaceResults(apiKey, nearbyGooglePlaces, 5, idx);
 }
 
+export const shouldShowLoadMoreOption = async () =>{
+    const nearbyGooglePlaces = await LocalStorageService.getItem(GOOGLE_API_RESULTS_KEY);
+    const idx = await LocalStorageService.getItem(GOOGLE_API_RESULTS_INDEX_KEY);
+    return nearbyGooglePlaces.length > idx;
+}
+
 const _iterateAndConvertNearbyPlaceResults = 
     async (apiKey: string, nearbyGooglePlaces: fullApiPlace[], count: number, startIndex: number = 0)=>{
     let places = [];
